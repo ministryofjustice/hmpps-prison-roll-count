@@ -3,7 +3,7 @@ import EstablishmentRollService from '../services/establishmentRollService'
 import MovementsService from '../services/movementsService'
 import LocationService from '../services/locationsService'
 import { userHasRoles } from '../utils/utils'
-import { Role } from '../enums/role'
+import Role from '../enums/role'
 
 export default class EstablishmentRollController {
   constructor(
