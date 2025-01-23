@@ -6,6 +6,7 @@ import nunjucksSetup from './utils/nunjucksSetup'
 import errorHandler from './errorHandler'
 import { appInsightsMiddleware } from './utils/azureAppInsights'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
+import populateClientToken from './middleware/populateClientToken'
 
 import setUpAuthentication from './middleware/setUpAuthentication'
 import setUpCsrf from './middleware/setUpCsrf'
@@ -34,9 +35,10 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpStaticResources())
   nunjucksSetup(app)
   app.use(setUpAuthentication())
-  app.use(authorisationMiddleware())
+  app.use(authorisationMiddleware(['ROLE_PRISON']))
   app.use(setUpCsrf())
   app.use(setUpCurrentUser())
+  app.use(populateClientToken())
 
   app.use(routes(services))
 
