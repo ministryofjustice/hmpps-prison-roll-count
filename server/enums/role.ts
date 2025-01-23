@@ -1,5 +1,4 @@
-// eslint-disable-next-line no-shadow,import/prefer-default-export
-export enum Role {
+enum Role {
   UpdateAlert = 'UPDATE_ALERT',
   InactiveBookings = 'INACTIVE_BOOKINGS',
   DeleteSensitiveCaseNotes = 'DELETE_SENSITIVE_CASE_NOTES',
@@ -26,3 +25,5 @@ export enum Role {
   CellMove = 'CELL_MOVE',
   KeyWorker = 'KW',
 }
+
+export default Role
