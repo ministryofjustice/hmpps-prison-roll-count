@@ -21,3 +21,25 @@ export const initialiseName = (fullName?: string): string | null => {
   const array = fullName.split(' ')
   return `${array[0][0]}. ${array.reverse()[0]}`
 }
+
+/**
+ * Whether any of the roles exist for the given user allowing for conditional role based access on any number of roles
+ *
+ * @param rolesToCheck
+ * @param userRoles
+ */
+export const userHasRoles = (rolesToCheck: string[], userRoles: string[]): boolean => {
+  return rolesToCheck.some(role => userRoles.includes(role))
+}
+
+export const stripAgencyPrefix = (location: string, agency: string): string => {
+  const parts = location && location.split('-')
+  if (parts && parts.length > 0) {
+    const index = parts.findIndex(p => p === agency)
+    if (index >= 0) {
+      return location.substring(parts[index].length + 1, location.length)
+    }
+  }
+
+  return null
+}

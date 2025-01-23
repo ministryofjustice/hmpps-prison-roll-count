@@ -4,6 +4,7 @@ import nunjucks from 'nunjucks'
 import express from 'express'
 import fs from 'fs'
 import { initialiseName } from './utils'
+import { formatDate, formatDateTime, formatTime, timeFromDate, toUnixTimeStamp } from './dateHelpers'
 import config from '../config'
 import logger from '../../logger'
 
@@ -39,4 +40,9 @@ export default function nunjucksSetup(app: express.Express): void {
 
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addFilter('assetMap', (url: string) => assetManifest[url] || url)
+  njkEnv.addFilter('formatDate', formatDate)
+  njkEnv.addFilter('formatDateTime', formatDateTime)
+  njkEnv.addFilter('formatTime', formatTime)
+  njkEnv.addFilter('toUnixTimeStamp', toUnixTimeStamp)
+  njkEnv.addFilter('timeFromDate', timeFromDate)
 }
