@@ -14,19 +14,47 @@ import HmppsAuthClient from './hmppsAuthClient'
 import { createRedisClient } from './redisClient'
 import RedisTokenStore from './tokenStore/redisTokenStore'
 import InMemoryTokenStore from './tokenStore/inMemoryTokenStore'
-import config from '../config'
+import config, { ApiConfig } from '../config'
 import HmppsAuditClient from './hmppsAuditClient'
+import LocationsInsidePrisonApiRestClient from './locationsInsidePrisonApiClient'
+import PrisonApiClient from './prisonApiRestClient'
+import PrisonApiRestClient from './prisonApiRestClient'
+import PrisonerSearchRestClient from './prisonerSearchClient'
+import RestClient, { RestClientBuilder as CreateRestClientBuilder } from './restClient'
 
 type RestClientBuilder<T> = (token: string) => T
 
-export const dataAccess = () => ({
-  applicationInfo,
-  hmppsAuthClient: new HmppsAuthClient(
-    config.redis.enabled ? new RedisTokenStore(createRedisClient()) : new InMemoryTokenStore(),
-  ),
-  hmppsAuditClient: new HmppsAuditClient(config.sqs.audit),
-})
+export default function restClientBuilder<T>(
+  name: string,
+  options: ApiConfig,
+  constructor: new (client: RestClient) => T,
+): RestClientBuilder<T> {
+  const restClient = CreateRestClientBuilder(name, options)
+  return token => new constructor(restClient(token))
+}
 
-export type DataAccess = ReturnType<typeof dataAccess>
+export const dataAccess = () => {
+
+  const tokenStore = config.redis.enabled ? new RedisTokenStore(createRedisClient()) : new InMemoryTokenStore()
+  const hmppsAuthClient = new HmppsAuthClient(tokenStore);
+
+  return {
+  applicationInfo,
+  hmppsAuthClient,
+  systemToken: (username?: string) => hmppsAuthClient.getSystemClientToken(username),
+  hmppsAuditClient: new HmppsAuditClient(config.sqs.audit),
+  prisonApiClientBuilder: restClientBuilder<PrisonApiClient>('Prison API', config.apis.prisonApi, PrisonApiRestClient),
+  prisonerSearchApiClientBuilder: restClientBuilder<PrisonerSearchRestClient>(
+    'Prisoner Search API',
+    config.apis.prisonerSearchApi,
+    PrisonerSearchRestClient,
+  ),
+  locationsInsidePrisonApiClientBuilder: restClientBuilder<LocationsInsidePrisonApiRestClient>(
+    'Locations Inside Prison API',
+    config.apis.locationsInsidePrisonApi,
+    LocationsInsidePrisonApiRestClient,
+  ),
+  }
+}
 
 export { HmppsAuthClient, RestClientBuilder, HmppsAuditClient }

@@ -68,6 +68,15 @@ export default {
     expiryMinutes: Number(get('WEB_SESSION_TIMEOUT_IN_MINUTES', 120)),
   },
   apis: {
+    frontendComponents: {
+      url: get('COMPONENT_API_URL', 'http://localhost:8082', requiredInProduction),
+      timeout: {
+        response: Number(get('COMPONENT_API_TIMEOUT_SECONDS', 3000)),
+        deadline: Number(get('COMPONENT_API_TIMEOUT_SECONDS', 3000)),
+      },
+      agent: new AgentConfig(Number(get('COMPONENT_API_TIMEOUT_SECONDS', 3000))),
+      latest: get('COMPONENT_API_LATEST', 'false') === 'true',
+    },
     hmppsAuth: {
       url: get('HMPPS_AUTH_URL', 'http://localhost:9090/auth', requiredInProduction),
       healthPath: '/health/ping',
@@ -81,6 +90,30 @@ export default {
       authClientSecret: get('AUTH_CODE_CLIENT_SECRET', 'clientsecret', requiredInProduction),
       systemClientId: get('CLIENT_CREDS_CLIENT_ID', 'clientid', requiredInProduction),
       systemClientSecret: get('CLIENT_CREDS_CLIENT_SECRET', 'clientsecret', requiredInProduction),
+    },
+    locationsInsidePrisonApi: {
+      url: get('LOCATIONS_INSIDE_PRISON_API_URL', 'http://localhost:8082', requiredInProduction),
+      timeout: {
+        response: Number(get('LOCATIONS_INSIDE_PRISON_API_TIMEOUT_RESPONSE', 20000)),
+        deadline: Number(get('LOCATIONS_INSIDE_PRISON_API_TIMEOUT_DEADLINE', 20000)),
+      },
+      agent: new AgentConfig(Number(get('LOCATIONS_INSIDE_PRISON_API_TIMEOUT_DEADLINE', 20000))),
+    },
+    prisonApi: {
+      url: get('PRISON_API_URL', 'http://localhost:8082', requiredInProduction),
+      timeout: {
+        response: Number(get('PRISON_API_TIMEOUT_RESPONSE', 20000)),
+        deadline: Number(get('PRISON_API_TIMEOUT_DEADLINE', 20000)),
+      },
+      agent: new AgentConfig(Number(get('PRISON_API_TIMEOUT_DEADLINE', 20000))),
+    },
+    prisonerSearchApi: {
+      url: get('PRISONER_SEARCH_API_URL', 'http://localhost:8082', requiredInProduction),
+      timeout: {
+        response: Number(get('PRISONER_SEARCH_API_TIMEOUT_SECONDS', 20000)),
+        deadline: Number(get('PRISONER_SEARCH_API_TIMEOUT_SECONDS', 20000)),
+      },
+      agent: new AgentConfig(Number(get('PRISONER_SEARCH_API_TIMEOUT_DEADLINE', 20000))),
     },
     tokenVerification: {
       url: get('TOKEN_VERIFICATION_API_URL', 'http://localhost:8100', requiredInProduction),

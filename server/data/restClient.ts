@@ -9,7 +9,7 @@ import type { ApiConfig } from '../config'
 import type { UnsanitisedError } from '../sanitisedError'
 
 interface Request {
-  path: string
+  path?: string
   query?: object | string
   headers?: Record<string, string>
   responseType?: string
@@ -19,6 +19,10 @@ interface Request {
 interface RequestWithBody extends Request {
   data?: Record<string, unknown>
   retry?: boolean
+}
+
+export function RestClientBuilder(name: string, config: ApiConfig) {
+  return (token: string): RestClient => new RestClient(name, config, token)
 }
 
 interface StreamRequest {
