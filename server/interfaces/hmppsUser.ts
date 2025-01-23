@@ -1,5 +1,6 @@
 import { CaseLoad } from '../data/interfaces/caseLoad'
 import { Location } from '../data/interfaces/location'
+
 export type AuthSource = 'nomis' | 'delius' | 'external' | 'azuread'
 
 /**

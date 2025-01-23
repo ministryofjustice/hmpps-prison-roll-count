@@ -17,8 +17,8 @@ import InMemoryTokenStore from './tokenStore/inMemoryTokenStore'
 import config, { ApiConfig } from '../config'
 import HmppsAuditClient from './hmppsAuditClient'
 import LocationsInsidePrisonApiRestClient from './locationsInsidePrisonApiClient'
-import PrisonApiClient from './prisonApiRestClient'
 import PrisonApiRestClient from './prisonApiRestClient'
+import { PrisonApiClient } from './interfaces/prisonApiClient'
 import PrisonerSearchRestClient from './prisonerSearchClient'
 import RestClient, { RestClientBuilder as CreateRestClientBuilder } from './restClient'
 
@@ -34,26 +34,29 @@ export default function restClientBuilder<T>(
 }
 
 export const dataAccess = () => {
-
   const tokenStore = config.redis.enabled ? new RedisTokenStore(createRedisClient()) : new InMemoryTokenStore()
-  const hmppsAuthClient = new HmppsAuthClient(tokenStore);
+  const hmppsAuthClient = new HmppsAuthClient(tokenStore)
 
   return {
-  applicationInfo,
-  hmppsAuthClient,
-  systemToken: (username?: string) => hmppsAuthClient.getSystemClientToken(username),
-  hmppsAuditClient: new HmppsAuditClient(config.sqs.audit),
-  prisonApiClientBuilder: restClientBuilder<PrisonApiClient>('Prison API', config.apis.prisonApi, PrisonApiRestClient),
-  prisonerSearchApiClientBuilder: restClientBuilder<PrisonerSearchRestClient>(
-    'Prisoner Search API',
-    config.apis.prisonerSearchApi,
-    PrisonerSearchRestClient,
-  ),
-  locationsInsidePrisonApiClientBuilder: restClientBuilder<LocationsInsidePrisonApiRestClient>(
-    'Locations Inside Prison API',
-    config.apis.locationsInsidePrisonApi,
-    LocationsInsidePrisonApiRestClient,
-  ),
+    applicationInfo,
+    hmppsAuthClient,
+    systemToken: (username?: string) => hmppsAuthClient.getSystemClientToken(username),
+    hmppsAuditClient: new HmppsAuditClient(config.sqs.audit),
+    prisonApiClientBuilder: restClientBuilder<PrisonApiClient>(
+      'Prison API',
+      config.apis.prisonApi,
+      PrisonApiRestClient,
+    ),
+    prisonerSearchApiClientBuilder: restClientBuilder<PrisonerSearchRestClient>(
+      'Prisoner Search API',
+      config.apis.prisonerSearchApi,
+      PrisonerSearchRestClient,
+    ),
+    locationsInsidePrisonApiClientBuilder: restClientBuilder<LocationsInsidePrisonApiRestClient>(
+      'Locations Inside Prison API',
+      config.apis.locationsInsidePrisonApi,
+      LocationsInsidePrisonApiRestClient,
+    ),
   }
 }
 

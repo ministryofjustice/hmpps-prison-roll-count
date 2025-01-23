@@ -31,9 +31,9 @@ export const user: HmppsUser = {
   userRoles: [],
   caseLoads: [],
   activeCaseLoad: Caseload,
-  locations: [] ,
+  locations: [],
   showFeedbackBanner: false,
-  activeCaseLoadId: 'MDI'
+  activeCaseLoadId: 'MDI',
 }
 
 export const flashProvider = jest.fn()

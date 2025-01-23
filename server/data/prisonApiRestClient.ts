@@ -1,19 +1,19 @@
 import * as querystring from 'querystring'
 import { Readable } from 'stream'
 import RestClient from './restClient'
-import { BedAssignment } from './interfaces/bedAssignment';
-import { CaseLoad } from './interfaces/caseLoad';
-import EstablishmentRollSummary from '../services/interfaces/EstablishmentRollSummary';
-import { Location } from './interfaces/location';
-import { Movements } from './interfaces/movements';
-import { OffenderIn } from './interfaces/offenderIn';
-import { OffenderInReception } from './interfaces/offenderInReception';
-import { OffenderMovement } from './interfaces/offenderMovement';
-import { OffenderOut } from './interfaces/offenderOut';
-import { PagedList } from './interfaces/pagedList';
-import PrisonRollCount from './interfaces/prisonRollCount';
-import { PrisonApiClient } from './interfaces/prisonApiClient';
-import { UserDetail } from './interfaces/userDetail';
+import { BedAssignment } from './interfaces/bedAssignment'
+import { CaseLoad } from './interfaces/caseLoad'
+import EstablishmentRollSummary from '../services/interfaces/EstablishmentRollSummary'
+import { Location } from './interfaces/location'
+import { Movements } from './interfaces/movements'
+import { OffenderIn } from './interfaces/offenderIn'
+import { OffenderInReception } from './interfaces/offenderInReception'
+import { OffenderMovement } from './interfaces/offenderMovement'
+import { OffenderOut } from './interfaces/offenderOut'
+import { PagedList } from './interfaces/pagedList'
+import PrisonRollCount from './interfaces/prisonRollCount'
+import { PrisonApiClient } from './interfaces/prisonApiClient'
+import { UserDetail } from './interfaces/userDetail'
 
 export default class PrisonApiRestClient implements PrisonApiClient {
   constructor(private restClient: RestClient) {}

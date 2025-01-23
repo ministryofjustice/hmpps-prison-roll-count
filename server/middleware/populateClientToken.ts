@@ -7,7 +7,7 @@ export default function populateClientToken(): RequestHandler {
     try {
       const { systemToken } = dataAccess()
       if (res.locals.user) {
-        const clientToken = await systemToken (res.locals.user.username)
+        const clientToken = await systemToken(res.locals.user.username)
         if (clientToken) {
           req.middleware = { ...req.middleware, clientToken }
         } else {

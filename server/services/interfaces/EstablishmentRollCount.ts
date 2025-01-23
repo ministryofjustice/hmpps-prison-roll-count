@@ -1,4 +1,4 @@
-import PrisonRollCount, { ResidentialLocation } from '../../../server/data/interfaces/prisonRollCount'
+import PrisonRollCount, { ResidentialLocation } from '../../data/interfaces/prisonRollCount'
 
 export default interface EstablishmentRollCount {
   todayStats: {

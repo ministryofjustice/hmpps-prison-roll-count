@@ -12,7 +12,7 @@ export default function setUpHealthChecks(applicationInfo: ApplicationInfo): Rou
 
   const middleware = monitoringMiddleware({
     applicationInfo,
-    // @ts-ignore
+    // @ts-expect-error check type here
     // TODO: check type here
     healthComponents: apiConfig.map(([name, options]) => endpointHealthComponent(logger, name, options)),
   })
