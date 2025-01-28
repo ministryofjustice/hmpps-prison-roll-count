@@ -1,22 +1,26 @@
 import jwt from 'jsonwebtoken'
-import type { Response } from 'superagent'
+import { Response } from 'superagent'
 
 import { stubFor, getMatchingRequests } from './wiremock'
 import tokenVerification from './tokenVerification'
+import Role from '../../server/enums/role'
 
-interface UserToken {
+export interface UserToken {
   name?: string
+  username?: string
+  userId?: string
   roles?: string[]
 }
 
 const createToken = (userToken: UserToken) => {
-  // authorities in the session are always prefixed by ROLE.
-  const authorities = userToken.roles?.map(role => (role.startsWith('ROLE_') ? role : `ROLE_${role}`)) || []
+  const authorities =
+    ( [`ROLE_${Role.PrisonUser}`]).map(role => (role.startsWith('ROLE_') ? role : `ROLE_${role}`)) ||
+    []
   const payload = {
     name: userToken.name || 'john smith',
-    user_name: 'USER1',
     scope: ['read'],
     auth_source: 'nomis',
+    userId: 'JSMITH',
     authorities,
     jti: '83b50a10-cca6-41db-985f-e87efb303ddb',
     client_id: 'clientid',
@@ -69,7 +73,7 @@ const redirect = () =>
         'Content-Type': 'text/html',
         Location: 'http://localhost:3007/sign-in/callback?code=codexxxx&state=stateyyyy',
       },
-      body: '<html><body>Sign in page<h1>Sign in</h1></body></html>',
+      body: '<html><body>SignIn page<h1>Sign in</h1></body></html>',
     },
   })
 
@@ -84,7 +88,7 @@ const signOut = () =>
       headers: {
         'Content-Type': 'text/html',
       },
-      body: '<html><body>Sign in page<h1>Sign in</h1></body></html>',
+      body: '<html><body>SignIn page<h1>Sign in</h1></body></html>',
     },
   })
 
@@ -117,8 +121,9 @@ const token = (userToken: UserToken) =>
       },
       jsonBody: {
         access_token: createToken(userToken),
+        auth_source: 'nomis',
         token_type: 'bearer',
-        user_name: 'USER1',
+        user_name: userToken.username || 'USER1',
         expires_in: 599,
         scope: 'read',
         internalUser: true,
@@ -126,10 +131,18 @@ const token = (userToken: UserToken) =>
     },
   })
 
+
 export default {
   getSignInUrl,
   stubAuthPing: ping,
   stubAuthManageDetails: manageDetails,
-  stubSignIn: (userToken: UserToken = {}): Promise<[Response, Response, Response, Response, Response]> =>
-    Promise.all([favicon(), redirect(), signOut(), token(userToken), tokenVerification.stubVerifyToken()]),
+  stubSignIn: (userToken: UserToken): Promise<[Response, Response, Response, Response, Response, Response]> =>
+    Promise.all([
+      favicon(),
+      redirect(),
+      signOut(),
+      manageDetails(),
+      token(userToken),
+      tokenVerification.stubVerifyToken(),
+    ]),
 }
