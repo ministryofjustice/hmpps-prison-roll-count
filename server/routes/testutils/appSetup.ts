@@ -12,6 +12,14 @@ import setUpWebSession from '../../middleware/setUpWebSession'
 
 jest.mock('../../services/auditService')
 
+const Caseload = {
+  caseLoadId: 'LEI',
+  description: 'Leeds (HMP)',
+  type: 'INST',
+  caseloadFunction: 'GENERAL',
+  currentlyActive: true,
+}
+
 export const user: HmppsUser = {
   name: 'FIRST LAST',
   userId: 'id',
@@ -21,6 +29,11 @@ export const user: HmppsUser = {
   authSource: 'nomis',
   staffId: 1234,
   userRoles: [],
+  caseLoads: [],
+  activeCaseLoad: Caseload,
+  locations: [],
+  showFeedbackBanner: false,
+  activeCaseLoadId: 'MDI',
 }
 
 export const flashProvider = jest.fn()

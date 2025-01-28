@@ -7,12 +7,111 @@ services:
       - hmpps
     container_name: hmpps-auth
     ports:
-      - "9090:8080"
+      - "8080:8080"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/auth/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/auth/health/ping" ]
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - APPLICATION_AUTHENTICATION_UI_ALLOWLIST=0.0.0.0/0
+      - DELIUS_ENABLED=false
+      - NOMIS_ENDPOINT_URL=http://nomis-user-roles-api:8080
+      - NOMIS_ENABLED=true
+
+  nomis-user-roles-api:
+    image: quay.io/hmpps/nomis-user-roles-api:latest
+    container_name: nomis-user-roles-api
+    networks:
+      - hmpps
+    ports:
+      - "8081:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_PROFILES_ACTIVE=dev
+      - API_BASE_URL_OAUTH=http://hmpps-auth:8080/auth
+
+  manage-users-api:
+    image: quay.io/hmpps/hmpps-manage-users-api:latest
+    container_name: manage-users-api
+    networks:
+      - hmpps
+    depends_on:
+      - nomis-user-roles-api
+      - hmpps-auth
+    ports:
+      - "8082:8080"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/health/ping" ]
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_PROFILES_ACTIVE=dev
+      - HMPPS_AUTH_ENDPOINT_URL=http://hmpps-auth:8080/auth
+      - HMPPS_AUTH_EXTERNAL_ENDPOINT_URL=http://localhost:8080/auth
+      - NOMIS_ENDPOINT_URL=http://nomis-user-roles-api:8080
+      - AUTHORIZATION_SERVER_TOKEN_ENDPOINT_URL=http://hmpps-auth:8080/auth/oauth/token
+
+  locations-inside-prison-api:
+    image: quay.io/hmpps/hmpps-locations-inside-prison-api:latest
+    container_name: locations-inside-prison-api
+    depends_on:
+      - hmpps-auth
+      - locations-inside-prison-db
+      - localstack
+    networks:
+      - hmpps
+    ports:
+      - "8090:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health/ping"]
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_PROFILES_ACTIVE=seed
+      - API_BASE_URL_OAUTH=http://hmpps-auth:8080/auth
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://locations-inside-prison-db:5432/locations_inside_prison?sslmode=prefer
+      - HMPPS_SQS_LOCALSTACK_URL=http://localstack:4566
+      - API_BASE_URL_PRISONER_SEARCH=http://prisoner-search:8080
+      - API_BASE_URL_PRISON_REGISTER=http://prison-register:8080
+      - LOCATIONS_INSIDE_PRISON_API_CLIENT_ID=hmpps-prison-roll-count-ui-1
+      - LOCATIONS_INSIDE_PRISON_API_CLIENT_SECRET=clientsecret
+
+  localstack:
+    image: localstack/localstack:stable
+    networks:
+      - hmpps
+    container_name: localstack
+    ports:
+      - "4566:4566"
+      - "8999:8080"
+    environment:
+      - DEBUG=${DEBUG- }
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+
+  prisoner-search:
+    image: wiremock/wiremock:latest
+    networks:
+      - hmpps
+    container_name: prisoner-search
+    ports:
+      - "8083:8080"
+    volumes:
+      - ./wiremock:/home/wiremock
+
+  locations-inside-prison-db:
+    image: postgres
+    networks:
+      - hmpps
+    container_name: locations-inside-prison-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=locations_inside_prison
+      - POSTGRES_USER=locations_inside_prison
+      - POSTGRES_DB=locations_inside_prison
 
   app:
     build:
@@ -32,14 +131,20 @@ services:
       - HMPPS_AUTH_EXTERNAL_URL=http://localhost:9090/auth
       - HMPPS_AUTH_URL=http://hmpps-auth:8080/auth
       # These will need to match new creds in the seed auth service auth
-      - AUTH_CODE_CLIENT_ID=hmpps-typescript-template
+      - HMPPS_AUTH_EXTERNAL_URL=http://localhost:8080/auth
+      - HMPPS_AUTH_URL=http://localhost:8080/auth
+      - MANAGE_USERS_API_URL=http://localhost:8082
+      - AUTH_CODE_CLIENT_ID=hmpps-prison-roll-count-ui-1
       - AUTH_CODE_CLIENT_SECRET=clientsecret
-      - CLIENT_CREDS_CLIENT_ID=hmpps-typescript-template-system
+      - CLIENT_CREDS_CLIENT_ID=hmpps-prison-roll-count-ui-1
       - CLIENT_CREDS_CLIENT_SECRET=clientsecret
       - SESSION_SECRET=somesecretvalue
-      - TOKEN_VERIFICATION_API_URL=http://hmpps-auth:8080/auth
+      - TOKEN_VERIFICATION_API_URL=http://localhost:8080
       - TOKEN_VERIFICATION_ENABLED=false
       - INGRESS_URL=http://localhost:3000
+      - DPS_URL=http://localhost:3000
+      - LOCATIONS_INSIDE_PRISON_API_URL=http://localhost:8090
+      - COMMON_COMPONENTS_ENABLED=false
       - NO_HTTPS=true
 
 networks:

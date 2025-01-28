@@ -1,3 +1,6 @@
+import { CaseLoad } from '../data/interfaces/caseLoad'
+import { Location } from '../data/interfaces/location'
+
 export type AuthSource = 'nomis' | 'delius' | 'external' | 'azuread'
 
 /**
@@ -11,6 +14,12 @@ export interface BaseUser {
   displayName: string
   userRoles: string[]
   token: string
+  staffId: number
+  activeCaseLoad: CaseLoad
+  activeCaseLoadId: string
+  caseLoads: CaseLoad[]
+  locations: Location[]
+  showFeedbackBanner: boolean
 }
 
 /**

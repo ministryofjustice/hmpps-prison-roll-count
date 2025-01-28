@@ -1,18 +1,39 @@
-import { type RequestHandler, Router } from 'express'
-
+import { RequestHandler, Router } from 'express'
+import { Services } from '../services'
 import asyncMiddleware from '../middleware/asyncMiddleware'
-import type { Services } from '../services'
-import { Page } from '../services/auditService'
+import EstablishmentRollController from '../controllers/establishmentRollController'
 
-export default function routes({ auditService }: Services): Router {
+export default function establishmentRollRouter(services: Services): Router {
   const router = Router()
-  const get = (path: string | string[], handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
 
-  get('/', async (req, res, next) => {
-    await auditService.logPageView(Page.EXAMPLE_PAGE, { who: res.locals.user.username, correlationId: req.id })
+  const get = (path: string | string[], ...handlers: RequestHandler[]) =>
+    router.get(
+      path,
+      handlers.map(handler => asyncMiddleware(handler)),
+    )
 
-    res.render('pages/index')
-  })
+  const establishmentRollController = new EstablishmentRollController(
+    services.establishmentRollService,
+    services.movementsService,
+    services.locationsService,
+  )
+
+  // TODO: IS /LOCATIONS NEEDED?
+  get('/', establishmentRollController.getEstablishmentRoll())
+  get('/locations/', establishmentRollController.getEstablishmentRoll(true))
+
+  // TODO: REMAINING ROUTES
+  // get(
+  //   ['/wing/:wingId/landing/:landingId', '/wing/:wingId/spur/:spurId/landing/:landingId'],
+  //   establishmentRollController.getEstablishmentRollForLanding(),
+  // )
+  // get('/arrived-today', establishmentRollController.getArrivedToday())
+  // get('/out-today', establishmentRollController.getOutToday())
+  // get('/en-route', establishmentRollController.getEnRoute())
+  // get('/in-reception', establishmentRollController.getInReception())
+  // get('/no-cell-allocated', establishmentRollController.getUnallocated())
+  // get('/total-currently-out', establishmentRollController.getTotalCurrentlyOut())
+  // get('/:livingUnitId/currently-out', establishmentRollController.getCurrentlyOut())
 
   return router
 }

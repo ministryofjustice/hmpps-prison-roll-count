@@ -16,6 +16,7 @@ passport.deserializeUser((user, done) => {
   // Not used but required for Passport
   done(null, user as Express.User)
 })
+// TODO: CHECK IF USING TWICE.
 
 passport.use(
   new Strategy(
