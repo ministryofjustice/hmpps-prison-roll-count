@@ -2,8 +2,9 @@ import IndexPage from '../pages/index'
 import AuthSignInPage from '../pages/authSignIn'
 import Page from '../pages/page'
 
+
 context('Index', () => {
-  context('Without the VIEW_INTERNAL_LOCATION role', () => {
+  context('Without the PRISON role', () => {
     beforeEach(() => {
       cy.task('reset')
       cy.task('stubSignIn', { roles: [] })
@@ -20,30 +21,22 @@ context('Index', () => {
     })
   })
 
-  context('With the VIEW_INTERNAL_LOCATION role', () => {
+  context('With the PRISON role', () => {
     beforeEach(() => {
       cy.task('reset')
-      cy.task('stubSignIn')
-      cy.task('stubManageUsersMe')
-      cy.task('stubManageUsersMeCaseloads')
+      cy.task('stubUserCaseLoads')
+      cy.task('stubUserLocations')
+      cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
+      cy.task('stubLocationPrisonRollCount')
+      cy.setupUserAuth()
+      cy.setupUserCaseloads()
     })
 
-    it('Displays the tiles', () => {
+    it('Homepage is visible', () => {
+      cy.visit('/sign-in')
       cy.signIn()
-      const indexPage = Page.verifyOnPage(IndexPage)
-
-      indexPage.cards.viewLocations().contains('View and update locations')
-      indexPage.cards.inactiveCells().contains('View all inactive cells')
-      indexPage.cards.archivedLocations().contains('Archived locations')
+      Page.verifyOnPage(IndexPage)
     })
 
-    it('has a feedback banner', () => {
-      cy.signIn()
-      cy.get('.feedback-banner a:contains("Suggest an improvement or report a problem with this service")').should(
-        'have.attr',
-        'href',
-        'http://feedback-form',
-      )
-    })
   })
 })

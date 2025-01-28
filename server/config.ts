@@ -68,15 +68,6 @@ export default {
     expiryMinutes: Number(get('WEB_SESSION_TIMEOUT_IN_MINUTES', 120)),
   },
   apis: {
-    frontendComponents: {
-      url: get('COMPONENT_API_URL', 'http://localhost:8082', requiredInProduction),
-      timeout: {
-        response: Number(get('COMPONENT_API_TIMEOUT_SECONDS', 3000)),
-        deadline: Number(get('COMPONENT_API_TIMEOUT_SECONDS', 3000)),
-      },
-      agent: new AgentConfig(Number(get('COMPONENT_API_TIMEOUT_SECONDS', 3000))),
-      latest: get('COMPONENT_API_LATEST', 'false') === 'true',
-    },
     hmppsAuth: {
       url: get('HMPPS_AUTH_URL', 'http://localhost:9090/auth', requiredInProduction),
       healthPath: '/health/ping',
@@ -93,6 +84,7 @@ export default {
     },
     locationsInsidePrisonApi: {
       url: get('LOCATIONS_INSIDE_PRISON_API_URL', 'http://localhost:8082', requiredInProduction),
+      healthPath: '/health/ping',
       timeout: {
         response: Number(get('LOCATIONS_INSIDE_PRISON_API_TIMEOUT_RESPONSE', 20000)),
         deadline: Number(get('LOCATIONS_INSIDE_PRISON_API_TIMEOUT_DEADLINE', 20000)),
@@ -101,6 +93,7 @@ export default {
     },
     prisonApi: {
       url: get('PRISON_API_URL', 'http://localhost:8082', requiredInProduction),
+      healthPath: '/health/ping',
       timeout: {
         response: Number(get('PRISON_API_TIMEOUT_RESPONSE', 20000)),
         deadline: Number(get('PRISON_API_TIMEOUT_DEADLINE', 20000)),
@@ -109,6 +102,7 @@ export default {
     },
     prisonerSearchApi: {
       url: get('PRISONER_SEARCH_API_URL', 'http://localhost:8082', requiredInProduction),
+      healthPath: '/health/ping',
       timeout: {
         response: Number(get('PRISONER_SEARCH_API_TIMEOUT_SECONDS', 20000)),
         deadline: Number(get('PRISONER_SEARCH_API_TIMEOUT_SECONDS', 20000)),
@@ -126,6 +120,14 @@ export default {
       enabled: get('TOKEN_VERIFICATION_ENABLED', 'false') === 'true',
     },
   },
+  dpsUrl: get('DPS_URL', 'http://localhost:3000', requiredInProduction),
+  productionUrl: get('PRODUCTION_URL', '#'),
+  serviceUrls: {
+    digitalPrisons: get('DIGITAL_PRISONS_URL', 'http://localhost:3001', requiredInProduction),
+    prisonerProfile: get('PRISONER_PROFILE_URL', 'http://localhost:3002', requiredInProduction),
+    changeSomeonesCell: get('CHANGE_SOMEONES_CELL_URL', 'http://localhost:3002', requiredInProduction),
+  },
+  domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   sqs: {
     audit: auditConfig(),
   },
