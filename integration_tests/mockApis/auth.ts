@@ -13,15 +13,13 @@ export interface UserToken {
 }
 
 const createToken = (userToken: UserToken) => {
-  const authorities =
-    ( [`ROLE_${Role.PrisonUser}`]).map(role => (role.startsWith('ROLE_') ? role : `ROLE_${role}`)) ||
-    []
   const payload = {
     name: userToken.name || 'john smith',
+    user_name: userToken.username || 'USER1',
+    user_id: userToken.userId || '231232',
     scope: ['read'],
     auth_source: 'nomis',
-    userId: 'JSMITH',
-    authorities,
+    authorities: userToken.roles || [`ROLE_${Role.PrisonUser}`],
     jti: '83b50a10-cca6-41db-985f-e87efb303ddb',
     client_id: 'clientid',
   }
@@ -130,12 +128,10 @@ const token = (userToken: UserToken) =>
       },
     },
   })
-
-
 export default {
   getSignInUrl,
   stubAuthPing: ping,
-  stubAuthManageDetails: manageDetails,
+
   stubSignIn: (userToken: UserToken): Promise<[Response, Response, Response, Response, Response, Response]> =>
     Promise.all([
       favicon(),
