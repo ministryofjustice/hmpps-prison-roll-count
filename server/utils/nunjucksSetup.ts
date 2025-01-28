@@ -3,7 +3,11 @@ import path from 'path'
 import nunjucks from 'nunjucks'
 import express from 'express'
 import fs from 'fs'
-import { initialiseName } from './utils'
+import {
+  initialiseName,
+  prisonerBelongsToUsersCaseLoad,
+  userHasAllRoles,
+  userHasRoles, } from './utils'
 import { formatDate, formatDateTime, formatTime, timeFromDate, toUnixTimeStamp } from './dateHelpers'
 import config from '../config'
 import logger from '../../logger'
@@ -37,6 +41,9 @@ export default function nunjucksSetup(app: express.Express): void {
       express: app,
     },
   )
+  njkEnv.addGlobal('prisonerBelongsToUsersCaseLoad', prisonerBelongsToUsersCaseLoad)
+  njkEnv.addGlobal('userHasRoles', userHasRoles)
+  njkEnv.addGlobal('userHasAllRoles', userHasAllRoles)
 
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addFilter('assetMap', (url: string) => assetManifest[url] || url)

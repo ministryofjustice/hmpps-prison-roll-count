@@ -1,5 +1,6 @@
 import { dataAccess } from '../data'
 import AuditService from './auditService'
+import UserService from './userService'
 import EstablishmentRollService from './establishmentRollService'
 import MovementsService from './movementsService'
 import LocationService from './locationsService'
@@ -13,8 +14,8 @@ export const services = () => {
     hmppsAuditClient,
   } = dataAccess()
 
+  const userService = new UserService(prisonApiClientBuilder)
   const auditService = new AuditService(hmppsAuditClient)
-
   const establishmentRollService = new EstablishmentRollService(
     prisonApiClientBuilder,
     locationsInsidePrisonApiClientBuilder,
@@ -25,10 +26,11 @@ export const services = () => {
     locationsInsidePrisonApiClientBuilder,
   )
   const locationsService = new LocationService(prisonApiClientBuilder, locationsInsidePrisonApiClientBuilder)
-
   return {
+    dataAccess,
     applicationInfo,
     auditService,
+    userService,
     establishmentRollService,
     movementsService,
     locationsService,
@@ -36,3 +38,5 @@ export const services = () => {
 }
 
 export type Services = ReturnType<typeof services>
+
+export { UserService }

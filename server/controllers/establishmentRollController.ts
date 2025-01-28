@@ -18,9 +18,7 @@ export default class EstablishmentRollController {
       const { clientToken } = req.middleware
       const establishmentRollCounts = await this.establishmentRollService.getEstablishmentRollCounts(
         clientToken,
-        // TODO: TEMPORARY CASELOAD, REPLACE WITH BELOW
-        'MDI',
-        // user.activeCaseLoadId,
+        user.activeCaseLoadId,
         forceUseLocationsApi,
       )
 

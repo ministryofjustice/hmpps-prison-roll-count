@@ -1,3 +1,6 @@
+import { CaseLoad } from '../data/interfaces/caseLoad'
+import { SelectItem } from '../data/interfaces/selectItem'
+
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
 
@@ -23,6 +26,16 @@ export const initialiseName = (fullName?: string): string | null => {
 }
 
 /**
+ * Whether or not the prisoner belongs to any of the users case loads
+ *
+ * @param prisonerAgencyId
+ * @param userCaseLoads
+ */
+export const prisonerBelongsToUsersCaseLoad = (prisonerAgencyId: string, userCaseLoads: CaseLoad[]): boolean => {
+  return userCaseLoads.some(caseLoad => caseLoad.caseLoadId === prisonerAgencyId)
+}
+
+/**
  * Whether any of the roles exist for the given user allowing for conditional role based access on any number of roles
  *
  * @param rolesToCheck
@@ -31,6 +44,18 @@ export const initialiseName = (fullName?: string): string | null => {
 export const userHasRoles = (rolesToCheck: string[], userRoles: string[]): boolean => {
   return rolesToCheck.some(role => userRoles.includes(role))
 }
+
+/**
+ * Whether all of the roles exist for the given user allowing for conditional role based access on any number of roles
+ *
+ * @param rolesToCheck
+ * @param userRoles
+ */
+export const userHasAllRoles = (rolesToCheck: string[], userRoles: string[]): boolean => {
+  return rolesToCheck.every(role => userRoles.includes(role))
+}
+
+
 
 export const stripAgencyPrefix = (location: string, agency: string): string => {
   const parts = location && location.split('-')
@@ -43,3 +68,11 @@ export const stripAgencyPrefix = (location: string, agency: string): string => {
 
   return null
 }
+
+export const kebabCase = (str: string) => {
+  return str
+    .replace(/([A-Z])/g, '-$1')
+    .replace(/^-/, '')
+    .toLowerCase()
+}
+

@@ -6,7 +6,6 @@ import nunjucksSetup from './utils/nunjucksSetup'
 import errorHandler from './errorHandler'
 import { appInsightsMiddleware } from './utils/azureAppInsights'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
-import populateClientToken from './middleware/populateClientToken'
 
 import setUpAuthentication from './middleware/setUpAuthentication'
 import setUpCsrf from './middleware/setUpCsrf'
@@ -19,6 +18,11 @@ import setUpWebSession from './middleware/setUpWebSession'
 
 import routes from './routes'
 import type { Services } from './services'
+
+import populateClientToken from './middleware/populateClientToken'
+import setUpEnvironmentName from './middleware/setUpEnvironmentName'
+
+import { ensureActiveCaseLoadSet } from './middleware/ensureActiveCaseLoadSet'
 
 export default function createApp(services: Services): express.Application {
   const app = express()
@@ -33,13 +37,15 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpWebSession())
   app.use(setUpWebRequestParsing())
   app.use(setUpStaticResources())
+  setUpEnvironmentName(app)
   nunjucksSetup(app)
   app.use(setUpAuthentication())
   app.use(authorisationMiddleware(['ROLE_PRISON']))
   app.use(setUpCsrf())
-  app.use(setUpCurrentUser())
+  app.use(setUpCurrentUser(services))
   app.use(populateClientToken())
 
+  app.use(ensureActiveCaseLoadSet(services.userService))
   app.use(routes(services))
 
   app.use((req, res, next) => next(createError(404, 'Not found')))

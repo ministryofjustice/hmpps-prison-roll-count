@@ -78,9 +78,8 @@
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.699.0",
     "@ministryofjustice/frontend": "^3.1.0",
-    "@ministryofjustice/hmpps-monitoring": "^0.0.1-beta.2",
-    "@ministryofjustice/hmpps-connect-dps-components": "2.0.0",
     "@ministryofjustice/hmpps-connect-dps-shared-items": "^1.2.1",
+    "@ministryofjustice/hmpps-monitoring": "^0.0.1-beta.2",
     "agentkeepalive": "^4.5.0",
     "applicationinsights": "^2.9.6",
     "body-parser": "^1.20.3",
@@ -135,6 +134,7 @@
     "esbuild-plugin-copy": "^2.1.1",
     "esbuild-plugin-manifest": "^1.0.5",
     "esbuild-sass-plugin": "^3.3.1",
+    "fishery": "^2.2.2",
     "glob": "^11.0.0",
     "husky": "^9.1.7",
     "jest": "^29.7.0",
