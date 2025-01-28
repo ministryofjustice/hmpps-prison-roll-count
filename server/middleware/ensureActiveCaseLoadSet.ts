@@ -22,7 +22,7 @@ export function ensureActiveCaseLoadSet(userService: UserService): RequestHandle
   }
 }
 
- export async function getActiveCaseload(
+export async function getActiveCaseload(
   caseloads: CaseLoad[],
   userService: UserService,
   user: HmppsUser,

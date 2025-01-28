@@ -1,9 +1,8 @@
 import { stubFor } from './wiremock'
-import { prisonerSearchMock } from '../../server/test/mocks/prisonerSearchMock'
-import { pagedListMock } from '../../server/test/mocks/pagedListMock'
+import prisonerSearchMock from '../../server/test/mocks/prisonerSearchMock'
+import pagedListMock from '../../server/test/mocks/pagedListMock'
 
 export default {
-
   stubPrisonerSearchApiPing: () =>
     stubFor({
       request: {

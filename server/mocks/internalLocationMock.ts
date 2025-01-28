@@ -1,6 +1,6 @@
 import { InternalLocation } from '../data/interfaces/internalLocation'
 
-export const internalLocationMock: InternalLocation = {
+const internalLocationMock: InternalLocation = {
   id: '01922e9a-ffd2-77cb-ba6b-3c9c9b623194',
   key: 'LEI-A',
   code: 'A',
@@ -9,3 +9,5 @@ export const internalLocationMock: InternalLocation = {
   prisonId: 'LEI',
   pathHierarchy: 'A',
 }
+
+export default internalLocationMock

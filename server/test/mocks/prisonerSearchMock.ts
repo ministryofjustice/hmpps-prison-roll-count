@@ -1,6 +1,6 @@
 import { Prisoner } from '../../data/interfaces/prisoner'
 
-export const prisonerSearchMock: Prisoner[] = [
+const prisonerSearchMock: Prisoner[] = [
   {
     prisonerNumber: 'A1234AA',
     bookingId: 123,
@@ -46,3 +46,5 @@ export const prisonerSearchMock: Prisoner[] = [
     alerts: [],
   },
 ]
+
+export default prisonerSearchMock

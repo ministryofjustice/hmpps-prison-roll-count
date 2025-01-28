@@ -8,15 +8,14 @@ import { movementsEnRouteMock } from '../../server/test/mocks/movementsEnRouteMo
 import { movementsInReceptionMock } from '../../server/test/mocks/movementsInReceptionMock'
 import { movementsRecentMock } from '../../server/test/mocks/movementsRecentMock'
 import { offenderCellHistoryMock } from '../../server/test/mocks/offenderCellHistoryMock'
-import { userDetailsMock } from '../../server/test/mocks/userDetailsMock'
-import { pagedListMock } from '../../server/test/mocks/pagedListMock'
-import { prisonRollCountMock } from '../../server/mocks/prisonRollCountMock'
-import { prisonRollCountForWingWithSpurMock } from '../../server/mocks/prisonRollCountForWingWithSpurMock'
-import { prisonEstablishmentRollSummaryMock } from '../../server/mocks/prisonRollCountSummaryMock'
+import userDetailsMock from '../../server/test/mocks/userDetailsMock'
+import pagedListMock from '../../server/test/mocks/pagedListMock'
+import prisonRollCountMock from '../../server/mocks/prisonRollCountMock'
+import prisonRollCountForWingWithSpurMock from '../../server/mocks/prisonRollCountForWingWithSpurMock'
+import prisonEstablishmentRollSummaryMock from '../../server/mocks/prisonRollCountSummaryMock'
 
 export default {
-
-   stubPrisonApiPing: () =>
+  stubPrisonApiPing: () =>
     stubFor({
       request: {
         method: 'GET',

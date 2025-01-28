@@ -1,5 +1,4 @@
 import { CaseLoad } from '../data/interfaces/caseLoad'
-import { SelectItem } from '../data/interfaces/selectItem'
 
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
@@ -55,8 +54,6 @@ export const userHasAllRoles = (rolesToCheck: string[], userRoles: string[]): bo
   return rolesToCheck.every(role => userRoles.includes(role))
 }
 
-
-
 export const stripAgencyPrefix = (location: string, agency: string): string => {
   const parts = location && location.split('-')
   if (parts && parts.length > 0) {
@@ -75,4 +72,3 @@ export const kebabCase = (str: string) => {
     .replace(/^-/, '')
     .toLowerCase()
 }
-

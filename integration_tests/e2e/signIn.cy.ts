@@ -25,7 +25,8 @@ context('SignIn', () => {
 
   it('User name visible in header', () => {
     cy.signIn()
-    const indexPage = Page.verifyOnPage(IndexPage)
+    Page.verifyOnPage(IndexPage)
+    // const indexPage = Page.verifyOnPage(IndexPage)
     // indexPage.headerUserName().should('contain.text', 'J. Smith')
   })
 

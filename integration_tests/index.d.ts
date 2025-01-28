@@ -17,11 +17,7 @@ declare global {
         },
       ): Chainable<AUTWindow>
 
-      setupUserCaseloads(
-        options?: {
-          caseLoads?: CaseLoad[]
-        }
-      ): Chainable<AUTWindow>
+      setupUserCaseloads(options?: { caseLoads?: CaseLoad[] }): Chainable<AUTWindow>
     }
   }
 }

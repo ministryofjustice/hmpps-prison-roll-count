@@ -2,7 +2,6 @@ import IndexPage from '../pages/index'
 import AuthSignInPage from '../pages/authSignIn'
 import Page from '../pages/page'
 
-
 context('Index', () => {
   context('Without the PRISON role', () => {
     beforeEach(() => {
@@ -37,6 +36,5 @@ context('Index', () => {
       cy.signIn()
       Page.verifyOnPage(IndexPage)
     })
-
   })
 })

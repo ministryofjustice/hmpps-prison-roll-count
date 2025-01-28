@@ -3,11 +3,7 @@ import path from 'path'
 import nunjucks from 'nunjucks'
 import express from 'express'
 import fs from 'fs'
-import {
-  initialiseName,
-  prisonerBelongsToUsersCaseLoad,
-  userHasAllRoles,
-  userHasRoles, } from './utils'
+import { initialiseName, prisonerBelongsToUsersCaseLoad, userHasAllRoles, userHasRoles } from './utils'
 import { formatDate, formatDateTime, formatTime, timeFromDate, toUnixTimeStamp } from './dateHelpers'
 import config from '../config'
 import logger from '../../logger'

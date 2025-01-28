@@ -1,6 +1,6 @@
 import PrisonRollCount from '../data/interfaces/prisonRollCount'
 
-export const prisonRollCountForWingWithSpurMock: PrisonRollCount = {
+const prisonRollCountForWingWithSpurMock: PrisonRollCount = {
   prisonId: 'HOI',
   numUnlockRollToday: 964,
   numCurrentPopulation: 964,
@@ -2175,3 +2175,5 @@ export const prisonRollCountForWingWithSpurMock: PrisonRollCount = {
     },
   ],
 }
+
+export default prisonRollCountForWingWithSpurMock

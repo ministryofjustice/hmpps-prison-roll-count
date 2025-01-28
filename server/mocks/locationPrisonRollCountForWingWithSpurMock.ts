@@ -1,6 +1,6 @@
 import { PrisonRollCountForCells } from '../data/interfaces/prisonRollCount'
 
-export const locationPrisonRollCountForWingWithSpurMock: PrisonRollCountForCells = {
+const locationPrisonRollCountForWingWithSpurMock: PrisonRollCountForCells = {
   locationHierarchy: [
     {
       id: '01922dda-5d40-74d6-1d24-7db36e9b1b5e',
@@ -2178,3 +2178,5 @@ export const locationPrisonRollCountForWingWithSpurMock: PrisonRollCountForCells
     },
   ],
 }
+
+export default locationPrisonRollCountForWingWithSpurMock

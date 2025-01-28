@@ -1,6 +1,6 @@
 import PrisonRollCount from '../data/interfaces/prisonRollCount'
 
-export const locationPrisonRollCountMock: PrisonRollCount = {
+const locationPrisonRollCountMock: PrisonRollCount = {
   prisonId: 'MDI',
   numUnlockRollToday: 100,
   numCurrentPopulation: 200,
@@ -125,3 +125,5 @@ export const locationPrisonRollCountMock: PrisonRollCount = {
     },
   ],
 }
+
+export default locationPrisonRollCountMock

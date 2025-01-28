@@ -1,6 +1,6 @@
 import { UserDetail } from '../../data/interfaces/userDetail'
 
-export const userDetailsMock: UserDetail[] = [
+const userDetailsMock: UserDetail[] = [
   {
     staffId: 1,
     username: 'ESHANNON',
@@ -24,3 +24,5 @@ export const userDetailsMock: UserDetail[] = [
     active: true,
   },
 ]
+
+export default userDetailsMock

@@ -25,7 +25,6 @@ export function populateCurrentUser(userService: UserService): RequestHandler {
         displayName: convertToTitleCase(name),
         userRoles: roles?.map(role => role.substring(role.indexOf('_') + 1)),
       }
-      console.log('CARROT', res.locals.user)
       if (res.locals.user.authSource === 'nomis') {
         res.locals.user.staffId = parseInt(userId, 10) || undefined
       }

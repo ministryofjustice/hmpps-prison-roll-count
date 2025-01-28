@@ -9,15 +9,16 @@ Cypress.Commands.add('setupUserAuth', (options = {}) => {
 })
 
 Cypress.Commands.add('setupUserCaseloads', (options = {}) => {
-  cy.task( 'stubUserCaseLoads',
-    options.caseLoads || [{
+  cy.task(
+    'stubUserCaseLoads',
+    options.caseLoads || [
+      {
         caseLoadId: 'LEI',
         currentlyActive: true,
         description: 'Leeds (HMP)',
         type: '',
         caseloadFunction: '',
       },
-    ]
+    ],
   )
 })
-

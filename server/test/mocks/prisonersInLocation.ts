@@ -1,6 +1,6 @@
 import { PrisonersInLocation } from '../../data/interfaces/prisonRollCount'
 
-export const prisonerInLocation: PrisonersInLocation[] = [
+const prisonerInLocation: PrisonersInLocation[] = [
   {
     cellLocation: '1-1-1',
     prisoners: [
@@ -55,3 +55,5 @@ export const prisonerInLocation: PrisonersInLocation[] = [
     ],
   },
 ]
+
+export default prisonerInLocation

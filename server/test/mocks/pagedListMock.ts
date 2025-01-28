@@ -1,6 +1,6 @@
 import { PagedList } from '../../data/interfaces/pagedList'
 
-export const pagedListMock = <T>(content: T[]): PagedList<T> => ({
+const pagedListMock = <T>(content: T[]): PagedList<T> => ({
   empty: false,
   first: false,
   last: false,
@@ -12,3 +12,5 @@ export const pagedListMock = <T>(content: T[]): PagedList<T> => ({
   totalPages: 0,
   content,
 })
+
+export default pagedListMock

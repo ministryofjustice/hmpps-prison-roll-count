@@ -1,7 +1,7 @@
 import type { Express } from 'express'
 import request from 'supertest'
 import { appWithAllRoutes, user } from './testutils/appSetup'
-import AuditService, { Page } from '../services/auditService'
+import AuditService from '../services/auditService'
 
 jest.mock('../services/auditService')
 
@@ -26,8 +26,6 @@ describe('GET /', () => {
   it('should render index page', () => {
     auditService.logPageView.mockResolvedValue(null)
 
-    return request(app)
-      .get('/')
-      .expect('Content-Type', /html/)
+    return request(app).get('/').expect('Content-Type', /html/)
   })
 })

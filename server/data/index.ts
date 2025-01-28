@@ -60,10 +60,4 @@ export const dataAccess = () => {
   }
 }
 
-
-export {
-  HmppsAuthClient,
-  RestClientBuilder,
-  HmppsAuditClient,
-  PrisonApiRestClient,
-}
+export { HmppsAuthClient, RestClientBuilder, HmppsAuditClient, PrisonApiRestClient }
