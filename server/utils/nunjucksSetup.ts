@@ -3,7 +3,7 @@ import path from 'path'
 import nunjucks from 'nunjucks'
 import express from 'express'
 import fs from 'fs'
-import { initialiseName, prisonerBelongsToUsersCaseLoad, userHasAllRoles, userHasRoles } from './utils'
+import { formatName, initialiseName, prisonerBelongsToUsersCaseLoad, userHasAllRoles, userHasRoles } from './utils'
 import { formatDate, formatDateTime, formatTime, timeFromDate, toUnixTimeStamp } from './dateHelpers'
 import config from '../config'
 import logger from '../../logger'
@@ -30,7 +30,11 @@ export default function nunjucksSetup(app: express.Express): void {
     [
       path.join(__dirname, '../../server/views'),
       'node_modules/govuk-frontend/dist/',
+      'node_modules/govuk-frontend/dist/components/',
       'node_modules/@ministryofjustice/frontend/',
+      'node_modules/@ministryofjustice/frontend/moj/components/',
+      'node_modules/@ministryofjustice/hmpps-connect-dps-components/dist/assets/',
+      'node_modules/@ministryofjustice/hmpps-connect-dps-shared-items/dist/assets/',
     ],
     {
       autoescape: true,
@@ -42,6 +46,7 @@ export default function nunjucksSetup(app: express.Express): void {
   njkEnv.addGlobal('userHasAllRoles', userHasAllRoles)
 
   njkEnv.addFilter('initialiseName', initialiseName)
+  njkEnv.addFilter('formatName', formatName)
   njkEnv.addFilter('assetMap', (url: string) => assetManifest[url] || url)
   njkEnv.addFilter('formatDate', formatDate)
   njkEnv.addFilter('formatDateTime', formatDateTime)
