@@ -18,22 +18,20 @@ export default function establishmentRollRouter(services: Services): Router {
     services.locationsService,
   )
 
-  // TODO: IS /LOCATIONS NEEDED?
   get('/', establishmentRollController.getEstablishmentRoll())
   get('/locations/', establishmentRollController.getEstablishmentRoll(true))
 
-  // TODO: REMAINING ROUTES
-  // get(
-  //   ['/wing/:wingId/landing/:landingId', '/wing/:wingId/spur/:spurId/landing/:landingId'],
-  //   establishmentRollController.getEstablishmentRollForLanding(),
-  // )
-  // get('/arrived-today', establishmentRollController.getArrivedToday())
-  // get('/out-today', establishmentRollController.getOutToday())
-  // get('/en-route', establishmentRollController.getEnRoute())
-  // get('/in-reception', establishmentRollController.getInReception())
-  // get('/no-cell-allocated', establishmentRollController.getUnallocated())
-  // get('/total-currently-out', establishmentRollController.getTotalCurrentlyOut())
-  // get('/:livingUnitId/currently-out', establishmentRollController.getCurrentlyOut())
+  get(
+    ['/wing/:wingId/landing/:landingId', '/wing/:wingId/spur/:spurId/landing/:landingId'],
+    establishmentRollController.getEstablishmentRollForLanding(),
+  )
+  get('/arrived-today', establishmentRollController.getArrivedToday())
+  get('/out-today', establishmentRollController.getOutToday())
+  get('/en-route', establishmentRollController.getEnRoute())
+  get('/in-reception', establishmentRollController.getInReception())
+  get('/no-cell-allocated', establishmentRollController.getUnallocated())
+  get('/total-currently-out', establishmentRollController.getTotalCurrentlyOut())
+  get('/:livingUnitId/currently-out', establishmentRollController.getCurrentlyOut())
 
   return router
 }

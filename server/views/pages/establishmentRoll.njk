@@ -22,7 +22,7 @@
     >
         <td class="govuk-table__cell">
             {% if type === "LANDING" %}
-                <a href="/establishment-roll/wing/{{ wing }}/{{ "spur/"+spur+"/" if spur }}landing/{{ block.locationId }}">{{ block.localName or block.locationCode }}</a>
+                <a href="/wing/{{ wing }}/{{ "spur/"+spur+"/" if spur }}landing/{{ block.locationId }}">{{ block.localName or block.locationCode }}</a>
             {% else %}
                 {{ block.localName or block.locationCode }}
             {% endif %}
@@ -31,7 +31,7 @@
         <td class="govuk-table__cell">{{ block.rollCount.currentlyInCell }}</td>
         <td class="govuk-table__cell">
             {% if block.rollCount.currentlyOut > 0 %}
-                <a class="govuk-link" href="/establishment-roll/{{block.locationId}}/currently-out">{{block.rollCount.currentlyOut}}</a>
+                <a class="govuk-link" href="/{{block.locationId}}/currently-out">{{block.rollCount.currentlyOut}}</a>
             {% else %} 0 {% endif %}
         </td>
         <td class="govuk-table__cell">{{ block.rollCount.workingCapacity }}</td>
@@ -73,7 +73,7 @@
                 establishmentRollStat(
                     heading = "Arrived today",
                     value = todayStats.inToday,
-                    href = "/establishment-roll/arrived-today",
+                    href = "/arrived-today",
                     qaTag = "in-today"
                 )
             }}
@@ -84,7 +84,7 @@
                 establishmentRollStat(
                     heading = "In reception",
                     value = todayStats.unassignedIn,
-                    href = "/establishment-roll/in-reception",
+                    href = "/in-reception",
                     qaTag = "unassigned-in"
                 )
             }}
@@ -95,7 +95,7 @@
                 establishmentRollStat(
                     heading = "Still to arrive",
                     value = todayStats.enroute,
-                    href = "/establishment-roll/en-route",
+                    href = "/en-route",
                     qaTag = "enroute"
                 )
             }}
@@ -107,7 +107,7 @@
                 establishmentRollStat(
                     heading = "Out today",
                     value = todayStats.outToday,
-                    href = "/establishment-roll/out-today",
+                    href = "/out-today",
                     qaTag = "out-today"
                 )
             }}
@@ -118,7 +118,7 @@
                 establishmentRollStat(
                     heading = "No cell allocated",
                     value = todayStats.noCellAllocated,
-                    href = "/establishment-roll/no-cell-allocated",
+                    href = "/no-cell-allocated",
                     qaTag = "no-cell-allocated"
                 )
             }}
@@ -161,7 +161,7 @@
                 <td class="govuk-table__cell">{{ totals.currentlyInCell }}</td>
                 <td class="govuk-table__cell">
                     {% if totals.currentlyOut > 0 %}
-                        <a class="govuk-link" href="/establishment-roll/total-currently-out">{{totals.currentlyOut}}</a>
+                        <a class="govuk-link" href="/total-currently-out">{{totals.currentlyOut}}</a>
                     {% else %} 0 {% endif %}
                 </td>
                 <td class="govuk-table__cell">{{ totals.workingCapacity }}</td>
