@@ -2,6 +2,7 @@ import express from 'express'
 
 import createError from 'http-errors'
 
+import getFrontendComponents from './middleware/getFeComponents'
 import nunjucksSetup from './utils/nunjucksSetup'
 import errorHandler from './errorHandler'
 import { appInsightsMiddleware } from './utils/azureAppInsights'
@@ -45,6 +46,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpCurrentUser(services))
   app.use(populateClientToken())
 
+  app.get('*', getFrontendComponents(services))
   app.use(ensureActiveCaseLoadSet(services.userService))
   app.use(routes(services))
 

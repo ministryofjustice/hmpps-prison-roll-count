@@ -9,12 +9,23 @@ generic-service:
 
   env:
     INGRESS_URL: "https://prison-roll-count-dev.hmpps.service.justice.gov.uk"
+
+    ENVIRONMENT_NAME: DEV
     HMPPS_AUTH_URL: "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
-    TOKEN_VERIFICATION_API_URL: "https://token-verification-api-dev.prison.service.justice.gov.uk"
+    HMPPS_COOKIE_DOMAIN: digital-dev.prison.service.justice.gov.uk
+    HMPPS_COOKIE_NAME: hmpps-session-dev
+
+    # APIs
+    LOCATIONS_INSIDE_PRISON_API_URL: "https://locations-inside-prison-api-dev.hmpps.service.justice.gov.uk"
     PRISON_API_URL: "https://prison-api-dev.prison.service.justice.gov.uk"
     PRISONER_SEARCH_API_URL: "https://prisoner-search-dev.prison.service.justice.gov.uk"
-    LOCATIONS_INSIDE_PRISON_API_URL: "https://locations-inside-prison-api-dev.hmpps.service.justice.gov.uk"
-    ENVIRONMENT_NAME: DEV
+    TOKEN_VERIFICATION_API_URL: "https://token-verification-api-dev.prison.service.justice.gov.uk"
+
+    # Service URLs
+    CHANGE_SOMEONES_CELL_URL: https://change-someones-cell-dev.prison.service.justice.gov.uk
+    DIGITAL_PRISONS_URL: https://digital-dev.prison.service.justice.gov.uk
+    PRISONER_PROFILE_URL: https://prisoner-dev.digital.prison.service.justice.gov.uk
+
     AUDIT_ENABLED: "false"
 
 generic-prometheus-alerts:
