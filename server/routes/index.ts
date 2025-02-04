@@ -2,6 +2,8 @@ import { RequestHandler, Router } from 'express'
 import { Services } from '../services'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import EstablishmentRollController from '../controllers/establishmentRollController'
+import ImageController from '../controllers/imageController'
+import { dataAccess } from '../data'
 
 export default function establishmentRollRouter(services: Services): Router {
   const router = Router()
@@ -18,6 +20,8 @@ export default function establishmentRollRouter(services: Services): Router {
     services.locationsService,
   )
 
+  const imageController = new ImageController(dataAccess.prisonApiClientBuilder)
+
   get('/', establishmentRollController.getEstablishmentRoll())
   get('/locations/', establishmentRollController.getEstablishmentRoll(true))
 
@@ -32,6 +36,8 @@ export default function establishmentRollRouter(services: Services): Router {
   get('/no-cell-allocated', establishmentRollController.getUnallocated())
   get('/total-currently-out', establishmentRollController.getTotalCurrentlyOut())
   get('/:livingUnitId/currently-out', establishmentRollController.getCurrentlyOut())
+
+  get('/prisonerImage/:prisonerNumber', imageController.prisonerImage)
 
   return router
 }

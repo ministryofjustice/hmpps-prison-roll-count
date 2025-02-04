@@ -6,6 +6,17 @@ import config from '../config'
 export default function setUpWebSecurity(): Router {
   const router = express.Router()
 
+  const imgSrc = [
+    "'self'",
+    'data:',
+    '*.google-analytics.com',
+    '*.analytics.google.com',
+    '*.googletagmanager.com',
+    '*.ctfassets.net',
+  ]
+
+  const mediaSrc = ["'self'", '*.ctfassets.net']
+
   // Secure code best practice - see:
   // 1. https://expressjs.com/en/advanced/best-practice-security.html,
   // 2. https://www.npmjs.com/package/helmet
@@ -28,6 +39,8 @@ export default function setUpWebSecurity(): Router {
           styleSrc: ["'self'", (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`],
           fontSrc: ["'self'"],
           formAction: [`'self' ${config.apis.hmppsAuth.externalUrl}`],
+          imgSrc,
+          mediaSrc,
         },
       },
       crossOriginEmbedderPolicy: true,
