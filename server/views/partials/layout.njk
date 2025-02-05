@@ -1,3 +1,4 @@
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 {% extends "govuk/template.njk" %}
 
 {% block head %}
@@ -34,6 +35,13 @@
   {% else %}
     {% include "./header.njk" %}
   {% endif %}
+{% endblock %}
+
+{% block beforeContent %}
+  {{ govukBreadcrumbs({
+    items: breadCrumbs | default([]),
+    classes: 'govuk-!-display-none-print'
+  }) }}
 {% endblock %}
 
 {% block bodyStart %}
