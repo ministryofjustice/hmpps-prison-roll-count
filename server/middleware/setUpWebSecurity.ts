@@ -6,17 +6,9 @@ import config from '../config'
 export default function setUpWebSecurity(): Router {
   const router = express.Router()
 
-  const imgSrc = [
-    "'self'",
-    'data:',
-    '*.google-analytics.com',
-    '*.analytics.google.com',
-    '*.googletagmanager.com',
-    '*.ctfassets.net',
-  ]
+  const gaHosts = ['*.googletagmanager.com', '*.google-analytics.com', '*.analytics.google.com']
 
-  const mediaSrc = ["'self'", '*.ctfassets.net']
-
+  //
   // Secure code best practice - see:
   // 1. https://expressjs.com/en/advanced/best-practice-security.html,
   // 2. https://www.npmjs.com/package/helmet
@@ -35,12 +27,13 @@ export default function setUpWebSecurity(): Router {
           // <link href="http://example.com/" rel="stylesheet" nonce="{{ cspNonce }}">
           // This ensures only scripts we trust are loaded, and not anything injected into the
           // page by an attacker.
-          scriptSrc: ["'self'", (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`],
+          scriptSrc: ["'self'", (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`, ...gaHosts],
           styleSrc: ["'self'", (_req: Request, res: Response) => `'nonce-${res.locals.cspNonce}'`],
-          fontSrc: ["'self'"],
+          fontSrc: ["'self'", config.apis.frontendComponents.url],
           formAction: [`'self' ${config.apis.hmppsAuth.externalUrl}`],
-          imgSrc,
-          mediaSrc,
+          connectSrc: ["'self'", ...gaHosts],
+          imgSrc: ["'self'", ...gaHosts],
+          mediaSrc: ["'self'", ...gaHosts],
         },
       },
       crossOriginEmbedderPolicy: true,
