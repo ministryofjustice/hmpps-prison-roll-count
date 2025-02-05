@@ -2,7 +2,6 @@
 {% from "../macros/printLink.njk" import printLink %}
 {% from "../macros/establishmentRollStat.njk" import establishmentRollStat %}
 
-{% set pageTitle = "Establishment roll" %}
 {% set mainClasses = "govuk-body govuk-main-wrapper--auto-spacing" %}
 {% set todayStats = establishmentRollCounts.todayStats %}
 {% set totals = establishmentRollCounts.totals %}
@@ -43,7 +42,7 @@
 {% block content %}
 <div class="govuk-width-container govuk-!-margin-top-8">
     <div class="govuk-!-margin-bottom-6">
-        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ pageTitle }} for {{ date | formatDate('full') }}</h1>
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Establishment roll for {{ date | formatDate('full') }}</h1>
         {{ printLink(align = "right") }}
     </div>
     <div class="govuk-grid-row govuk-!-margin-bottom-6">

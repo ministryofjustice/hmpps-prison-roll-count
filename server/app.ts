@@ -22,6 +22,7 @@ import type { Services } from './services'
 
 import populateClientToken from './middleware/populateClientToken'
 import setUpEnvironmentName from './middleware/setUpEnvironmentName'
+import setUpPageNotFound from './middleware/setUpPageNotFound'
 
 import { ensureActiveCaseLoadSet } from './middleware/ensureActiveCaseLoadSet'
 
@@ -50,6 +51,7 @@ export default function createApp(services: Services): express.Application {
   app.use(ensureActiveCaseLoadSet(services.userService))
   app.use(routes(services))
 
+  app.use(setUpPageNotFound)
   app.use((req, res, next) => next(createError(404, 'Not found')))
   app.use(errorHandler(process.env.NODE_ENV === 'production'))
 

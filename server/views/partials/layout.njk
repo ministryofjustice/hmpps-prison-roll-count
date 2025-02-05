@@ -27,7 +27,7 @@
 
 {% endblock %}
 
-{% block pageTitle %}{{pageTitle | default(applicationName)}}{% endblock %}
+{% block pageTitle %}{{ pageTitle + ' - ' + applicationName if pageTitle else applicationName }}{% endblock %}
 
 {% block header %}
   {% if feComponents.header %}
@@ -50,6 +50,7 @@
 {% block bodyEnd %}
    <script type="module" src="/assets/govukFrontendInit.js"></script>
    <script src="/assets/moj/all.js"></script>
+   <script src="/assets/printPage.js"></script>
    <script src="/assets/initMoj.js"></script>
 
   {% block pageScripts %}

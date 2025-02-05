@@ -17,10 +17,12 @@ $govuk-page-width: $moj-page-width;
 @import 'node_modules/@ministryofjustice/hmpps-connect-dps-components/dist/assets/header-bar';
 @import 'node_modules/@ministryofjustice/hmpps-connect-dps-shared-items/dist/assets/scss/all';
 
+@import './components/print-link';
 @import './components/alert-flags';
 @import './components/header-bar';
 @import './components/results-table';
 @import './components/sortable-table';
 @import './pages/establishment-roll';
 @import './local';
+@import './print';
 

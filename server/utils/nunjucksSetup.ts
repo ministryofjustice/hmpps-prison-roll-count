@@ -12,7 +12,7 @@ export default function nunjucksSetup(app: express.Express): void {
   app.set('view engine', 'njk')
 
   app.locals.asset_path = '/assets/'
-  app.locals.applicationName = 'HMPPS Prison Roll Count'
+  app.locals.applicationName = 'Establishment roll'
   app.locals.config = config
   app.locals.dpsUrl = config.serviceUrls.digitalPrisons
   app.locals.environmentName = config.environmentName
