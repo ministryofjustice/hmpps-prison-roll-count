@@ -18,6 +18,7 @@ import config, { ApiConfig } from '../config'
 import HmppsAuditClient from './hmppsAuditClient'
 import LocationsInsidePrisonApiRestClient from './locationsInsidePrisonApiClient'
 import PrisonApiRestClient from './prisonApiRestClient'
+import FeComponentsClient from './feComponentsClient'
 import { PrisonApiClient } from './interfaces/prisonApiClient'
 import PrisonerSearchRestClient from './prisonerSearchClient'
 import RestClient, { RestClientBuilder as CreateRestClientBuilder } from './restClient'
@@ -41,7 +42,13 @@ export const dataAccess = () => {
     applicationInfo,
     hmppsAuthClient,
     systemToken: (username?: string) => hmppsAuthClient.getSystemClientToken(username),
+    feComponentsClient: new FeComponentsClient(),
     hmppsAuditClient: new HmppsAuditClient(config.sqs.audit),
+    locationsInsidePrisonApiClientBuilder: restClientBuilder<LocationsInsidePrisonApiRestClient>(
+      'Locations Inside Prison API',
+      config.apis.locationsInsidePrisonApi,
+      LocationsInsidePrisonApiRestClient,
+    ),
     prisonApiClientBuilder: restClientBuilder<PrisonApiClient>(
       'Prison API',
       config.apis.prisonApi,
@@ -51,11 +58,6 @@ export const dataAccess = () => {
       'Prisoner Search API',
       config.apis.prisonerSearchApi,
       PrisonerSearchRestClient,
-    ),
-    locationsInsidePrisonApiClientBuilder: restClientBuilder<LocationsInsidePrisonApiRestClient>(
-      'Locations Inside Prison API',
-      config.apis.locationsInsidePrisonApi,
-      LocationsInsidePrisonApiRestClient,
     ),
   }
 }

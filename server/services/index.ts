@@ -1,39 +1,44 @@
 import { dataAccess } from '../data'
 import AuditService from './auditService'
-import UserService from './userService'
 import EstablishmentRollService from './establishmentRollService'
-import MovementsService from './movementsService'
+import FeComponentsService from './feComponentsService'
 import LocationService from './locationsService'
+import MovementsService from './movementsService'
+import UserService from './userService'
 
 export const services = () => {
   const {
+    applicationInfo,
+    feComponentsClient,
+    hmppsAuditClient,
+    locationsInsidePrisonApiClientBuilder,
     prisonApiClientBuilder,
     prisonerSearchApiClientBuilder,
-    locationsInsidePrisonApiClientBuilder,
-    applicationInfo,
-    hmppsAuditClient,
   } = dataAccess()
 
-  const userService = new UserService(prisonApiClientBuilder)
   const auditService = new AuditService(hmppsAuditClient)
   const establishmentRollService = new EstablishmentRollService(
     prisonApiClientBuilder,
     locationsInsidePrisonApiClientBuilder,
   )
+  const feComponentsService = new FeComponentsService(feComponentsClient)
+  const locationsService = new LocationService(prisonApiClientBuilder, locationsInsidePrisonApiClientBuilder)
   const movementsService = new MovementsService(
     prisonApiClientBuilder,
     prisonerSearchApiClientBuilder,
     locationsInsidePrisonApiClientBuilder,
   )
-  const locationsService = new LocationService(prisonApiClientBuilder, locationsInsidePrisonApiClientBuilder)
+  const userService = new UserService(prisonApiClientBuilder)
+
   return {
     dataAccess,
     applicationInfo,
     auditService,
-    userService,
     establishmentRollService,
-    movementsService,
+    feComponentsService,
     locationsService,
+    movementsService,
+    userService,
   }
 }
 

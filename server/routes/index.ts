@@ -2,6 +2,8 @@ import { RequestHandler, Router } from 'express'
 import { Services } from '../services'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import EstablishmentRollController from '../controllers/establishmentRollController'
+import ImageController from '../controllers/imageController'
+import { dataAccess } from '../data'
 
 export default function establishmentRollRouter(services: Services): Router {
   const router = Router()
@@ -12,28 +14,32 @@ export default function establishmentRollRouter(services: Services): Router {
       handlers.map(handler => asyncMiddleware(handler)),
     )
 
+  const { prisonApiClientBuilder } = dataAccess()
+
   const establishmentRollController = new EstablishmentRollController(
     services.establishmentRollService,
     services.movementsService,
     services.locationsService,
   )
 
-  // TODO: IS /LOCATIONS NEEDED?
+  const imageController = new ImageController(prisonApiClientBuilder)
+
   get('/', establishmentRollController.getEstablishmentRoll())
   get('/locations/', establishmentRollController.getEstablishmentRoll(true))
 
-  // TODO: REMAINING ROUTES
-  // get(
-  //   ['/wing/:wingId/landing/:landingId', '/wing/:wingId/spur/:spurId/landing/:landingId'],
-  //   establishmentRollController.getEstablishmentRollForLanding(),
-  // )
-  // get('/arrived-today', establishmentRollController.getArrivedToday())
-  // get('/out-today', establishmentRollController.getOutToday())
-  // get('/en-route', establishmentRollController.getEnRoute())
-  // get('/in-reception', establishmentRollController.getInReception())
-  // get('/no-cell-allocated', establishmentRollController.getUnallocated())
-  // get('/total-currently-out', establishmentRollController.getTotalCurrentlyOut())
-  // get('/:livingUnitId/currently-out', establishmentRollController.getCurrentlyOut())
+  get(
+    ['/wing/:wingId/landing/:landingId', '/wing/:wingId/spur/:spurId/landing/:landingId'],
+    establishmentRollController.getEstablishmentRollForLanding(),
+  )
+  get('/arrived-today', establishmentRollController.getArrivedToday())
+  get('/out-today', establishmentRollController.getOutToday())
+  get('/en-route', establishmentRollController.getEnRoute())
+  get('/in-reception', establishmentRollController.getInReception())
+  get('/no-cell-allocated', establishmentRollController.getUnallocated())
+  get('/total-currently-out', establishmentRollController.getTotalCurrentlyOut())
+  get('/:livingUnitId/currently-out', establishmentRollController.getCurrentlyOut())
+
+  get('/prisonerImage/:prisonerNumber', imageController.prisonerImage)
 
   return router
 }

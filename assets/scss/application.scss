@@ -6,6 +6,23 @@ $govuk-page-width: $moj-page-width;
 
 @import "govuk-frontend/dist/govuk/all";
 @import "@ministryofjustice/frontend/moj/all";
+@import "node_modules/govuk-frontend/dist/govuk/base";
+@import "node_modules/govuk-frontend/dist/govuk/core";
+@import "node_modules/govuk-frontend/dist/govuk/objects";
+@import "node_modules/govuk-frontend/dist/govuk/components";
+@import "node_modules/govuk-frontend/dist/govuk/utilities";
+@import "node_modules/govuk-frontend/dist/govuk/overrides";
 
+@import 'node_modules/@ministryofjustice/hmpps-connect-dps-components/dist/assets/footer';
+@import 'node_modules/@ministryofjustice/hmpps-connect-dps-components/dist/assets/header-bar';
+@import 'node_modules/@ministryofjustice/hmpps-connect-dps-shared-items/dist/assets/scss/all';
+
+@import './components/print-link';
+@import './components/alert-flags';
 @import './components/header-bar';
+@import './components/results-table';
+@import './components/sortable-table';
+@import './pages/establishment-roll';
 @import './local';
+@import './print';
+

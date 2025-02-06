@@ -1,3 +1,33 @@
 .govuk-main-wrapper {
   min-height: 600px;
+  padding-top: 0;
+}
+
+.text-align-right {
+  text-align: right;
+}
+
+.text-align-left {
+  text-align: left;
+}
+
+// Creates width helper classes to set input, paragraph or other element width based on EMs
+// e.g. hmpps-width-20 sets the width of the element to 20em
+// Classes created got from 1em to 40em
+@mixin hmpps-width-x {
+  @for $i from 1 through 40 {
+    .hmpps-width-#{$i} { width: #{$i}em; }
+  }
+}
+@include hmpps-width-x;
+
+.govuk-link {
+  text-underline-offset: .1em;
+}
+
+// Print styles
+@include govuk-media-query($media-type: print) {
+  .govuk-template {
+    background-color: govuk-colour('white');
+  }
 }

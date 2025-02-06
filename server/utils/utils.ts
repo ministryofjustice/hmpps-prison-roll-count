@@ -25,6 +25,43 @@ export const initialiseName = (fullName?: string): string | null => {
 }
 
 /**
+ * Format a person's name with proper capitalisation
+ *
+ * Correctly handles names with apostrophes, hyphens and spaces
+ *
+ * Examples, "James O'Reilly", "Jane Smith-Doe", "Robert Henry Jones"
+ *
+ * @param firstName - first name
+ * @param middleNames - middle names as space separated list
+ * @param lastName - last name
+ * @param options
+ * @param options.style - format to use for output name, e.g. `NameStyleFormat.lastCommaFirst`
+ * @returns formatted name string
+ */
+
+export const formatName = (
+  firstName: string,
+  middleNames: string,
+  lastName: string,
+  options?: { style: 'firstMiddleLast' | 'lastCommaFirstMiddle' | 'lastCommaFirst' | 'firstLast' },
+): string => {
+  const names = [firstName, middleNames, lastName]
+  if (options?.style === 'lastCommaFirstMiddle') {
+    names.unshift(`${names.pop()},`)
+  } else if (options?.style === 'lastCommaFirst') {
+    names.unshift(`${names.pop()},`)
+    names.pop() // Remove middleNames
+  } else if (options?.style === 'firstLast') {
+    names.splice(1, 1)
+  }
+  return names
+    .filter(s => s)
+    .map(s => s.trim().toLowerCase())
+    .join(' ')
+    .replace(/(^\w)|([\s'-]+\w)/g, letter => letter.toUpperCase())
+}
+
+/**
  * Whether or not the prisoner belongs to any of the users case loads
  *
  * @param prisonerAgencyId

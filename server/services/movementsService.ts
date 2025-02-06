@@ -1,13 +1,13 @@
 import dpsShared from '@ministryofjustice/hmpps-connect-dps-shared-items'
-import { BedAssignment } from '../data/interfaces/bedAssignment'
-import { OffenderMovement } from '../data/interfaces/offenderMovement'
+import { RestClientBuilder } from '../data'
 import { PrisonApiClient } from '../data/interfaces/prisonApiClient'
-import { Prisoner } from '../data/interfaces/prisoner'
 import { PrisonerSearchClient } from '../data/interfaces/prisonerSearchClient'
 import { PrisonerWithAlerts } from './interfaces/PrisonerWithAlerts'
-import { RestClientBuilder } from '../data'
-import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
 import { stripAgencyPrefix } from '../utils/utils'
+import { Prisoner } from '../data/interfaces/prisoner'
+import { BedAssignment } from '../data/interfaces/bedAssignment'
+import { OffenderMovement } from '../data/interfaces/offenderMovement'
+import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
 
 export default class MovementsService {
   constructor(
