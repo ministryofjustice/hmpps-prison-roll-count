@@ -8,6 +8,7 @@ generic-service:
     host: prison-roll-count-dev.hmpps.service.justice.gov.uk
 
   env:
+    PRODUCT_ID: "DPS118"
     INGRESS_URL: "https://prison-roll-count-dev.hmpps.service.justice.gov.uk"
     ENVIRONMENT_NAME: DEV
     HMPPS_AUTH_URL: "https://sign-in-dev.hmpps.service.justice.gov.uk/auth"
