@@ -34,26 +34,32 @@ export default function restClientBuilder<T>(
   return token => new constructor(restClient(token))
 }
 
-const tokenStore = config.redis.enabled ? new RedisTokenStore(createRedisClient()) : new InMemoryTokenStore()
-const hmppsAuthClient = new HmppsAuthClient(tokenStore)
+export const dataAccess = () => {
+  const tokenStore = config.redis.enabled ? new RedisTokenStore(createRedisClient()) : new InMemoryTokenStore()
+  const hmppsAuthClient = new HmppsAuthClient(tokenStore)
 
-export const dataAccess = {
-  applicationInfo,
-  hmppsAuthClient,
-  systemToken: (username?: string) => hmppsAuthClient.getSystemClientToken(username),
-  feComponentsClient: new FeComponentsClient(),
-  hmppsAuditClient: new HmppsAuditClient(config.sqs.audit),
-  locationsInsidePrisonApiClientBuilder: restClientBuilder<LocationsInsidePrisonApiRestClient>(
-    'Locations Inside Prison API',
-    config.apis.locationsInsidePrisonApi,
-    LocationsInsidePrisonApiRestClient,
-  ),
-  prisonApiClientBuilder: restClientBuilder<PrisonApiClient>('Prison API', config.apis.prisonApi, PrisonApiRestClient),
-  prisonerSearchApiClientBuilder: restClientBuilder<PrisonerSearchRestClient>(
-    'Prisoner Search API',
-    config.apis.prisonerSearchApi,
-    PrisonerSearchRestClient,
-  ),
+  return {
+    applicationInfo,
+    hmppsAuthClient,
+    systemToken: (username?: string) => hmppsAuthClient.getSystemClientToken(username),
+    feComponentsClient: new FeComponentsClient(),
+    hmppsAuditClient: new HmppsAuditClient(config.sqs.audit),
+    locationsInsidePrisonApiClientBuilder: restClientBuilder<LocationsInsidePrisonApiRestClient>(
+      'Locations Inside Prison API',
+      config.apis.locationsInsidePrisonApi,
+      LocationsInsidePrisonApiRestClient,
+    ),
+    prisonApiClientBuilder: restClientBuilder<PrisonApiClient>(
+      'Prison API',
+      config.apis.prisonApi,
+      PrisonApiRestClient,
+    ),
+    prisonerSearchApiClientBuilder: restClientBuilder<PrisonerSearchRestClient>(
+      'Prisoner Search API',
+      config.apis.prisonerSearchApi,
+      PrisonerSearchRestClient,
+    ),
+  }
 }
 
-export { HmppsAuthClient, HmppsAuditClient, PrisonApiRestClient, RestClientBuilder }
+export { HmppsAuthClient, RestClientBuilder, HmppsAuditClient, PrisonApiRestClient }

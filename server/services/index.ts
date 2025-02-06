@@ -14,7 +14,7 @@ export const services = () => {
     locationsInsidePrisonApiClientBuilder,
     prisonApiClientBuilder,
     prisonerSearchApiClientBuilder,
-  } = dataAccess
+  } = dataAccess()
 
   const auditService = new AuditService(hmppsAuditClient)
   const establishmentRollService = new EstablishmentRollService(

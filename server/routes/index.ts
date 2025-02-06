@@ -14,13 +14,15 @@ export default function establishmentRollRouter(services: Services): Router {
       handlers.map(handler => asyncMiddleware(handler)),
     )
 
+  const { prisonApiClientBuilder } = dataAccess()
+
   const establishmentRollController = new EstablishmentRollController(
     services.establishmentRollService,
     services.movementsService,
     services.locationsService,
   )
 
-  const imageController = new ImageController(dataAccess.prisonApiClientBuilder)
+  const imageController = new ImageController(prisonApiClientBuilder)
 
   get('/', establishmentRollController.getEstablishmentRoll())
   get('/locations/', establishmentRollController.getEstablishmentRoll(true))
