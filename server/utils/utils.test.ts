@@ -1,4 +1,12 @@
-import { convertToTitleCase, initialiseName, formatName, prisonerBelongsToUsersCaseLoad, userHasRoles, userHasAllRoles, kebabCase } from './utils'
+import {
+  convertToTitleCase,
+  initialiseName,
+  formatName,
+  prisonerBelongsToUsersCaseLoad,
+  userHasRoles,
+  userHasAllRoles,
+  kebabCase,
+} from './utils'
 import { CaseLoad } from '../data/interfaces/caseLoad'
 import Role from '../enums/role'
 
@@ -138,7 +146,3 @@ describe('kebabCase', () => {
     expect(kebabCase('a-test-value')).toEqual('a-test-value')
   })
 })
-
-
-
-
