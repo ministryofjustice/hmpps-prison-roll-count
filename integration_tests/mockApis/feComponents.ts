@@ -7,7 +7,7 @@ export default {
     stubFor({
       request: {
         method: 'GET',
-        urlPath: '/frontend-components/health/ping',
+        urlPath: '/frontend-components/health',
       },
       response: {
         status: 200,
