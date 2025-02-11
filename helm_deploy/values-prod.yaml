@@ -12,4 +12,4 @@ generic-service:
     AUDIT_ENABLED: "false"
 
 generic-prometheus-alerts:
-  alertSeverity: hmpps-establishment-roll-prod
+  alertSeverity: move-a-prisoner-alerts-prod

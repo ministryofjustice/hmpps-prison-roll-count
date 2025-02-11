@@ -63,3 +63,4 @@ generic-service:
 
 generic-prometheus-alerts:
   targetApplication: hmpps-prison-roll-count
+  alertSeverity: move-a-prisoner-alerts-nonprod
