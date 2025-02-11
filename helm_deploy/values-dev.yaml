@@ -26,6 +26,3 @@ generic-service:
     PRISONER_PROFILE_URL: "https://prisoner-dev.digital.prison.service.justice.gov.uk"
 
     AUDIT_ENABLED: "false"
-
-generic-prometheus-alerts:
-  alertSeverity: hmpps-establishment-roll-dev
