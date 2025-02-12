@@ -13,6 +13,7 @@ function visitPageWithRoles(roles: string[]) {
   cy.signIn({ redirectPath: '/no-cell-allocated' })
   cy.visit('/no-cell-allocated')
 }
+
 context('In reception Page', () => {
   beforeEach(() => {
     cy.task('reset')
@@ -21,7 +22,7 @@ context('In reception Page', () => {
     cy.task('stubGetOffenderCellHistory', prisonerSearchMock[1].bookingId)
     cy.task('getUserDetailsList')
     cy.task('stubActivePrisons', { activeAgencies: ['MDI'] })
-    cy.task('stubLocationPrisonRollCount', {prisonCode: 'MDI'})
+    cy.task('stubLocationPrisonRollCount', { prisonCode: 'MDI' })
   })
 
   it('Page is visible', () => {
