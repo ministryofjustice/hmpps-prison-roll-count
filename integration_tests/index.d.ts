@@ -18,6 +18,14 @@ declare global {
       ): Chainable<AUTWindow>
 
       setupUserCaseloads(options?: { caseLoads?: CaseLoad[] }): Chainable<AUTWindow>
+
+      setupComponentsData(options?: {
+        header?: Component
+        footer?: Component
+        caseLoads?: CaseLoad[]
+        services?: Service[]
+        residentialLocationsActive?: boolean
+      }): Chainable<AUTWindow>
     }
   }
 }
