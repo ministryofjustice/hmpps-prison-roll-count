@@ -8,8 +8,21 @@ generic-service:
     host: prison-roll-count-preprod.hmpps.service.justice.gov.uk
 
   env:
+    PRODUCT_ID: "DPS118"
     INGRESS_URL: "https://prison-roll-count-preprod.hmpps.service.justice.gov.uk"
-    HMPPS_AUTH_URL: "https://sign-in-preprod.hmpps.service.justice.gov.uk/auth"
-    TOKEN_VERIFICATION_API_URL: "https://token-verification-api-preprod.prison.service.justice.gov.uk"
     ENVIRONMENT_NAME: PRE-PRODUCTION
+    HMPPS_AUTH_URL: "https://sign-in-preprod.hmpps.service.justice.gov.uk/auth"
+
+    # APIs
+    LOCATIONS_INSIDE_PRISON_API_URL: "https://locations-inside-prison-api-preprod.hmpps.service.justice.gov.uk"
+    PRISON_API_URL: "https://prison-api-preprod.prison.service.justice.gov.uk"
+    PRISONER_SEARCH_API_URL: "https://prisoner-search-preprod.prison.service.justice.gov.uk"
+    TOKEN_VERIFICATION_API_URL: "https://token-verification-api-preprod.prison.service.justice.gov.uk"
+    COMPONENT_API_URL: "https://frontend-components-preprod.hmpps.service.justice.gov.uk"
+
+    # Service URLs
+    CHANGE_SOMEONES_CELL_URL: "https://change-someones-cell-preprod.prison.service.justice.gov.uk"
+    DIGITAL_PRISONS_URL: "https://digital-preprod.prison.service.justice.gov.uk"
+    PRISONER_PROFILE_URL: "https://prisoner-preprod.digital.prison.service.justice.gov.uk"
+
     AUDIT_ENABLED: "false"
