@@ -22,3 +22,23 @@ Cypress.Commands.add('setupUserCaseloads', (options = {}) => {
     ],
   )
 })
+
+Cypress.Commands.add(
+  'setupComponentsData',
+  (
+    options = {
+      caseLoads: [
+        {
+          caseLoadId: 'LEI',
+          currentlyActive: true,
+          description: 'Leeds (HMP)',
+          type: '',
+          caseloadFunction: '',
+        },
+      ],
+    },
+  ) => {
+    cy.task('stubFeComponents', options)
+    cy.task('stubUserCaseLoads', options.caseLoads)
+  },
+)
