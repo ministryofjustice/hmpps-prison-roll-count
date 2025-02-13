@@ -1,10 +1,12 @@
-const printLinks = document.querySelectorAll('.print-link')
+module.exports = () => {
+  const printLinks = document.querySelectorAll('.print-link')
 
-if (printLinks?.length) {
-  printLinks.forEach(el =>
-    el.addEventListener('click', evt => {
-      evt.preventDefault()
-      window.print()
-    }),
-  )
+  if (printLinks?.length) {
+    printLinks.forEach(el =>
+      el.addEventListener('click', evt => {
+        evt.preventDefault()
+        window.print()
+      }),
+    )
+  }
 }

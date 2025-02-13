@@ -1,9 +1,9 @@
-const landingRows = document.querySelectorAll('.establishment-roll__table__landing-row')
-const spurRows = document.querySelectorAll('.establishment-roll__table__spur-row')
-const wingRows = document.querySelectorAll('.establishment-roll__table__wing-row')
-const totalsRow = document.querySelector('#roll-table-totals-row')
+module.exports = () => {
+  const landingRows = document.querySelectorAll('.establishment-roll__table__landing-row')
+  const spurRows = document.querySelectorAll('.establishment-roll__table__spur-row')
+  const wingRows = document.querySelectorAll('.establishment-roll__table__wing-row')
+  const totalsRow = document.querySelector('#roll-table-totals-row')
 
-function init() {
   ;[...landingRows, ...spurRows].forEach(row => {
     row.setAttribute('hidden', 'hidden')
   })
@@ -45,5 +45,3 @@ function init() {
     wingNameCell.replaceChildren(wingLink)
   })
 }
-
-init()
