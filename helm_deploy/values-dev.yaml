@@ -7,6 +7,9 @@ generic-service:
   ingress:
     host: prison-roll-count-dev.hmpps.service.justice.gov.uk
 
+  scheduledDowntime:
+    enabled: true
+
   env:
     PRODUCT_ID: "DPS118"
     INGRESS_URL: "https://prison-roll-count-dev.hmpps.service.justice.gov.uk"
