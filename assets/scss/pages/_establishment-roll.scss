@@ -66,16 +66,19 @@
         display: block;
         margin-left: 46px;
         border-collapse: separate;
-
-        a {
-          color: govuk-colour('blue');
-        }
       }
 
       &.last-in-group {
         td {
           border-bottom: none;
           margin-bottom: 10px;
+        }
+      }
+
+      @media print {
+        padding-right: 0;
+        td  {
+          font-size: 14px !important;
         }
       }
 

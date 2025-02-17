@@ -21,7 +21,7 @@
     >
         <td class="govuk-table__cell">
             {% if type === "LANDING" %}
-                <a href="/wing/{{ wing }}/{{ "spur/"+spur+"/" if spur }}landing/{{ block.locationId }}">{{ block.localName or block.locationCode }}</a>
+                <a class="govuk-link" href="/wing/{{ wing }}/{{ "spur/"+spur+"/" if spur }}landing/{{ block.locationId }}">{{ block.localName or block.locationCode }}</a>
             {% else %}
                 {{ block.localName or block.locationCode }}
             {% endif %}
