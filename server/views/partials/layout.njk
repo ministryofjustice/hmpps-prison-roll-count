@@ -10,7 +10,7 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', '{{ tagManagerContainerId }}');
+      gtag('config', '{{ tagManagerContainerId }}', { cookie_flags: 'SameSite=None;Secure' });
 
       {% if user %}
       gtag('user', {
