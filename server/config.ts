@@ -141,4 +141,7 @@ export default {
   },
   ingressUrl: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   environmentName: get('ENVIRONMENT_NAME', ''),
+  analytics: {
+    tagManagerContainerId: get('TAG_MANAGER_CONTAINER_ID', ''),
+  },
 }

@@ -2,15 +2,28 @@
 {% extends "govuk/template.njk" %}
 
 {% block head %}
+  {% if tagManagerContainerId %}
+    <!-- Google tag (gtag.js) start -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ tagManagerContainerId }}"></script>
+    <script nonce="{{ cspNonce }}">
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', '{{ tagManagerContainerId }}');
+
+      {% if user %}
+      gtag('user', {
+        'prison': '{{ user.activeCaseLoadId }}',
+      })
+      {% endif %}
+    </script>
+    <!-- Google tag (gtag.js) end -->
+  {% endif %}
+
   <link href="{{ '/assets/css/app.css' | assetMap }}" rel="stylesheet"/>
 
-      <script src="/assets/js/jquery.min.js"></script>
-      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-              integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-              nonce="{{ cspNonce }}"
-              crossorigin="anonymous"></script>
-      <link href="https://code.jquery.com/ui/1.12.1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" nonce="{{ cspNonce }}" crossorigin>
-
+  <script src="/assets/js/jquery.min.js"></script>
 
   {% if feComponents.jsIncludes %}
       {% for js in feComponents.jsIncludes %}
@@ -23,7 +36,6 @@
         <link href="{{ css }}" nonce="{{ cspNonce }}" rel="stylesheet" />
       {% endfor %}
     {% endif %}
-
 
 {% endblock %}
 
@@ -45,6 +57,13 @@
 {% endblock %}
 
 {% block bodyStart %}
+  {% if tagManagerContainerId %}
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id={{ tagManagerContainerId }}" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+  {% endif %}
 {% endblock %}
 
 {% block bodyEnd %}
