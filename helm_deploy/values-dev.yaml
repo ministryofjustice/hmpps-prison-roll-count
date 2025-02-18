@@ -29,3 +29,5 @@ generic-service:
     PRISONER_PROFILE_URL: "https://prisoner-dev.digital.prison.service.justice.gov.uk"
 
     AUDIT_ENABLED: "false"
+
+    TAG_MANAGER_CONTAINER_ID: "G-65CM9HZPT0"
