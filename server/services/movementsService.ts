@@ -28,16 +28,15 @@ export default class MovementsService {
 
     const prisoners = await prisonerSearchClient.getPrisonersById(movements.map(movement => movement.offenderNo))
 
-    return movements
-      .map(prisonerMovement => {
-        const prisoner = prisoners.find(prisonerToFind => prisonerToFind.prisonerNumber === prisonerMovement.offenderNo)
-        return {
-          ...prisoner,
-          movementTime: prisonerMovement?.movementTime,
-          arrivedFrom: prisonerMovement?.fromAgencyDescription || prisonerMovement?.fromCity,
-          alertFlags: dpsShared.alertFlags.getAlertFlagLabelsForAlerts(prisoner.alerts),
-        }
-      })
+    return movements.map(prisonerMovement => {
+      const prisoner = prisoners.find(prisonerToFind => prisonerToFind.prisonerNumber === prisonerMovement.offenderNo)
+      return {
+        ...prisoner,
+        movementTime: prisonerMovement?.movementTime,
+        arrivedFrom: prisonerMovement?.fromAgencyDescription || prisonerMovement?.fromCity,
+        alertFlags: dpsShared.alertFlags.getAlertFlagLabelsForAlerts(prisoner.alerts),
+      }
+    })
   }
 
   public async getOutTodayPrisoners(
@@ -52,16 +51,15 @@ export default class MovementsService {
 
     const prisoners = await prisonerSearchClient.getPrisonersById(movements.map(movement => movement.offenderNo))
 
-    return movements
-      .map(prisonerMovement => {
-        const prisoner = prisoners.find(prisonerToFind => prisonerToFind.prisonerNumber === prisonerMovement.offenderNo)
-        return {
-          ...prisoner,
-          timeOut: prisonerMovement?.timeOut,
-          reasonDescription: prisonerMovement.reasonDescription,
-          alertFlags: dpsShared.alertFlags.getAlertFlagLabelsForAlerts(prisoner.alerts),
-        }
-      })
+    return movements.map(prisonerMovement => {
+      const prisoner = prisoners.find(prisonerToFind => prisonerToFind.prisonerNumber === prisonerMovement.offenderNo)
+      return {
+        ...prisoner,
+        timeOut: prisonerMovement?.timeOut,
+        reasonDescription: prisonerMovement.reasonDescription,
+        alertFlags: dpsShared.alertFlags.getAlertFlagLabelsForAlerts(prisoner.alerts),
+      }
+    })
   }
 
   public async getEnRoutePrisoners(
