@@ -28,10 +28,9 @@ export default class MovementsService {
 
     const prisoners = await prisonerSearchClient.getPrisonersById(movements.map(movement => movement.offenderNo))
 
-    return prisoners
-      .sort((a, b) => a.lastName.localeCompare(b.lastName, 'en', { ignorePunctuation: true }))
-      .map(prisoner => {
-        const prisonerMovement = movements.find(movement => movement.offenderNo === prisoner.prisonerNumber)
+    return movements
+      .map(prisonerMovement => {
+        const prisoner = prisoners.find(prisonerToFind => prisonerToFind.prisonerNumber === prisonerMovement.offenderNo)
         return {
           ...prisoner,
           movementTime: prisonerMovement?.movementTime,
@@ -53,10 +52,9 @@ export default class MovementsService {
 
     const prisoners = await prisonerSearchClient.getPrisonersById(movements.map(movement => movement.offenderNo))
 
-    return prisoners
-      .sort((a, b) => a.lastName.localeCompare(b.lastName, 'en', { ignorePunctuation: true }))
-      .map(prisoner => {
-        const prisonerMovement = movements.find(movement => movement.offenderNo === prisoner.prisonerNumber)
+    return movements
+      .map(prisonerMovement => {
+        const prisoner = prisoners.find(prisonerToFind => prisonerToFind.prisonerNumber === prisonerMovement.offenderNo)
         return {
           ...prisoner,
           timeOut: prisonerMovement?.timeOut,
