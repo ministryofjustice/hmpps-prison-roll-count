@@ -50,7 +50,7 @@ describe('movementsService', () => {
           alertFlags: [],
           arrivedFrom: 'Cookham Wood',
           movementTime: '10:30:00',
-        }
+        },
       ])
     })
 
