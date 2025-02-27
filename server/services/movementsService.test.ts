@@ -34,12 +34,6 @@ describe('movementsService', () => {
       expect(result).toEqual([
         {
           ...prisonerSearchMock[0],
-          alertFlags: [],
-          arrivedFrom: 'Cookham Wood',
-          movementTime: '10:30:00',
-        },
-        {
-          ...prisonerSearchMock[1],
           alertFlags: [
             {
               alertCodes: ['HID'],
@@ -51,6 +45,12 @@ describe('movementsService', () => {
           arrivedFrom: 'Leeds',
           movementTime: '10:00:00',
         },
+        {
+          ...prisonerSearchMock[1],
+          alertFlags: [],
+          arrivedFrom: 'Cookham Wood',
+          movementTime: '10:30:00',
+        }
       ])
     })
 
@@ -76,12 +76,6 @@ describe('movementsService', () => {
       expect(result).toEqual([
         {
           ...prisonerSearchMock[0],
-          alertFlags: [],
-          reasonDescription: 'Another transfer',
-          timeOut: '11:00:00',
-        },
-        {
-          ...prisonerSearchMock[1],
           alertFlags: [
             {
               alertCodes: ['HID'],
@@ -92,6 +86,12 @@ describe('movementsService', () => {
           ],
           reasonDescription: 'Transfer',
           timeOut: '10:00:00',
+        },
+        {
+          ...prisonerSearchMock[1],
+          alertFlags: [],
+          reasonDescription: 'Another transfer',
+          timeOut: '11:00:00',
         },
       ])
     })
