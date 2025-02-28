@@ -48,7 +48,7 @@ describe('movementsService', () => {
         {
           ...prisonerSearchMock[1],
           alertFlags: [],
-          arrivedFrom: 'Cookham Wood',
+          arrivedFrom: 'York Train Station, York, YO24 1AB',
           movementTime: '10:30:00',
         },
       ])
@@ -86,11 +86,13 @@ describe('movementsService', () => {
           ],
           reasonDescription: 'Transfer',
           timeOut: '10:00:00',
+          goingTo: 'HMP Leeds',
         },
         {
           ...prisonerSearchMock[1],
           alertFlags: [],
           reasonDescription: 'Another transfer',
+          goingTo: 'HMP Moorland',
           timeOut: '11:00:00',
         },
       ])
