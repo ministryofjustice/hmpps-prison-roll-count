@@ -17,6 +17,9 @@ export const movementsInMock: OffenderIn[] = [
     movementTime: '10:00:00',
     movementDateTime: '2024-05-10',
     location: 'LEI',
+    fromAddress: 'Address 2, Sheffield, S1 2BP',
+    movementType: 'ROTL',
+    movementReasonDescription: 'Normal ROTL',
   },
   {
     offenderNo: 'A1234AB',
@@ -33,5 +36,8 @@ export const movementsInMock: OffenderIn[] = [
     movementTime: '10:30:00',
     movementDateTime: '2024-05-10',
     location: 'CKI',
+    fromAddress: 'Address 1',
+    movementType: 'TRN',
+    movementReasonDescription: 'Normal Transfer',
   },
 ]

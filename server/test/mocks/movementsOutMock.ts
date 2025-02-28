@@ -9,6 +9,8 @@ export const movementsOutMock: OffenderOut[] = [
     lastName: 'Smith',
     timeOut: '10:00:00',
     reasonDescription: 'Transfer',
+    movementType: 'TRN',
+    toAddress: 'HMP Leeds',
   },
   {
     offenderNo: 'A1234AB',
@@ -17,5 +19,7 @@ export const movementsOutMock: OffenderOut[] = [
     lastName: 'Shannon',
     timeOut: '11:00:00',
     reasonDescription: 'Another transfer',
+    movementType: 'TRN',
+    toAddress: 'HMP Moorland',
   },
 ]
