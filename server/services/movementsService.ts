@@ -33,7 +33,7 @@ export default class MovementsService {
       return {
         ...prisoner,
         movementTime: prisonerMovement?.movementTime,
-        arrivedFrom: prisonerMovement?.fromAgencyDescription || prisonerMovement?.fromCity,
+        arrivedFrom: prisonerMovement?.fromAgencyDescription || prisonerMovement?.fromAddress,
         alertFlags: dpsShared.alertFlags.getAlertFlagLabelsForAlerts(prisoner.alerts),
       }
     })
@@ -57,6 +57,7 @@ export default class MovementsService {
         ...prisoner,
         timeOut: prisonerMovement?.timeOut,
         reasonDescription: prisonerMovement.reasonDescription,
+        goingTo: prisonerMovement?.toAddress,
         alertFlags: dpsShared.alertFlags.getAlertFlagLabelsForAlerts(prisoner.alerts),
       }
     })

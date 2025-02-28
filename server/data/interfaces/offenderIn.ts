@@ -14,4 +14,7 @@ export interface OffenderIn {
   movementTime: string
   movementDateTime: string
   location: string
+  fromAddress: string
+  movementType: string
+  movementReasonDescription: string
 }
