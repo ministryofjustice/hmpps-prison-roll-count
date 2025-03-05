@@ -2,6 +2,7 @@ import prisonApiClientMock from '../test/mocks/prisonApiClientMock'
 import LocationService from './locationsService'
 import { locationMock } from '../mocks/locationMock'
 import locationsInsidePrisonApiClientMock from '../test/mocks/locationsInsidePrisonApiClientMock'
+import internalLocationMock from '../mocks/internalLocationMock'
 
 describe('LocationService', () => {
   let locationRollService: LocationService
@@ -65,8 +66,7 @@ describe('LocationService', () => {
   })
 
   describe('getInternalLocationInfo', () => {
-    it('should call locationsI API and return the internal location info', async () => {
-      const internalLocationMock = { id: '123', description: 'Location Description' }
+    it('should call locations API and return the internal location info', async () => {
       locationsInsidePrisonApiClientMock.getLocation = jest.fn().mockResolvedValueOnce(internalLocationMock)
 
       const internalLocationInfo = await locationRollService.getInternalLocationInfo('token', 'MDI')
