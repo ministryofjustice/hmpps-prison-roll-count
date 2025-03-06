@@ -3,9 +3,10 @@ import logger from '../../logger'
 import { dataAccess } from '../data'
 
 export default function populateClientToken(): RequestHandler {
+  const { systemToken } = dataAccess()
+
   return async (req, res, next) => {
     try {
-      const { systemToken } = dataAccess()
       if (res.locals.user) {
         const clientToken = await systemToken(res.locals.user.username)
         if (clientToken) {
