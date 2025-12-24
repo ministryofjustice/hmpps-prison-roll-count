@@ -25,10 +25,11 @@ ENV BUILD_NUMBER=${BUILD_NUMBER}
 ENV GIT_REF=${GIT_REF}
 ENV GIT_BRANCH=${GIT_BRANCH}
 
-RUN apt-get update && \
-        apt-get upgrade -y && \
-        apt-get autoremove -y && \
-        rm -rf /var/lib/apt/lists/*
+# TODO: needs updating to apk if required. Will update if so or remove permanaently
+#RUN apt-get update && \
+#        apt-get upgrade -y && \
+#        apt-get autoremove -y && \
+#        rm -rf /var/lib/apt/lists/*
 
 # Stage: build assets
 FROM base as build
