@@ -17,7 +17,7 @@ services:
       - NOMIS_ENABLED=true
 
   nomis-user-roles-api:
-    image: quay.io/hmpps/nomis-user-roles-api:latest
+    image: ghcr.io/ministryofjustice/nomis-user-roles-api:latest
     container_name: nomis-user-roles-api
     networks:
       - hmpps
@@ -31,7 +31,7 @@ services:
       - API_BASE_URL_OAUTH=http://hmpps-auth:8080/auth
 
   manage-users-api:
-    image: quay.io/hmpps/hmpps-manage-users-api:latest
+    image: ghcr.io/ministryofjustice/hmpps-manage-users-api:latest
     container_name: manage-users-api
     networks:
       - hmpps
@@ -51,7 +51,7 @@ services:
       - AUTHORIZATION_SERVER_TOKEN_ENDPOINT_URL=http://hmpps-auth:8080/auth/oauth/token
 
   locations-inside-prison-api:
-    image: quay.io/hmpps/hmpps-locations-inside-prison-api:latest
+    image: ghcr.io/ministryofjustice/hmpps-locations-inside-prison-api:latest
     container_name: locations-inside-prison-api
     depends_on:
       - hmpps-auth
