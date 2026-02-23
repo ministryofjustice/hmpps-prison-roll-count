@@ -25,7 +25,7 @@ import RestClient, { RestClientBuilder as CreateRestClientBuilder } from './rest
 
 type RestClientBuilder<T> = (token: string) => T
 
-export default function restClientBuilder<T>(
+function restClientBuilder<T>(
   name: string,
   options: ApiConfig,
   constructor: new (client: RestClient) => T,
@@ -62,4 +62,5 @@ export const dataAccess = () => {
   }
 }
 
-export { HmppsAuthClient, RestClientBuilder, HmppsAuditClient, PrisonApiRestClient }
+export { HmppsAuthClient, HmppsAuditClient, PrisonApiRestClient, restClientBuilder }
+export type { RestClientBuilder }

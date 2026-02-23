@@ -63,7 +63,7 @@ export default class RestClient {
         .get(`${this.apiUrl()}${path}`)
         .query(query)
         .agent(this.agent)
-        .retry(2, (err, res) => {
+        .retry(2, (err, _res) => {
           if (err) logger.info(`Retry handler found ${this.name} API error with ${err.code} ${err.message}`)
           return undefined // retry handler only for logging retries, not to influence retry logic
         })
@@ -72,7 +72,7 @@ export default class RestClient {
         .responseType(responseType)
         .timeout(this.timeoutConfig())
 
-      return raw ? result : result.body
+      return (raw ? result : result.body) as Response
     } catch (error) {
       const sanitisedError = sanitiseError(error)
       logger.warn({ ...sanitisedError }, `Error calling ${this.name}, path: '${path}', verb: 'GET'`)
@@ -90,7 +90,7 @@ export default class RestClient {
         .query(query)
         .send(data)
         .agent(this.agent)
-        .retry(2, (err, res) => {
+        .retry(2, (err, _res) => {
           if (retry === false) {
             return false
           }
@@ -102,7 +102,7 @@ export default class RestClient {
         .responseType(responseType)
         .timeout(this.timeoutConfig())
 
-      return raw ? result : result.body
+      return (raw ? result : result.body) as Response
     } catch (error) {
       const sanitisedError = sanitiseError(error)
       logger.warn({ ...sanitisedError }, `Error calling ${this.name}, path: '${path}', verb: '${method.toUpperCase()}'`)
@@ -135,7 +135,7 @@ export default class RestClient {
         .delete(`${this.apiUrl()}${path}`)
         .query(query)
         .agent(this.agent)
-        .retry(2, (err, res) => {
+        .retry(2, (err, _res) => {
           if (err) logger.info(`Retry handler found ${this.name} API error with ${err.code} ${err.message}`)
           return undefined // retry handler only for logging retries, not to influence retry logic
         })
@@ -144,7 +144,7 @@ export default class RestClient {
         .responseType(responseType)
         .timeout(this.timeoutConfig())
 
-      return raw ? result : result.body
+      return (raw ? result : result.body) as Response
     } catch (error) {
       const sanitisedError = sanitiseError(error)
       logger.warn({ ...sanitisedError }, `Error calling ${this.name}, path: '${path}', verb: 'DELETE'`)
@@ -152,19 +152,19 @@ export default class RestClient {
     }
   }
 
-  async stream({ path = null, headers = {} }: StreamRequest = {}): Promise<Readable> {
+  async stream({ path = null, headers: _headers = {} }: StreamRequest = {}): Promise<Readable> {
     logger.info(`${this.name} streaming: ${path}`)
     return new Promise((resolve, reject) => {
       superagent
         .get(`${this.apiUrl()}${path}`)
         .agent(this.agent)
         .auth(this.token, { type: 'bearer' })
-        .retry(2, (err, res) => {
+        .retry(2, (err, _res) => {
           if (err) logger.info(`Retry handler found ${this.name} API error with ${err.code} ${err.message}`)
           return undefined // retry handler only for logging retries, not to influence retry logic
         })
         .timeout(this.timeoutConfig())
-        .set(headers)
+        .set(_headers)
         .end((error, response) => {
           if (error) {
             logger.warn(sanitiseError(error), `Error calling ${this.name}`)

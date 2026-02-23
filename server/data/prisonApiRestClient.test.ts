@@ -1,7 +1,7 @@
 import nock from 'nock'
 import config from '../config'
 import PrisonApiClient from './prisonApiRestClient'
-import restClientBuilder from '.'
+import { restClientBuilder } from '.'
 import { ApplicationInfo } from '../applicationInfo'
 import { locationMock } from '../mocks/locationMock'
 
