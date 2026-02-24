@@ -1,7 +1,7 @@
 services:
 
   redis:
-    image: redis:7
+    image: redis:8
     container_name: roll-redis
     networks:
       - hmpps_int
