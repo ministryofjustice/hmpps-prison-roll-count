@@ -34,7 +34,7 @@ export default {
     return stubFor({
       request: {
         method: 'GET',
-        urlPattern: '/frontend-components/components\\?.*',
+        urlPattern: '/frontend-components/components.*',
       },
       response: {
         status: 200,
