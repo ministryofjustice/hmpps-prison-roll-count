@@ -34,7 +34,7 @@ export default class MovementsService {
         ...prisoner,
         movementTime: prisonerMovement?.movementTime,
         arrivedFrom: prisonerMovement?.fromAgencyDescription || prisonerMovement?.fromAddress,
-        alertFlags: dpsShared.alertFlags.getAlertFlagLabelsForAlerts(prisoner.alerts),
+        alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
       }
     })
   }
@@ -58,7 +58,7 @@ export default class MovementsService {
         timeOut: prisonerMovement?.timeOut,
         reasonDescription: prisonerMovement.reasonDescription,
         goingTo: prisonerMovement?.toAddress,
-        alertFlags: dpsShared.alertFlags.getAlertFlagLabelsForAlerts(prisoner.alerts),
+        alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
       }
     })
   }
@@ -83,7 +83,7 @@ export default class MovementsService {
           ...prisoner,
           from: prisonerMovement?.fromAgencyDescription,
           reason: prisonerMovement?.movementReasonDescription,
-          alertFlags: dpsShared.alertFlags.getAlertFlagLabelsForAlerts(prisoner.alerts),
+          alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
           movementTime: prisonerMovement?.movementTime,
           movementDate: prisonerMovement?.movementDate,
         }
@@ -113,7 +113,7 @@ export default class MovementsService {
 
         return {
           ...prisoner,
-          alertFlags: dpsShared.alertFlags.getAlertFlagLabelsForAlerts(prisoner.alerts),
+          alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
           from: recentMovement?.fromAgencyDescription,
           timeArrived: recentMovement?.movementTime,
         }
@@ -243,7 +243,7 @@ export default class MovementsService {
 
         return {
           ...prisoner,
-          alertFlags: dpsShared.alertFlags.getAlertFlagLabelsForAlerts(prisoner.alerts),
+          alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
           currentLocation: recentMovement?.toCity,
           movementComment: recentMovement?.commentText,
         }
