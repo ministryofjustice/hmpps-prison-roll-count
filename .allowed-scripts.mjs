@@ -3,11 +3,11 @@ import { configureAllowedScripts } from '@ministryofjustice/hmpps-npm-script-all
 export default configureAllowedScripts({
   allowlist: {
     // Needed to run integration tests
-    'node_modules/cypress@15.12.0': 'ALLOW',
+    'node_modules/cypress@15.13.1': 'ALLOW',
     // Provides native integration, supporting the ability to write dtrace probes for bunyan
     'node_modules/dtrace-provider@0.8.8': 'ALLOW',
     // ESBuild is written in GoLang - this is needed to download prebuilt binaries for the specific platform
-    'node_modules/esbuild@0.27.4': 'ALLOW',
+    'node_modules/esbuild@0.28.0': 'ALLOW',
     // Needed by jest for running tests in watch mode
     'node_modules/fsevents@2.3.3': 'ALLOW',
     // Needed by esbuild for watching files during development
