@@ -35,7 +35,7 @@ const buildAssets = buildConfig => {
     minify: buildConfig.isProduction,
     sourcemap: !buildConfig.isProduction,
     platform: 'browser',
-    target: 'es2018',
+    target: 'esnext',
     external: ['/assets/*'],
     bundle: true,
     plugins: [
