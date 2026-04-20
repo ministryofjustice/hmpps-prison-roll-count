@@ -59,7 +59,7 @@ describe('movementsService', () => {
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
 
       const result = await movementsService.getArrivedTodayPrisoners('token', 'LEI')
-      expect(prisonerSearchApiClientMock.getPrisonersById).toBeCalledTimes(0)
+      expect(prisonerSearchApiClientMock.getPrisonersById).not.toHaveBeenCalled()
 
       expect(result).toEqual([])
     })
@@ -103,7 +103,7 @@ describe('movementsService', () => {
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
 
       const result = await movementsService.getOutTodayPrisoners('token', 'LEI')
-      expect(prisonerSearchApiClientMock.getPrisonersById).toBeCalledTimes(0)
+      expect(prisonerSearchApiClientMock.getPrisonersById).not.toHaveBeenCalled()
 
       expect(result).toEqual([])
     })
@@ -149,7 +149,7 @@ describe('movementsService', () => {
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
 
       const result = await movementsService.getEnRoutePrisoners('token', 'LEI')
-      expect(prisonerSearchApiClientMock.getPrisonersById).toBeCalledTimes(0)
+      expect(prisonerSearchApiClientMock.getPrisonersById).not.toHaveBeenCalled()
 
       expect(result).toEqual([])
     })
@@ -194,8 +194,8 @@ describe('movementsService', () => {
       prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue(movementsRecentMock)
 
       const result = await movementsService.getInReceptionPrisoners('token', 'LEI')
-      expect(prisonerSearchApiClientMock.getPrisonersById).toBeCalledTimes(0)
-      expect(prisonApiClientMock.getRecentMovements).toBeCalledTimes(0)
+      expect(prisonerSearchApiClientMock.getPrisonersById).not.toHaveBeenCalled()
+      expect(prisonApiClientMock.getRecentMovements).not.toHaveBeenCalled()
 
       expect(result).toEqual([])
     })
@@ -273,8 +273,8 @@ describe('movementsService', () => {
       prisonApiClientMock.getUserDetailsList = jest.fn().mockResolvedValue(userDetailsMock)
 
       const result = await movementsService.getNoCellAllocatedPrisoners('token', 'LEI')
-      expect(prisonApiClientMock.getOffenderCellHistory).toBeCalledTimes(0)
-      expect(prisonApiClientMock.getUserDetailsList).toBeCalledTimes(0)
+      expect(prisonApiClientMock.getOffenderCellHistory).not.toHaveBeenCalled()
+      expect(prisonApiClientMock.getUserDetailsList).not.toHaveBeenCalled()
 
       expect(result).toEqual([])
     })
@@ -348,8 +348,8 @@ describe('movementsService', () => {
       prisonApiClientMock.getPrisonersCurrentlyOutOfLivingUnit = jest.fn().mockResolvedValue([])
 
       const result = await movementsService.getOffendersCurrentlyOutOfLivingUnit('token', 'LEI')
-      expect(prisonerSearchApiClientMock.getPrisonersById).toBeCalledTimes(0)
-      expect(prisonApiClientMock.getRecentMovements).toBeCalledTimes(0)
+      expect(prisonerSearchApiClientMock.getPrisonersById).not.toHaveBeenCalled()
+      expect(prisonApiClientMock.getRecentMovements).not.toHaveBeenCalled()
 
       expect(result).toEqual([])
     })
@@ -403,8 +403,8 @@ describe('movementsService', () => {
       prisonApiClientMock.getPrisonersCurrentlyOutOfPrison = jest.fn().mockResolvedValue([])
 
       const result = await movementsService.getOffendersCurrentlyOutTotal('token', 'LEI')
-      expect(prisonerSearchApiClientMock.getPrisonersById).toBeCalledTimes(0)
-      expect(prisonApiClientMock.getRecentMovements).toBeCalledTimes(0)
+      expect(prisonerSearchApiClientMock.getPrisonersById).not.toHaveBeenCalled()
+      expect(prisonApiClientMock.getRecentMovements).not.toHaveBeenCalled()
 
       expect(result).toEqual([])
     })
