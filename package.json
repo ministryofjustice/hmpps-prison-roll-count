@@ -77,9 +77,9 @@
     ]
   },
   "dependencies": {
-    "@aws-sdk/client-sqs": "^3.1028.0",
+    "@aws-sdk/client-sqs": "^3.1030.0",
     "@ministryofjustice/frontend": "^9.0.0",
-    "@ministryofjustice/hmpps-connect-dps-components": "5.3.6",
+    "@ministryofjustice/hmpps-connect-dps-components": "5.4.0",
     "@ministryofjustice/hmpps-connect-dps-shared-items": "^3.7.4",
     "@ministryofjustice/hmpps-monitoring": "^1.0.2",
     "agentkeepalive": "^4.6.0",
@@ -102,13 +102,13 @@
     "nunjucks": "^3.2.4",
     "passport": "^0.7.0",
     "passport-oauth2": "^1.8.0",
-    "redis": "^5.11.0",
+    "redis": "^5.12.1",
     "superagent": "^10.3.0"
   },
   "devDependencies": {
     "@jgoz/esbuild-plugin-typecheck": "^4.0.4",
     "@ministryofjustice/eslint-config-hmpps": "^1.0.3",
-    "@ministryofjustice/hmpps-npm-script-allowlist": "0.0.3",
+    "@ministryofjustice/hmpps-npm-script-allowlist": "0.0.4",
     "@ministryofjustice/hmpps-precommit-hooks": "^2.0.2",
     "@tsconfig/node24": "^24.0.4",
     "@types/bunyan": "^1.8.11",
@@ -125,8 +125,8 @@
     "@types/passport-oauth2": "^1.8.0",
     "@types/superagent": "^8.1.9",
     "@types/supertest": "^7.2.0",
-    "@typescript-eslint/eslint-plugin": "^8.58.1",
-    "@typescript-eslint/parser": "^8.58.1",
+    "@typescript-eslint/eslint-plugin": "^8.58.2",
+    "@typescript-eslint/parser": "^8.58.2",
     "audit-ci": "^7.1.0",
     "aws-sdk-client-mock": "^4.1.0",
     "chokidar": "^3.6.0",
@@ -147,7 +147,7 @@
     "lint-staged": "^16.4.0",
     "mocha-junit-reporter": "^2.2.1",
     "nock": "^14.0.12",
-    "prettier": "^3.8.2",
+    "prettier": "^3.8.3",
     "prettier-plugin-jinja-template": "^2.1.0",
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.9",
@@ -156,7 +156,7 @@
   "overrides": {
     "cypress-multi-reporters": {
       "mocha": {
-        "serialize-javascript": "7.0.4"
+        "serialize-javascript": "7.0.5"
       }
     }
   }
