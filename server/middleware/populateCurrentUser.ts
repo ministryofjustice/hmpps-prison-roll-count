@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express'
 import { jwtDecode } from 'jwt-decode'
-import logger from '../../logger'
+import logger from '../logger'
 import UserService from '../services/userService'
 import { convertToTitleCase } from '../utils/utils'
 import Role from '../enums/role'

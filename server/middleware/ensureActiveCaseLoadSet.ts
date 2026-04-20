@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import logger from '../../logger'
+import logger from '../logger'
 import UserService from '../services/userService'
 import { CaseLoad } from '../data/interfaces/caseLoad'
 import { HmppsUser } from '../interfaces/hmppsUser'

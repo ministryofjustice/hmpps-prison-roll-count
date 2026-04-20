@@ -1,6 +1,6 @@
 import type { RequestHandler } from 'express'
 
-import logger from '../../logger'
+import logger from '../logger'
 import { Services } from '../services'
 import config from '../config'
 

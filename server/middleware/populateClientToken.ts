@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import logger from '../../logger'
+import logger from '../logger'
 import { dataAccess } from '../data'
 
 export default function populateClientToken(): RequestHandler {
