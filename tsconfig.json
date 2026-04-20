@@ -25,6 +25,6 @@
     "cypress.config.ts",
     "esbuild",
     "eslint.config.mjs"
-  ]
-//  "include": ["**/*.js", "**/*.ts"]
+  ],
+  "include": ["**/*.js", "**/*.ts"]
 }
