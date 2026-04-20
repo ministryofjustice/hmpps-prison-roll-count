@@ -1,6 +1,6 @@
 import type { RedisClient } from '../redisClient'
 
-import logger from '../../../logger'
+import logger from '../../logger'
 import TokenStore from './tokenStore'
 
 export default class RedisTokenStore implements TokenStore {

@@ -1,5 +1,5 @@
 import { format, formatISO, isValid, parse } from 'date-fns'
-import logger from '../../logger'
+import logger from '../logger'
 
 /**
  * Format a Date object as an ISO-8601 string, rendering only the date part.
