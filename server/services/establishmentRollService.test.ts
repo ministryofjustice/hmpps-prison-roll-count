@@ -65,7 +65,7 @@ describe('establishmentRollService', () => {
 
       it('should call api with wingId', async () => {
         await establishmentRollService.getLandingRollCounts('token', 'LEI', '13075', '13076')
-        expect(prisonApiClientMock.getPrisonRollCountForLocation).toBeCalledWith('LEI', '13075')
+        expect(prisonApiClientMock.getPrisonRollCountForLocation).toHaveBeenCalledWith('LEI', '13075')
       })
 
       it('should return the wing name', async () => {
@@ -121,7 +121,7 @@ describe('establishmentRollService', () => {
 
       it('should call api with wingId', async () => {
         await establishmentRollService.getLandingRollCounts('token', 'HOI', '39255', '39270')
-        expect(prisonApiClientMock.getPrisonRollCountForLocation).toBeCalledWith('HOI', '39255')
+        expect(prisonApiClientMock.getPrisonRollCountForLocation).toHaveBeenCalledWith('HOI', '39255')
       })
 
       it('should return the wing name', async () => {
@@ -172,7 +172,7 @@ describe('establishmentRollService', () => {
   describe('getEstablishmentRollSummary', () => {
     it('should call the prisonApiClient with the correct parameters', async () => {
       await establishmentRollService.getEstablishmentRollSummary('token', 'LEI')
-      expect(prisonApiClientMock.getPrisonRollCountSummary).toBeCalledWith('LEI')
+      expect(prisonApiClientMock.getPrisonRollCountSummary).toHaveBeenCalledWith('LEI')
     })
 
     it('should return the data from the API', async () => {
