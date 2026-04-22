@@ -158,6 +158,9 @@
       "mocha": {
         "serialize-javascript": "7.0.5"
       }
+    },
+    "nunjucks": {
+      "chokidar" : "5.0.0"
     }
   }
 }
