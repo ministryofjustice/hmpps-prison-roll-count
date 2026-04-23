@@ -47,7 +47,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpCurrentUser(services))
   app.use(populateClientToken())
 
-  app.get('*', getFrontendComponents(services))
+  app.get('*any', getFrontendComponents(services))
   app.use(ensureActiveCaseLoadSet(services.userService))
   app.use(routes(services))
 
