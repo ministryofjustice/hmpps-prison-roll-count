@@ -36,7 +36,7 @@ export default class EstablishmentRollController {
     return async (req: Request, res: Response) => {
       const { user } = res.locals
       const { clientToken } = req.middleware
-      const { landingId, wingId } = req.params
+      const { landingId, wingId } = req.params as { landingId: string; wingId: string }
 
       const rollCounts = await this.establishmentRollService.getLandingRollCounts(
         clientToken,
@@ -111,7 +111,7 @@ export default class EstablishmentRollController {
 
   public getCurrentlyOut(): RequestHandler {
     return async (req: Request, res: Response) => {
-      const { livingUnitId } = req.params
+      const { livingUnitId } = req.params as { livingUnitId: string }
       const { clientToken } = req.middleware
       const { user } = res.locals
 
