@@ -9,7 +9,7 @@ export default class ImageController {
 
   public prisonerImage: RequestHandler = (req: Request, res: Response) => {
     const prisonApiClient = this.prisonApiClientBuilder(req.middleware.clientToken)
-    const { prisonerNumber } = req.params
+    const { prisonerNumber } = req.params as { prisonerNumber: string }
     const fullSizeImage = req.query.fullSizeImage ? req.query.fullSizeImage === 'true' : true
 
     if (prisonerNumber === 'placeholder') {

@@ -74,7 +74,7 @@ export default class RestClient {
 
       return (raw ? result : result.body) as Response
     } catch (error) {
-      const sanitisedError = sanitiseError(error)
+      const sanitisedError = sanitiseError(error as Error)
       logger.warn({ ...sanitisedError }, `Error calling ${this.name}, path: '${path}', verb: 'GET'`)
       throw sanitisedError
     }
@@ -104,7 +104,7 @@ export default class RestClient {
 
       return (raw ? result : result.body) as Response
     } catch (error) {
-      const sanitisedError = sanitiseError(error)
+      const sanitisedError = sanitiseError(error as Error)
       logger.warn({ ...sanitisedError }, `Error calling ${this.name}, path: '${path}', verb: '${method.toUpperCase()}'`)
       throw sanitisedError
     }
@@ -146,13 +146,13 @@ export default class RestClient {
 
       return (raw ? result : result.body) as Response
     } catch (error) {
-      const sanitisedError = sanitiseError(error)
+      const sanitisedError = sanitiseError(error as Error)
       logger.warn({ ...sanitisedError }, `Error calling ${this.name}, path: '${path}', verb: 'DELETE'`)
       throw sanitisedError
     }
   }
 
-  async stream({ path = null, headers: _headers = {} }: StreamRequest = {}): Promise<Readable> {
+  async stream({ path = undefined, headers: _headers = {} }: StreamRequest = {}): Promise<Readable> {
     logger.info(`${this.name} streaming: ${path}`)
     return new Promise((resolve, reject) => {
       superagent

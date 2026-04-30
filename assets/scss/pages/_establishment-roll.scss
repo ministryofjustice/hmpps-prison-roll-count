@@ -1,9 +1,11 @@
+@use 'sass:map';
+
 .establishment-roll {
   &__label-and-value {
     display: flex;
     justify-content: space-between;
 
-    @media (min-width: #{map-get($govuk-breakpoints, 'desktop')}) {
+    @media (min-width: #{map.get($govuk-breakpoints, 'desktop')}) {
       flex-basis: 50%;
       padding-right: 90px;
     }
@@ -16,7 +18,7 @@
     }
 
     &--with-space {
-      @media print, (min-width: #{map-get($govuk-breakpoints, 'desktop')}) {
+      @media print, (min-width: #{map.get($govuk-breakpoints, 'desktop')}) {
         flex-basis: 33%;
       }
     }
@@ -98,7 +100,7 @@
       }
 
       td {
-        background-color: govuk-colour('light-grey');
+        background-color: govuk-colour('black', $variant: 'tint-95');
         border-bottom: none;
         padding-top: 10px;
       }
@@ -106,7 +108,7 @@
 
     tr.next-wing-to-open {
       td {
-        border-top: 1px solid govuk-colour('mid-grey');
+        border-top: 1px solid govuk-colour('black', $variant: 'tint-80');
       }
     }
   }
