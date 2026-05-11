@@ -77,7 +77,7 @@
     ]
   },
   "dependencies": {
-    "@aws-sdk/client-sqs": "^3.1043.0",
+    "@aws-sdk/client-sqs": "^3.1045.0",
     "@ministryofjustice/frontend": "^9.0.0",
     "@ministryofjustice/hmpps-connect-dps-components": "5.5.0",
     "@ministryofjustice/hmpps-connect-dps-shared-items": "^3.7.4",
@@ -161,6 +161,8 @@
     },
     "nunjucks": {
       "chokidar" : "5.0.0"
-    }
+    },
+    "diff": "8.0.3",
+    "fast-xml-builder": "^1.1.7"
   }
 }
