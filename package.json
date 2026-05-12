@@ -162,7 +162,7 @@
     "nunjucks": {
       "chokidar" : "5.0.0"
     },
-    "diff": "8.0.3",
-    "fast-xml-builder": "^1.1.7"
+    "diff": "8.0.4",
+    "fast-xml-builder": "^1.1.9"
   }
 }
