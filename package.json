@@ -165,6 +165,9 @@
     "nunjucks": {
       "chokidar": "5.0.0"
     },
+    "eslint-plugin-import": {
+      "minimatch": "^5.1.6"
+    },
     "diff": "9.0.0",
     "fast-xml-builder": "^1.2.0",
     "minimatch": "^10.2.3",
