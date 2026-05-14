@@ -140,7 +140,7 @@
     "esbuild-sass-plugin": "^3.7.0",
     "fishery": "^2.4.0",
     "glob": "^13.0.6",
-    "jest": "^30.4.0",
+    "jest": "^30.4.2",
     "jest-html-reporter": "^4.4.0",
     "jest-junit": "^17.0.0",
     "jsonwebtoken": "^9.0.3",
@@ -163,6 +163,6 @@
       "chokidar" : "5.0.0"
     },
     "diff": "9.0.0",
-    "fast-xml-builder": "^1.1.9"
+    "fast-xml-builder": "^1.2.0"
   }
 }
