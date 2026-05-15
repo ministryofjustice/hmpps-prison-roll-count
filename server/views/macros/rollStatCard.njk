@@ -1,0 +1,68 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% macro rollStatCard(heading, description, value, href, qaTag) %}
+  {% set titleHtml %}
+    <div class="roll-stat-card__title">{{ heading }}</div>
+    {% if description %}
+      <div class="roll-stat-card__subheading govuk-!-font-weight-regular">{{ description }}</div>
+    {% endif %}
+  {% endset %}
+
+
+  {% set valueHtml %}
+    {% if href and value > 0 %}
+      <a href="{{ href }}" class="govuk-link">{{ value }}</a>
+    {% else %}
+      {{ value }}
+    {% endif %}
+  {% endset %}
+
+  {{ govukSummaryList({
+    card: {
+      title: {
+        html: titleHtml
+      },
+      classes: "roll-stat-card"
+    },
+    rows: [
+      {
+        classes: "roll-stat-card__content",
+        key: {
+          text: ""
+        },
+        value: {
+          classes: "govuk-heading-xl",
+          html: valueHtml
+        }
+      }
+    ],
+    attributes: {
+      'data-qa': qaTag
+    }
+  }) }}
+
+{#  {{ govukSummaryList({#}
+{#    card: {#}
+{#      title: {#}
+{#        text: heading#}
+{#      },#}
+{#      classes: "roll-stat-card"#}
+{#    },#}
+{#    rows: [#}
+{#      {#}
+{#        classes: "roll-stat-card__content",#}
+{#        key: {#}
+{#          text: description or "",#}
+{#          classes: "govuk-!-font-weight-regular roll-stat-card__content_key"#}
+{#        },#}
+{#        value: {#}
+{#          html: valueHtml#}
+{#        }#}
+{#      }#}
+{#    ],#}
+{#    attributes: {#}
+{#      'data-qa': qaTag#}
+{#    }#}
+{#  }) }}#}
+
+{% endmacro %}
