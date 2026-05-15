@@ -166,11 +166,11 @@
       "chokidar": "5.0.0"
     },
     "eslint-plugin-import": {
-      "minimatch": "^5.1.6"
+      "minimatch": "^5.1.9"
     },
     "diff": "9.0.0",
     "fast-xml-builder": "^1.2.0",
-    "minimatch": "^10.2.3",
+    "minimatch": "^10.2.5",
     "@opentelemetry/exporter-prometheus": "^0.218.0",
     "@opentelemetry/sdk-node": "^0.218.0",
     "@opentelemetry/otlp-transformer": "^0.218.0",
