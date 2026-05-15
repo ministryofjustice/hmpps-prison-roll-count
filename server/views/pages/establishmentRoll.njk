@@ -127,13 +127,28 @@
     <table class="govuk-table establishment-roll__table">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header"></th>
-                <th scope="col" class="govuk-table__header">Beds in use</th>
-                <th scope="col" class="govuk-table__header">Currently in cell</th>
-                <th scope="col" class="govuk-table__header">Currently out</th>
-                <th scope="col" class="govuk-table__header">{{ capacityLabel }}</th>
-                <th scope="col" class="govuk-table__header">Net vacancies</th>
-                <th scope="col" class="govuk-table__header">Out of order</th>
+                <th scope="col" class="govuk-table__header column-width-l">Location</th>
+                <th scope="col" class="govuk-table__header column-width-m">
+                  Beds in use
+                  <span class="establishment-roll__table__header-support">Prisoners allocated a bed</span>
+                </th>
+                <th scope="col" class="govuk-table__header column-width-m">
+                  Currently in
+                  <span class="establishment-roll__table__header-support">Prisoners allocated a bed and on site</span>
+                </th>
+                <th scope="col" class="govuk-table__header column-width-m">
+                  Currently out
+                  <span class="establishment-roll__table__header-support">Prisoners allocated a bed and off-site</span>
+                </th>
+                <th scope="col" class="govuk-table__header column-width-m">
+                  {{ capacityLabel }}
+                  <span class="establishment-roll__table__header-support">Total beds minus inactive cells</span>
+                </th>
+                <th scope="col" class="govuk-table__header column-width-m">
+                  Beds available
+                  <span class="establishment-roll__table__header-support">Working capacity minus beds in use</span>
+                </th>
+                <th scope="col" class="govuk-table__header column-width-s">Inactive cells</th>
             </tr>
         </thead>
         <tbody class="govuk-table__body">
