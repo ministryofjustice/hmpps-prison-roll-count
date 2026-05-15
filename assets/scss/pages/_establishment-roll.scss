@@ -111,5 +111,22 @@
         border-top: 1px solid govuk-colour('black', $variant: 'tint-80');
       }
     }
+
+    &__header-support {
+      display: block;
+      @include govuk-font($size: 16, $weight: regular);
+    }
+
+    .column-width-l {
+      width: 200px;
+    }
+
+    .column-width-m {
+      width: 150px;
+    }
+
+    .column-width-s {
+      width: 100px;
+    }
   }
 }
