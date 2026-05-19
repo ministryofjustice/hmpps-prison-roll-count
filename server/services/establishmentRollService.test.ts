@@ -19,6 +19,9 @@ describe('establishmentRollService', () => {
   describe('getEstablishmentRollCounts', () => {
     beforeEach(() => {
       prisonApiClientMock.getPrisonRollCount = jest.fn().mockResolvedValueOnce(prisonRollCountMock)
+      locationsInsidePrisonApiClientMock.getPrisonConfiguration = jest
+        .fn()
+        .mockResolvedValue({ prisonId: 'LEI', resiLocationServiceActive: 'INACTIVE' })
     })
 
     it('should return data from API for the today stats', async () => {
@@ -52,6 +55,25 @@ describe('establishmentRollService', () => {
       const establishmentRollCounts = await establishmentRollService.getEstablishmentRollCounts('token', 'LEI')
 
       expect(establishmentRollCounts.wings).toEqual(prisonRollCountMock.locations)
+    })
+
+    it('should use the prisonAPI to get roll count when resiLocationServiceActive is INACTIVE', async () => {
+      await establishmentRollService.getEstablishmentRollCounts('token', 'LEI')
+      expect(prisonApiClientMock.getPrisonRollCount).toHaveBeenCalledWith('LEI')
+      expect(locationsInsidePrisonApiClientMock.getPrisonRollCount).not.toHaveBeenCalled()
+    })
+
+    it('should use the locations API to get roll count when resiLocationServiceActive is ACTIVE', async () => {
+      prisonApiClientMock.getPrisonRollCount = jest.fn()
+      locationsInsidePrisonApiClientMock.getPrisonConfiguration = jest
+        .fn()
+        .mockResolvedValue({ prisonId: 'LEI', resiLocationServiceActive: 'ACTIVE' })
+      locationsInsidePrisonApiClientMock.getPrisonRollCount = jest.fn().mockResolvedValue(prisonRollCountMock)
+
+      await establishmentRollService.getEstablishmentRollCounts('token', 'LEI')
+
+      expect(locationsInsidePrisonApiClientMock.getPrisonRollCount).toHaveBeenCalledWith('LEI')
+      expect(prisonApiClientMock.getPrisonRollCount).not.toHaveBeenCalled()
     })
   })
 
