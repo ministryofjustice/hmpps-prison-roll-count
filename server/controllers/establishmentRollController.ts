@@ -19,7 +19,6 @@ export default class EstablishmentRollController {
       const establishmentRollCounts = await this.establishmentRollService.getEstablishmentRollCounts(
         clientToken,
         user.activeCaseLoadId,
-        forceUseLocationsApi,
       )
 
       const useLocationsApi =
