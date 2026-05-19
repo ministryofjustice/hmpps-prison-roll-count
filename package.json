@@ -81,7 +81,7 @@
     "@ministryofjustice/frontend": "^9.0.0",
     "@ministryofjustice/hmpps-connect-dps-components": "5.5.0",
     "@ministryofjustice/hmpps-connect-dps-shared-items": "^3.7.4",
-    "@ministryofjustice/hmpps-monitoring": "^2.0.0",
+    "@ministryofjustice/hmpps-monitoring": "^2.1.0",
     "agentkeepalive": "^4.6.0",
     "applicationinsights": "^3.14.0",
     "body-parser": "^2.2.2",
