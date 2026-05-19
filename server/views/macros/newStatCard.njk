@@ -1,0 +1,18 @@
+{% macro newStatCard(heading, description, value, href, qaTag) %}
+    <div class="e-roll-card" data-qa="{{ qaTag }}">
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-1">{{ heading }}</h3>
+
+        {% if description %}
+          <div class="e-roll-card__description govuk-!-margin-bottom-2">{{ description }}</div>
+        {% endif %}
+
+        <div class="e-roll-card__count">
+            {% if href and value > 0 %}
+                <a href="{{ href }}" class="govuk-link">{{ value }}</a>
+            {% else %}
+                {{ value }}
+            {% endif %}
+        </div>
+    </div>
+
+{% endmacro %}
