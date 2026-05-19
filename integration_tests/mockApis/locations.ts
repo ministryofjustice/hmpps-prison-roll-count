@@ -103,6 +103,22 @@ const stubInternalLocation = ({
   })
 }
 
+const stubPrisonConfiguration = ({ prisonId = 'LEI', resiLocationServiceActive = 'ACTIVE' } = {}) => {
+  return stubFor({
+    request: {
+      method: 'GET',
+      urlPattern: `/locations/prison-configuration/${prisonId}`,
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: { prisonId, resiLocationServiceActive },
+    },
+  })
+}
+
 export default {
   stubLocationsApiPing,
   stubActivePrisons,
@@ -110,4 +126,5 @@ export default {
   stubLocationPrisonRollCountForLanding,
   stubLocationsOutToday,
   stubInternalLocation,
+  stubPrisonConfiguration,
 }

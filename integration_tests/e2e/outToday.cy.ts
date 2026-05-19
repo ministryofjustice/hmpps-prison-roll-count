@@ -11,6 +11,7 @@ context('Out Today Page', () => {
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubLocationPrisonRollCount')
+    cy.task('stubPrisonConfiguration')
     cy.signIn({ redirectPath: '/out-today' })
     cy.visit('/out-today')
   })
