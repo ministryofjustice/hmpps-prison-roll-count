@@ -23,6 +23,7 @@ context('In reception Page', () => {
     cy.task('getUserDetailsList')
     cy.task('stubActivePrisons', { activeAgencies: ['MDI'] })
     cy.task('stubLocationPrisonRollCount', { prisonCode: 'MDI' })
+    cy.task('stubPrisonConfiguration', { prisonId: 'MDI', resiLocationServiceActive: 'ACTIVE' })
   })
 
   it('Page is visible', () => {

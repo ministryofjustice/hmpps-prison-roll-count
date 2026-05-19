@@ -11,6 +11,7 @@ context('En Route Page', () => {
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubLocationPrisonRollCount')
+    cy.task('stubPrisonConfiguration')
     cy.signIn({ redirectPath: '/en-route' })
     cy.visit('/en-route')
   })
