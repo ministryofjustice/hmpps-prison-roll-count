@@ -10,6 +10,12 @@ export default class EstablishmentRollService {
     private readonly locationsInsidePrisonApiClientBuilder: RestClientBuilder<LocationsInsidePrisonApiClient>,
   ) {}
 
+  public async isResiLocationServiceActive(clientToken: string, caseLoadId: string): Promise<boolean> {
+    const locationsApi = this.locationsInsidePrisonApiClientBuilder(clientToken)
+    const { resiLocationServiceActive } = await locationsApi.getPrisonConfiguration(caseLoadId)
+    return resiLocationServiceActive === 'ACTIVE'
+  }
+
   public async getEstablishmentRollCounts(
     clientToken: string,
     caseLoadId: string,
@@ -18,10 +24,10 @@ export default class EstablishmentRollService {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const locationsApi = this.locationsInsidePrisonApiClientBuilder(clientToken)
 
-    const { resiLocationServiceActive } = await locationsApi.getPrisonConfiguration(caseLoadId)
+    const resiLocationServiceActive = await this.isResiLocationServiceActive(clientToken, caseLoadId)
 
     const rollCount =
-      forceUseLocationsApi || resiLocationServiceActive === 'ACTIVE'
+      forceUseLocationsApi || resiLocationServiceActive
         ? await locationsApi.getPrisonRollCount(caseLoadId)
         : await prisonApi.getPrisonRollCount(caseLoadId)
 
@@ -44,8 +50,7 @@ export default class EstablishmentRollService {
     const locationsApi = this.locationsInsidePrisonApiClientBuilder(clientToken)
     const prisonApi = this.prisonApiClientBuilder(clientToken)
 
-    const { resiLocationServiceActive } = await locationsApi.getPrisonConfiguration(caseLoadId)
-    const prisonIsActiveForResi = resiLocationServiceActive === 'ACTIVE'
+    const prisonIsActiveForResi = await this.isResiLocationServiceActive(clientToken, caseLoadId)
 
     const rollCountForWing = prisonIsActiveForResi
       ? await locationsApi.getPrisonRollCountForLocation(caseLoadId, wingId)

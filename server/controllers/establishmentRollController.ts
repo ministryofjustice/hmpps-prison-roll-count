@@ -23,7 +23,8 @@ export default class EstablishmentRollController {
       )
 
       const useLocationsApi =
-        forceUseLocationsApi || (await this.locationService.isActivePrison(clientToken, user.activeCaseLoadId))
+        forceUseLocationsApi ||
+        (await this.establishmentRollService.isResiLocationServiceActive(clientToken, user.activeCaseLoadId))
       res.render('pages/establishmentRoll', {
         establishmentRollCounts: establishmentRollCounts || null,
         date: new Date(),
@@ -115,7 +116,10 @@ export default class EstablishmentRollController {
       const { clientToken } = req.middleware
       const { user } = res.locals
 
-      const useLocationsApi = await this.locationService.isActivePrison(clientToken, user.activeCaseLoadId)
+      const useLocationsApi = await this.establishmentRollService.isResiLocationServiceActive(
+        clientToken,
+        user.activeCaseLoadId,
+      )
 
       if (useLocationsApi) {
         const [prisonersCurrentlyOut, location] = await Promise.all([
