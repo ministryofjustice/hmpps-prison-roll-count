@@ -10,6 +10,7 @@ describe('establishmentRollService', () => {
   let establishmentRollService: EstablishmentRollService
 
   beforeEach(() => {
+    jest.clearAllMocks()
     establishmentRollService = new EstablishmentRollService(
       () => prisonApiClientMock,
       () => locationsInsidePrisonApiClientMock,
@@ -92,6 +93,9 @@ describe('establishmentRollService', () => {
   describe('getLandingRollCounts', () => {
     describe('Two levels of hierarchy', () => {
       beforeEach(() => {
+        locationsInsidePrisonApiClientMock.getPrisonConfiguration = jest
+          .fn()
+          .mockResolvedValue({ prisonId: 'LEI', resiLocationServiceActive: 'INACTIVE' })
         prisonApiClientMock.getPrisonRollCountForLocation = jest
           .fn()
           .mockResolvedValue(prisonRollCountForWingNoSpurMock)
@@ -100,6 +104,7 @@ describe('establishmentRollService', () => {
       it('should call api with wingId', async () => {
         await establishmentRollService.getLandingRollCounts('token', 'LEI', '13075', '13076')
         expect(prisonApiClientMock.getPrisonRollCountForLocation).toHaveBeenCalledWith('LEI', '13075')
+        expect(locationsInsidePrisonApiClientMock.getPrisonRollCountForLocation).not.toHaveBeenCalled()
       })
 
       it('should return the wing name', async () => {
@@ -144,10 +149,34 @@ describe('establishmentRollService', () => {
           prisonRollCountForWingNoSpurMock.locations[0].subLocations[1].subLocations,
         )
       })
+
+      it('should use locations API when resiLocationServiceActive is ACTIVE', async () => {
+        locationsInsidePrisonApiClientMock.getPrisonConfiguration = jest
+          .fn()
+          .mockResolvedValue({ prisonId: 'LEI', resiLocationServiceActive: 'ACTIVE' })
+        locationsInsidePrisonApiClientMock.getPrisonRollCountForLocation = jest
+          .fn()
+          .mockResolvedValue(prisonRollCountForWingNoSpurMock)
+        prisonApiClientMock.getPrisonRollCountForLocation = jest.fn()
+
+        const establishmentRollCounts = await establishmentRollService.getLandingRollCounts(
+          'token',
+          'LEI',
+          '13075',
+          '13076',
+        )
+
+        expect(locationsInsidePrisonApiClientMock.getPrisonRollCountForLocation).toHaveBeenCalledWith('LEI', '13075')
+        expect(prisonApiClientMock.getPrisonRollCountForLocation).not.toHaveBeenCalled()
+        expect(establishmentRollCounts.useWorkingCapacity).toBe(true)
+      })
     })
 
     describe('Three levels of hierarchy', () => {
       beforeEach(() => {
+        locationsInsidePrisonApiClientMock.getPrisonConfiguration = jest
+          .fn()
+          .mockResolvedValue({ prisonId: 'HOI', resiLocationServiceActive: 'INACTIVE' })
         prisonApiClientMock.getPrisonRollCountForLocation = jest
           .fn()
           .mockResolvedValue(prisonRollCountForWingWithSpurMock)
@@ -156,6 +185,7 @@ describe('establishmentRollService', () => {
       it('should call api with wingId', async () => {
         await establishmentRollService.getLandingRollCounts('token', 'HOI', '39255', '39270')
         expect(prisonApiClientMock.getPrisonRollCountForLocation).toHaveBeenCalledWith('HOI', '39255')
+        expect(locationsInsidePrisonApiClientMock.getPrisonRollCountForLocation).not.toHaveBeenCalled()
       })
 
       it('should return the wing name', async () => {

@@ -44,8 +44,10 @@ export default class EstablishmentRollService {
     const locationsApi = this.locationsInsidePrisonApiClientBuilder(clientToken)
     const prisonApi = this.prisonApiClientBuilder(clientToken)
 
-    const useLocationsApi = await locationsApi.isActivePrison(caseLoadId)
-    const rollCountForWing = useLocationsApi
+    const { resiLocationServiceActive } = await locationsApi.getPrisonConfiguration(caseLoadId)
+    const prisonIsActiveForResi = resiLocationServiceActive === 'ACTIVE'
+
+    const rollCountForWing = prisonIsActiveForResi
       ? await locationsApi.getPrisonRollCountForLocation(caseLoadId, wingId)
       : await prisonApi.getPrisonRollCountForLocation(caseLoadId, wingId)
 
@@ -57,7 +59,7 @@ export default class EstablishmentRollService {
         wingName: wing.localName || wing.locationCode,
         landingName: landingOnWing.localName || landingOnWing.locationCode,
         cellRollCounts: landingOnWing.subLocations,
-        useWorkingCapacity: useLocationsApi,
+        useWorkingCapacity: prisonIsActiveForResi,
       }
     }
 
@@ -72,7 +74,7 @@ export default class EstablishmentRollService {
       spurName: spur?.localName || spur?.locationCode,
       landingName: landing?.localName || landing?.locationCode,
       cellRollCounts: landing.subLocations,
-      useWorkingCapacity: useLocationsApi,
+      useWorkingCapacity: prisonIsActiveForResi,
     }
   }
 
