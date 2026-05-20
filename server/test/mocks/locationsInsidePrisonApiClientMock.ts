@@ -7,6 +7,7 @@ const locationsInsidePrisonApiClientMock: LocationsInsidePrisonApiClient = {
   getPrisonRollCountForLocation: jest.fn(),
   getPrisonersAtLocation: jest.fn(),
   getPrisonersInPrison: jest.fn(),
+  getPrisonConfiguration: jest.fn(),
 }
 
 export default locationsInsidePrisonApiClientMock

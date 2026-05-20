@@ -1,7 +1,8 @@
-import PrisonRollCount, { PrisonersInLocation, PrisonRollCountForCells } from './prisonRollCount'
+import PrisonRollCount, { PrisonConfiguration, PrisonersInLocation, PrisonRollCountForCells } from './prisonRollCount'
 import { InternalLocation } from './internalLocation'
 
 export interface LocationsInsidePrisonApiClient {
+  getPrisonConfiguration(prisonId: string): Promise<PrisonConfiguration>
   isActivePrison(prisonId: string): Promise<boolean>
   getLocation(locationId: string): Promise<InternalLocation>
   getPrisonRollCount(prisonId: string): Promise<PrisonRollCount>

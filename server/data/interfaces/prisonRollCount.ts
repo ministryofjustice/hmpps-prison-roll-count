@@ -67,3 +67,8 @@ export interface PrisonersInLocation {
   cellLocation: string
   prisoners: Prisoner[]
 }
+
+export interface PrisonConfiguration {
+  prisonId: string
+  resiLocationServiceActive: string
+}

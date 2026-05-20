@@ -18,11 +18,12 @@ export default class EstablishmentRollService {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const locationsApi = this.locationsInsidePrisonApiClientBuilder(clientToken)
 
-    const useLocationsApi = forceUseLocationsApi || (await locationsApi.isActivePrison(caseLoadId))
+    const { resiLocationServiceActive } = await locationsApi.getPrisonConfiguration(caseLoadId)
 
-    const rollCount = useLocationsApi
-      ? await locationsApi.getPrisonRollCount(caseLoadId)
-      : await prisonApi.getPrisonRollCount(caseLoadId)
+    const rollCount =
+      forceUseLocationsApi || resiLocationServiceActive === 'ACTIVE'
+        ? await locationsApi.getPrisonRollCount(caseLoadId)
+        : await prisonApi.getPrisonRollCount(caseLoadId)
 
     return {
       todayStats: {
