@@ -24,7 +24,7 @@ ARG BUILD_NUMBER
 ARG GIT_REF
 ARG GIT_BRANCH
 
-COPY package*.json ./
+COPY package*.json .npmrc ./
 RUN NPM_CONFIG_AUDIT=false NPM_CONFIG_FUND=false npm run setup
 ENV NODE_ENV='production'
 
