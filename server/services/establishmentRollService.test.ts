@@ -90,6 +90,30 @@ describe('establishmentRollService', () => {
     })
   })
 
+  describe('isResiLocationServiceActive', () => {
+    it('should return true when resiLocationServiceActive is ACTIVE', async () => {
+      locationsInsidePrisonApiClientMock.getPrisonConfiguration = jest
+        .fn()
+        .mockResolvedValue({ prisonId: 'LEI', resiLocationServiceActive: 'ACTIVE' })
+
+      const result = await establishmentRollService.isResiLocationServiceActive('token', 'LEI')
+
+      expect(result).toBe(true)
+      expect(locationsInsidePrisonApiClientMock.getPrisonConfiguration).toHaveBeenCalledWith('LEI')
+    })
+
+    it('should return false when resiLocationServiceActive is INACTIVE', async () => {
+      locationsInsidePrisonApiClientMock.getPrisonConfiguration = jest
+        .fn()
+        .mockResolvedValue({ prisonId: 'LEI', resiLocationServiceActive: 'INACTIVE' })
+
+      const result = await establishmentRollService.isResiLocationServiceActive('token', 'LEI')
+
+      expect(result).toBe(false)
+      expect(locationsInsidePrisonApiClientMock.getPrisonConfiguration).toHaveBeenCalledWith('LEI')
+    })
+  })
+
   describe('getLandingRollCounts', () => {
     describe('Two levels of hierarchy', () => {
       beforeEach(() => {
