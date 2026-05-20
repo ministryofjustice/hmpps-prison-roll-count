@@ -13,6 +13,7 @@ context('Currently Out Page', () => {
     cy.task('stubGetLocation')
     cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubLocationPrisonRollCount')
+    cy.task('stubPrisonConfiguration')
     cy.signIn({ redirectPath: '/total-currently-out' })
     cy.visit('/total-currently-out')
   })
