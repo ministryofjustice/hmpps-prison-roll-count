@@ -129,6 +129,12 @@
       width: 100px;
     }
   }
+
+  &__before-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
 
 .establishment-roll-cards-container {
@@ -138,7 +144,7 @@
   margin: govuk-spacing(6) 0;
 }
 
-.e-roll-card {
+.establishment-roll-card {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
