@@ -144,4 +144,7 @@ export default {
   analytics: {
     tagManagerContainerId: get('TAG_MANAGER_CONTAINER_ID', ''),
   },
+  featureFlags: {
+    eRollRebuild: get('FLAG_E_ROLL_REBUILD', 'disabled') === 'enabled',
+  },
 }
