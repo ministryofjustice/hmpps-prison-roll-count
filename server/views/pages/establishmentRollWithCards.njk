@@ -49,9 +49,9 @@
         <div class="govuk-grid-column-one-third">
             {{
                 establishmentRollStat(
-                    heading = "Today’s unlock roll",
+                    heading = "Card test for Today’s unlock roll",
                     value = todayStats.unlockRoll,
-                    qaTag = "unlock-roll"
+                    qaTag = "unlock-roll-card"
                 )
             }}
         </div>
@@ -61,7 +61,7 @@
                 establishmentRollStat(
                     heading = "Current population",
                     value = todayStats.currentRoll,
-                    qaTag = "current-roll"
+                    qaTag = "current-roll-card"
                 )
             }}
         </div>
@@ -73,7 +73,7 @@
                     heading = "Arrived today",
                     value = todayStats.inToday,
                     href = "/arrived-today",
-                    qaTag = "in-today"
+                    qaTag = "in-today-card"
                 )
             }}
         </div>
@@ -84,7 +84,7 @@
                     heading = "In reception",
                     value = todayStats.unassignedIn,
                     href = "/in-reception",
-                    qaTag = "unassigned-in"
+                    qaTag = "unassigned-in-card"
                 )
             }}
         </div>
@@ -95,7 +95,7 @@
                     heading = "Still to arrive",
                     value = todayStats.enroute,
                     href = "/en-route",
-                    qaTag = "enroute"
+                    qaTag = "enroute-card"
                 )
             }}
         </div>
@@ -107,7 +107,7 @@
                     heading = "Out today",
                     value = todayStats.outToday,
                     href = "/out-today",
-                    qaTag = "out-today"
+                    qaTag = "out-today-card"
                 )
             }}
         </div>
@@ -118,10 +118,14 @@
                     heading = "No cell allocated",
                     value = todayStats.noCellAllocated,
                     href = "/no-cell-allocated",
-                    qaTag = "no-cell-allocated"
+                    qaTag = "no-cell-allocated-card"
                 )
             }}
         </div>
+    </div>
+
+    <div class="govuk-!-margin-bottom-6">
+        <h3 class="govuk-heading-m govuk-!-margin-bottom-0">This is the page when feature flags are on</h3>
     </div>
 
     <table class="govuk-table establishment-roll__table">
