@@ -1,6 +1,6 @@
 {% extends "../partials/layout.njk" %}
 {% from "../macros/printLink.njk" import printLink %}
-{% from "../macros/establishmentRollStat.njk" import establishmentRollStat %}
+{% from "../macros/establishmentRollStatCard.njk" import establishmentRollStatCard %}
 
 {% set mainClasses = "govuk-body govuk-main-wrapper--auto-spacing" %}
 {% set todayStats = establishmentRollCounts.todayStats %}
@@ -15,13 +15,13 @@
 ] %}
 
 {% macro blockRow(block, type, wing, spur, lastInGroup) %}
-    <tr class="govuk-table__row establishment-roll__table__{{ "spur" if type==="SPUR" else ("landing" if type==="LANDING" else "wing") }}-row {{ 'last-in-group' if lastInGroup else '' }}"
+    <tr class="govuk-table__row establishment-roll__table__{{ "spur" if type == "SPUR" else ("landing" if type == "LANDING" else "wing") }}-row {{ 'last-in-group' if lastInGroup else '' }}"
         id="{{ block.locationId }}"
         {% if wing %}data-wing-id="{{ wing }}" {% endif %}
     >
         <td class="govuk-table__cell">
-            {% if type === "LANDING" %}
-                <a class="govuk-link" href="/wing/{{ wing }}/{{ "spur/"+spur+"/" if spur }}landing/{{ block.locationId }}">{{ block.localName or block.locationCode }}</a>
+            {% if type == "LANDING" %}
+                <a class="govuk-link" href="/wing/{{ wing }}/{{ ("spur/" ~ spur ~ "/") if spur else "" }}landing/{{ block.locationId }}">{{ block.localName or block.locationCode }}</a>
             {% else %}
                 {{ block.localName or block.locationCode }}
             {% endif %}
@@ -39,95 +39,96 @@
     </tr>
 {% endmacro %}
 
+{% block beforeContent %}
+    <div class="establishment-roll__before-content">
+        {{ govukBreadcrumbs({
+            items: breadCrumbs | default([]),
+            classes: 'govuk-!-display-none-print'
+        }) }}
+        {{ printLink(align = "right") }}
+    </div>
+{% endblock %}
+
 {% block content %}
 <div class="govuk-width-container govuk-!-margin-top-8">
     <div class="govuk-!-margin-bottom-6">
-        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Establishment roll with cards for {{ date | formatDate('full') }}</h1>
-        {{ printLink(align = "right") }}
-    </div>
-    <div class="govuk-grid-row govuk-!-margin-bottom-6">
-        <div class="govuk-grid-column-one-third">
-            {{
-                establishmentRollStat(
-                    heading = "Card test for Today’s unlock roll",
-                    value = todayStats.unlockRoll,
-                    qaTag = "unlock-roll-card"
-                )
-            }}
-        </div>
-
-        <div class="govuk-grid-column-one-third">
-            {{
-                establishmentRollStat(
-                    heading = "Current population",
-                    value = todayStats.currentRoll,
-                    qaTag = "current-roll-card"
-                )
-            }}
-        </div>
-    </div>
-    <div class="govuk-grid-row govuk-!-margin-bottom-2">
-        <div class="govuk-grid-column-one-third">
-            {{
-                establishmentRollStat(
-                    heading = "Arrived today",
-                    value = todayStats.inToday,
-                    href = "/arrived-today",
-                    qaTag = "in-today-card"
-                )
-            }}
-        </div>
-
-        <div class="govuk-grid-column-one-third">
-            {{
-                establishmentRollStat(
-                    heading = "In reception",
-                    value = todayStats.unassignedIn,
-                    href = "/in-reception",
-                    qaTag = "unassigned-in-card"
-                )
-            }}
-        </div>
-
-        <div class="govuk-grid-column-one-third">
-            {{
-                establishmentRollStat(
-                    heading = "Still to arrive",
-                    value = todayStats.enroute,
-                    href = "/en-route",
-                    qaTag = "enroute-card"
-                )
-            }}
-        </div>
-    </div>
-    <div class="govuk-grid-row govuk-!-margin-bottom-9">
-        <div class="govuk-grid-column-one-third">
-            {{
-                establishmentRollStat(
-                    heading = "Out today",
-                    value = todayStats.outToday,
-                    href = "/out-today",
-                    qaTag = "out-today-card"
-                )
-            }}
-        </div>
-
-        <div class="govuk-grid-column-one-third">
-            {{
-                establishmentRollStat(
-                    heading = "No cell allocated",
-                    value = todayStats.noCellAllocated,
-                    href = "/no-cell-allocated",
-                    qaTag = "no-cell-allocated-card"
-                )
-            }}
-        </div>
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">Establishment roll for {{ date | formatDate('full') }}</h1>
     </div>
 
-    <div class="govuk-!-margin-bottom-6">
-        <h3 class="govuk-heading-m govuk-!-margin-bottom-0">This is the page when feature flags are on</h3>
+    <h2 class="govuk-heading-m">Today's roll</h2>
+    <div class="establishment-roll-cards-container">
+        {{
+            establishmentRollStatCard(
+                heading = "Unlock roll",
+                description = "As of 00:01",
+                value = todayStats.unlockRoll,
+                qaTag = "unlock-roll"
+            )
+        }}
+
+        {{
+            establishmentRollStatCard(
+                heading = "Current population",
+                description = "All prisoners on-site",
+                value = todayStats.currentRoll,
+                qaTag = "current-roll"
+            )
+        }}
+
+        {{
+            establishmentRollStatCard(
+                heading = "In today",
+                description = "Arrivals so far",
+                value = todayStats.inToday,
+                href = "/arrived-today",
+                qaTag = "in-today"
+            )
+        }}
+
+        {{
+            establishmentRollStatCard(
+                heading = "Out today",
+                description = "Permanent and temporary departures so far",
+                value = todayStats.outToday,
+                href = "/out-today",
+                qaTag = "out-today"
+            )
+        }}
     </div>
 
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    <h2 class="govuk-heading-m">Movements</h2>
+    <div class="establishment-roll-cards-container">
+        {{
+            establishmentRollStatCard(
+                heading = "In reception",
+                value = todayStats.unassignedIn,
+                href = "/in-reception",
+                qaTag = "unassigned-in"
+            )
+        }}
+
+        {{
+            establishmentRollStatCard(
+                heading = "No cell allocated",
+                value = todayStats.noCellAllocated,
+                href = "/no-cell-allocated",
+                qaTag = "no-cell-allocated"
+            )
+        }}
+
+        {{
+            establishmentRollStatCard(
+                heading = "Incoming transfers",
+                value = todayStats.enroute,
+                href = "/en-route",
+                qaTag = "enroute"
+            )
+        }}
+    </div>
+
+    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+    <h2 class="govuk-heading-m">Locations and vacancies</h2>
     <table class="govuk-table establishment-roll__table">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
@@ -164,13 +165,13 @@
                 {% for subLocation in wing.subLocations %}
                     {% set style = 'SPUR' if subLocation.subLocations.length else 'LANDING' %}
 
-                    {% if style === 'SPUR' %}
+                    {% if style == 'SPUR' %}
                         {{ blockRow(block=subLocation, type='SPUR', wing=wing.locationId) }}
                         {% for landing in subLocation.subLocations %}
-                            {{ blockRow(block=landing, type='LANDING', wing=wing.locationId, spur=subLocation.locationId, lastInGroup=loop.index === subLocation.subLocations.length) }}
+                            {{ blockRow(block=landing, type='LANDING', wing=wing.locationId, spur=subLocation.locationId, lastInGroup=loop.index == subLocation.subLocations.length) }}
                         {% endfor %}
                     {% else %}
-                        {{ blockRow(block=subLocation, type='LANDING', wing=wing.locationId, lastInGroup=loop.index === wing.subLocations.length) }}
+                        {{ blockRow(block=subLocation, type='LANDING', wing=wing.locationId, lastInGroup=loop.index == wing.subLocations.length) }}
                     {% endif %}
                 {% endfor %}
 
