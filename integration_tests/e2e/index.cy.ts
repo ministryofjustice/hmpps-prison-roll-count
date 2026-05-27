@@ -57,8 +57,7 @@ context('Index', () => {
       cy.visit('/sign-in')
       cy.signIn()
 
-      cy.contains('h1', 'Establishment roll with cards for').should('exist')
-      cy.contains('h3', 'This is the page when feature flags are on').should('exist')
+      cy.contains('h2', /Today['’]s roll/).should('exist')
       cy.get('[data-qa="unlock-roll-card"]').should('exist')
     })
 
