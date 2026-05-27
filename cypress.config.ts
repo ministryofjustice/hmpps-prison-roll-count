@@ -1,3 +1,4 @@
+import superagent from 'superagent'
 import { defineConfig } from 'cypress'
 import { resetStubs } from './integration_tests/mockApis/wiremock'
 import auth from './integration_tests/mockApis/auth'
@@ -6,6 +7,19 @@ import locations from './integration_tests/mockApis/locations'
 import prison from './integration_tests/mockApis/prison'
 import prisonerSearch from './integration_tests/mockApis/prisonerSearch'
 import tokenVerification from './integration_tests/mockApis/tokenVerification'
+
+async function setFeatureFlag(flags: Record<string, boolean>): Promise<null> {
+  const query = Object.fromEntries(Object.entries(flags).map(([key, val]) => [key, val ? 'enabled' : 'disabled']))
+  await superagent.get('http://localhost:3007/set-feature-flag').query(query)
+
+  return null
+}
+
+async function resetFeatureFlags(): Promise<null> {
+  await superagent.get('http://localhost:3007/reset-feature-flags')
+
+  return null
+}
 
 export default defineConfig({
   chromeWebSecurity: false,
@@ -21,6 +35,8 @@ export default defineConfig({
     setupNodeEvents(on) {
       on('task', {
         reset: resetStubs,
+        setFeatureFlag,
+        resetFeatureFlags,
         ...auth,
         ...feComponents,
         ...locations,
