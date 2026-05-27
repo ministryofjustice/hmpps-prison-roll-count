@@ -25,7 +25,13 @@ export default class EstablishmentRollController {
       const useLocationsApi =
         forceUseLocationsApi ||
         (await this.establishmentRollService.isResiLocationServiceActive(clientToken, user.activeCaseLoadId))
-      res.render('pages/establishmentRoll', {
+      // Temporary page, once signed off this will be merged into the existing establishmentRoll page
+      let pageName = 'pages/establishmentRoll'
+      if (req.featureFlags?.eRollRebuild) {
+        pageName = 'pages/establishmentRollWithCards'
+      }
+
+      res.render(pageName, {
         establishmentRollCounts: establishmentRollCounts || null,
         date: new Date(),
         useWorkingCapacity: useLocationsApi,

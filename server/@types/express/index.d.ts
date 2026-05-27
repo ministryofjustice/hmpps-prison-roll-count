@@ -1,5 +1,6 @@
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import { Services } from '../../services'
+import config from '../../config'
 
 export declare module 'express-session' {
   // Declare that the session will potentially contain these additional fields
@@ -23,6 +24,7 @@ export declare global {
       services?: Services
       middleware?: Record
       logout(done: (err: unknown) => void): void
+      featureFlags?: (typeof config)['featureFlags']
     }
 
     interface Locals {

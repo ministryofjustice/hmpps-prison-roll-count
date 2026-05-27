@@ -25,6 +25,7 @@ import setUpEnvironmentName from './middleware/setUpEnvironmentName'
 import setUpPageNotFound from './middleware/setUpPageNotFound'
 
 import { ensureActiveCaseLoadSet } from './middleware/ensureActiveCaseLoadSet'
+import setUpFeatureFlags from './middleware/setUpFeatureFlags'
 
 export default function createApp(services: Services): express.Application {
   const app = express()
@@ -41,6 +42,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpStaticResources())
   setUpEnvironmentName(app)
   nunjucksSetup(app)
+  app.use(setUpFeatureFlags())
   app.use(setUpAuthentication())
   app.use(authorisationMiddleware(['ROLE_PRISON']))
   app.use(setUpCsrf())
