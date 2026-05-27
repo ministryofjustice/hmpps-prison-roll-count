@@ -15,6 +15,6 @@ export default configureAllowedScripts({
     // Native solution to quickly resolve module paths, used by jest and eslint
     'node_modules/unrs-resolver@1.11.1': 'ALLOW',
     // Required by ApplicationInsights to serialise data
-    'node_modules/protobufjs@8.4.0': 'ALLOW',
+    'node_modules/protobufjs@8.4.2': 'ALLOW',
   },
 })
