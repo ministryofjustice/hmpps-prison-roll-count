@@ -129,4 +129,38 @@
       width: 100px;
     }
   }
+
+  &__before-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.establishment-roll-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin: govuk-spacing(6) 0;
+}
+
+.establishment-roll-card {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: 181px;
+  width: 270px;
+  padding: 15px 15px 20px 15px;
+  border: 1px solid govuk-functional-colour('input-border');
+  box-shadow: 0 4px govuk-colour('black', $variant: 'tint-80');
+
+  &__description{
+    @include govuk-font($size: 19, $weight: regular);
+    line-height: 1.2;
+  }
+
+  &__count {
+    @include govuk-font($size: 48, $weight: bold);
+    margin-top: auto;
+  }
 }
