@@ -13,6 +13,7 @@
         href:  dpsUrl
     }
 ] %}
+{% set showPrintLink = true %}
 
 {% macro blockRow(block, type, wing, spur, lastInGroup) %}
     <tr class="govuk-table__row establishment-roll__table__{{ "spur" if type == "SPUR" else ("landing" if type == "LANDING" else "wing") }}-row {{ 'last-in-group' if lastInGroup else '' }}"
@@ -38,16 +39,6 @@
         <td class="govuk-table__cell">{{ block.rollCount.outOfOrder }}</td>
     </tr>
 {% endmacro %}
-
-{% block beforeContent %}
-    <div class="establishment-roll__before-content">
-        {{ govukBreadcrumbs({
-            items: breadCrumbs | default([]),
-            classes: 'govuk-!-display-none-print'
-        }) }}
-        {{ printLink(align = "right") }}
-    </div>
-{% endblock %}
 
 {% block content %}
 <div class="govuk-width-container govuk-!-margin-top-8">
