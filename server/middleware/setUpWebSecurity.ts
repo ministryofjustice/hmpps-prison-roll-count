@@ -59,6 +59,7 @@ export default function setUpWebSecurity(): Router {
           formAction,
           imgSrc,
           mediaSrc,
+          upgradeInsecureRequests: config.https ? [] : null,
         },
       },
       crossOriginEmbedderPolicy: true,
