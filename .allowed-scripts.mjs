@@ -14,7 +14,5 @@ export default configureAllowedScripts({
     'node_modules/@parcel/watcher@2.5.6': 'ALLOW',
     // Native solution to quickly resolve module paths, used by jest and eslint
     'node_modules/unrs-resolver@1.11.1': 'ALLOW',
-    // Required by ApplicationInsights to serialise data
-    'node_modules/protobufjs@8.4.2': 'ALLOW',
   },
 })
