@@ -40,4 +40,20 @@ context('In reception Page', () => {
     page.inReceptionRows().eq(1).find('td').eq(6).should('contain.text', 'Hidden disability')
     page.inReceptionRows().eq(1).find('td').eq(6).should('contain.text', 'CAT A')
   })
+
+  it('name link returns to the In reception page via the prisoner profile back link', () => {
+    const page = Page.verifyOnPage(InReceptionPage)
+
+    page
+      .inReceptionRows()
+      .first()
+      .find('td')
+      .eq(1)
+      .find('a')
+      .should('have.attr', 'href')
+      .and('contain', '/save-backlink')
+      .and('contain', 'service=prison-roll-count')
+      .and('contain', 'returnPath=/in-reception')
+      .and('contain', 'redirectPath=/prisoner/A1234AB')
+  })
 })
