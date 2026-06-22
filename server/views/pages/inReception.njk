@@ -33,6 +33,7 @@
                         <th scope="col" class="govuk-table__header govuk-!-font-size-16">Date of birth</th>
                         <th scope="col" class="govuk-table__header govuk-!-font-size-16" aria-sort="none">Time arrived</th>
                         <th scope="col" class="govuk-table__header govuk-!-font-size-16">Arrived from</th>
+                        <th scope="col" class="govuk-table__header govuk-!-font-size-16" aria-sort="none">CSRA</th>
                         <th scope="col" class="govuk-table__header govuk-!-font-size-16">Alert flags</th>
                     </tr>
                 </thead>
@@ -46,6 +47,8 @@
                             <td class="govuk-table__cell">{{ prisoner.dateOfBirth | formatDate('short')}}</td>
                             <td class="govuk-table__cell">{{ prisoner.timeArrived | formatTime }}</td>
                             <td class="govuk-table__cell">{{ prisoner.from }}</td>
+                            {% set csraLevel = prisoner.csra or 'None' %}
+                            <td class="govuk-table__cell" data-sort-value="{{ csraLevel }}"><a href="{{ config.serviceUrls.prisonerProfile }}/save-backlink?service=prison-roll-count&backLinkText=Back%20to%20In%20reception&returnPath=/in-reception&redirectPath=/prisoner/{{ prisoner.prisonerNumber }}/csra-history" class="govuk-link">{{ csraLevel }}</a></td>
                             <td class="govuk-table__cell">{{ alertFlags(prisoner.alertFlags) }}{{categoryFlag("", prisoner.category) | safe}}</td>
                         </tr>
                     {% endfor %}
