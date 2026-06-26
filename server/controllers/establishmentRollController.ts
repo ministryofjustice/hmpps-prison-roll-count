@@ -163,4 +163,16 @@ export default class EstablishmentRollController {
       })
     }
   }
+
+  public getOvernights(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { user } = res.locals
+      const { clientToken } = req.middleware
+
+      // Keeping in for reference during dev
+      const prisonersEnRoute = await this.movementsService.getEnRoutePrisoners(clientToken, user.activeCaseLoadId)
+
+      res.render('pages/overnights', { prisoners: prisonersEnRoute, prison: user.activeCaseLoad.description })
+    }
+  }
 }
