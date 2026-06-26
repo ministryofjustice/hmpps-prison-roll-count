@@ -81,4 +81,33 @@ context('In reception Page', () => {
       .and('contain', 'returnPath=/in-reception')
       .and('contain', 'redirectPath=/prisoner/A1234AB/csra-history')
   })
+
+  it('makes Name, Date of birth, Time arrived and CSRA sortable but not the other columns', () => {
+    const page = Page.verifyOnPage(InReceptionPage)
+
+    // Sortable columns expose aria-sort
+    page.inReceptionHeaders().eq(1).should('have.attr', 'aria-sort') // Name
+    page.inReceptionHeaders().eq(3).should('have.attr', 'aria-sort') // Date of birth
+    page.inReceptionHeaders().eq(4).should('have.attr', 'aria-sort') // Time arrived
+    page.inReceptionHeaders().eq(6).should('have.attr', 'aria-sort') // CSRA
+
+    // Non-sortable columns do not
+    page.inReceptionHeaders().eq(2).should('not.have.attr', 'aria-sort') // Prison number
+    page.inReceptionHeaders().eq(5).should('not.have.attr', 'aria-sort') // Arrived from
+    page.inReceptionHeaders().eq(7).should('not.have.attr', 'aria-sort') // Alert flags
+  })
+
+  it('sorts Date of birth chronologically using the ISO date as the sort value', () => {
+    const page = Page.verifyOnPage(InReceptionPage)
+
+    page.inReceptionRows().first().find('td').eq(3).should('have.attr', 'data-sort-value', '1980-01-01')
+  })
+
+  it('applies the govuk-!-font-size-16 override to the body cells', () => {
+    const page = Page.verifyOnPage(InReceptionPage)
+
+    page.inReceptionRows().first().find('td').eq(1).should('have.class', 'govuk-!-font-size-16')
+    page.inReceptionRows().first().find('td').eq(3).should('have.class', 'govuk-!-font-size-16')
+    page.inReceptionRows().first().find('td').eq(7).should('have.class', 'govuk-!-font-size-16')
+  })
 })
