@@ -23,3 +23,10 @@
       }
     }
 }
+
+// Horizontal stroke between records, but no stroke on the last row's baseline
+.in-reception-roll__table {
+  .govuk-table__body .govuk-table__row:last-child .govuk-table__cell {
+    border-bottom: 0;
+  }
+}

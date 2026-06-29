@@ -6,4 +6,6 @@ export default class InReceptionPage extends Page {
   }
 
   inReceptionRows = (): PageElement => cy.get('table.in-reception-roll__table tbody tr')
+
+  inReceptionHeaders = (): PageElement => cy.get('table.in-reception-roll__table thead th')
 }
