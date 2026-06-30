@@ -52,23 +52,25 @@ context('Index', () => {
       cy.setupUserCaseloads()
     })
 
-    it('Loads the rebuilt page with cards when eRollRebuild is enabled', () => {
+    it('Loads the ER homepage with cards including the overnights card when eRollRebuild feature flag is enabled', () => {
       cy.task('setFeatureFlag', { eRollRebuild: true })
       cy.visit('/sign-in')
       cy.signIn()
 
       cy.contains('h2', /Today['’]s roll/).should('exist')
       cy.get('[data-qa="unlock-roll-card"]').should('exist')
+      cy.get('[data-qa="overnights-card"]').should('exist')
     })
 
-    it('loads the original page after resetting feature flags', () => {
+    it('Loads the ER homepage without the overnights card after resetting feature flags', () => {
       cy.task('setFeatureFlag', { eRollRebuild: true })
       cy.task('resetFeatureFlags')
       cy.visit('/sign-in')
       cy.signIn()
 
       cy.contains('h1', 'Establishment roll for').should('exist')
-      cy.get('[data-qa="unlock-roll"]').should('exist')
+      cy.get('[data-qa="unlock-roll-card"]').should('exist')
+      cy.get('[data-qa="overnights-card"]').should('not.exist')
     })
   })
 })

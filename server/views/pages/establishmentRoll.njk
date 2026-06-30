@@ -115,7 +115,7 @@
                 qaTag = "enroute-card"
             )
         }}
-        {% if eRollRebuildFlag %}
+        {% if eRollEnabled and displayOvernights %}
         {{
             establishmentRollStatCard(
                 heading = "Overnights (due to return)",
