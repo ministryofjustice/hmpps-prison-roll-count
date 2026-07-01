@@ -30,9 +30,10 @@
                         <th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Picture</span></th>
                         <th scope="col" class="govuk-table__header govuk-!-font-size-16" aria-sort="ascending">Name</th>
                         <th scope="col" class="govuk-table__header govuk-!-font-size-16">Prison number</th>
-                        <th scope="col" class="govuk-table__header govuk-!-font-size-16">Date of birth</th>
+                        <th scope="col" class="govuk-table__header govuk-!-font-size-16" aria-sort="none">Date of birth</th>
                         <th scope="col" class="govuk-table__header govuk-!-font-size-16" aria-sort="none">Time arrived</th>
                         <th scope="col" class="govuk-table__header govuk-!-font-size-16">Arrived from</th>
+                        <th scope="col" class="govuk-table__header govuk-!-font-size-16" aria-sort="none">CSRA</th>
                         <th scope="col" class="govuk-table__header govuk-!-font-size-16">Alert flags</th>
                     </tr>
                 </thead>
@@ -41,12 +42,14 @@
                         {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell"><img src="/prisonerImage/{{ prisoner.prisonerNumber or 'placeholder' }}" alt="Image of {{ prisonerName }}" class="results-table__results__image" /></td>
-                            <td class="govuk-table__cell" data-sort-value="{{ prisonerName }}" ><a href="{{ config.serviceUrls.prisonerProfile }}/prisoner/{{ prisoner.prisonerNumber }}" class="govuk-link">{{ prisonerName }}</a></td>
-                            <td class="govuk-table__cell">{{ prisoner.prisonerNumber }}</td>
-                            <td class="govuk-table__cell">{{ prisoner.dateOfBirth | formatDate('short')}}</td>
-                            <td class="govuk-table__cell">{{ prisoner.timeArrived | formatTime }}</td>
-                            <td class="govuk-table__cell">{{ prisoner.from }}</td>
-                            <td class="govuk-table__cell">{{ alertFlags(prisoner.alertFlags) }}{{categoryFlag("", prisoner.category) | safe}}</td>
+                            <td class="govuk-table__cell govuk-!-font-size-16" data-sort-value="{{ prisonerName }}" ><a href="{{ config.serviceUrls.prisonerProfile }}/save-backlink?service=prison-roll-count&backLinkText=Back%20to%20In%20reception&returnPath=/in-reception&redirectPath=/prisoner/{{ prisoner.prisonerNumber }}" class="govuk-link">{{ prisonerName }}</a></td>
+                            <td class="govuk-table__cell govuk-!-font-size-16">{{ prisoner.prisonerNumber }}</td>
+                            <td class="govuk-table__cell govuk-!-font-size-16" data-sort-value="{{ prisoner.dateOfBirth }}">{{ prisoner.dateOfBirth | formatDate('short')}}</td>
+                            <td class="govuk-table__cell govuk-!-font-size-16">{{ prisoner.timeArrived | formatTime }}</td>
+                            <td class="govuk-table__cell govuk-!-font-size-16">{{ prisoner.from }}</td>
+                            {% set csraLevel = prisoner.csra or 'None' %}
+                            <td class="govuk-table__cell govuk-!-font-size-16" data-sort-value="{{ csraLevel }}"><a href="{{ config.serviceUrls.prisonerProfile }}/save-backlink?service=prison-roll-count&backLinkText=Back%20to%20In%20reception&returnPath=/in-reception&redirectPath=/prisoner/{{ prisoner.prisonerNumber }}/csra-history" class="govuk-link">{{ csraLevel }}</a></td>
+                            <td class="govuk-table__cell govuk-!-font-size-16">{{ alertFlags(prisoner.alertFlags) }}{{categoryFlag("", prisoner.category) | safe}}</td>
                         </tr>
                     {% endfor %}
 
