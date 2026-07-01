@@ -66,7 +66,6 @@ export default class EstablishmentRollService {
         landingName: landingOnWing.localName || landingOnWing.locationCode,
         cellRollCounts: landingOnWing.subLocations,
         useWorkingCapacity: prisonIsActiveForResi,
-        displayOvernights: prisonIsActiveForResi,
       }
     }
 
@@ -82,7 +81,6 @@ export default class EstablishmentRollService {
       landingName: landing?.localName || landing?.locationCode,
       cellRollCounts: landing.subLocations,
       useWorkingCapacity: prisonIsActiveForResi,
-      displayOvernights: prisonIsActiveForResi,
     }
   }
 
