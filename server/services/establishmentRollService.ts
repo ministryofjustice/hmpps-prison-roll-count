@@ -40,6 +40,7 @@ export default class EstablishmentRollService {
         unassignedIn: rollCount.numInReception,
         enroute: rollCount.numStillToArrive,
         noCellAllocated: rollCount.numNoCellAllocated,
+        overnights: rollCount.numOvernights,
       },
       totals: rollCount.totals,
       wings: rollCount.locations,

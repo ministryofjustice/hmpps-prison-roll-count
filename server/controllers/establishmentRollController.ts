@@ -25,16 +25,14 @@ export default class EstablishmentRollController {
       const useLocationsApi =
         forceUseLocationsApi ||
         (await this.establishmentRollService.isResiLocationServiceActive(clientToken, user.activeCaseLoadId))
-      // Temporary page, once signed off this will be merged into the existing establishmentRoll page
-      let pageName = 'pages/establishmentRoll'
-      if (req.featureFlags?.eRollRebuild) {
-        pageName = 'pages/establishmentRollWithCards'
-      }
 
-      res.render(pageName, {
+      const eRollEnabled = req.featureFlags?.eRollRebuild
+
+      res.render('pages/establishmentRoll', {
         establishmentRollCounts: establishmentRollCounts || null,
         date: new Date(),
         useWorkingCapacity: useLocationsApi,
+        displayOvernights: useLocationsApi && eRollEnabled,
       })
     }
   }
@@ -165,6 +163,18 @@ export default class EstablishmentRollController {
         prisoners: prisonersCurrentlyOut,
         locationName: null,
       })
+    }
+  }
+
+  public getOvernights(): RequestHandler {
+    return async (req: Request, res: Response) => {
+      const { user } = res.locals
+      const { clientToken } = req.middleware
+
+      // Keeping in for reference during dev
+      const prisonersEnRoute = await this.movementsService.getEnRoutePrisoners(clientToken, user.activeCaseLoadId)
+
+      res.render('pages/overnights', { prisoners: prisonersEnRoute, prison: user.activeCaseLoad.description })
     }
   }
 }

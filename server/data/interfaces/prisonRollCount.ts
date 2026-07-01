@@ -9,6 +9,7 @@ export default interface PrisonRollCount {
   numStillToArrive: number
   numOutToday: number
   numNoCellAllocated: number
+  numOvernights: number
   totals: {
     bedsInUse: number
     currentlyInCell: number

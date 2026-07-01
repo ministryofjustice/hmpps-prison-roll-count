@@ -223,7 +223,7 @@ describe('EstablishmentRollController', () => {
   })
 
   describe('getEstablishmentRoll with feature flag rendering', () => {
-    it('renders the establishmentRollWithCards page when the eRollRebuild flag is true', async () => {
+    it('does not render overnights card when locations API is not used, even if the eRollRebuild flag is true', async () => {
       establishmentRollService.getEstablishmentRollCounts.mockResolvedValue({ todayStats: {}, totals: {}, wings: [] })
       establishmentRollService.isResiLocationServiceActive.mockResolvedValue(false)
 
@@ -240,12 +240,17 @@ describe('EstablishmentRollController', () => {
 
       await controller.getEstablishmentRoll(false)(req, res, next)
 
-      expect(res.render).toHaveBeenCalledWith('pages/establishmentRollWithCards', expect.any(Object))
+      expect(res.render).toHaveBeenCalledWith('pages/establishmentRoll', {
+        establishmentRollCounts: expect.any(Object),
+        date: expect.anything(),
+        useWorkingCapacity: false,
+        displayOvernights: false,
+      })
     })
 
-    it('renders the establishmentRoll page when the eRollRebuild flag is false', async () => {
+    it('does not render overnights card when locations API is used if eRollRebuild flag is false', async () => {
       establishmentRollService.getEstablishmentRollCounts.mockResolvedValue({ todayStats: {}, totals: {}, wings: [] })
-      establishmentRollService.isResiLocationServiceActive.mockResolvedValue(false)
+      establishmentRollService.isResiLocationServiceActive.mockResolvedValue(true)
 
       const controller = new EstablishmentRollController(
         establishmentRollService as unknown as EstablishmentRollService,
@@ -260,12 +265,17 @@ describe('EstablishmentRollController', () => {
 
       await controller.getEstablishmentRoll(false)(req, res, next)
 
-      expect(res.render).toHaveBeenCalledWith('pages/establishmentRoll', expect.any(Object))
+      expect(res.render).toHaveBeenCalledWith('pages/establishmentRoll', {
+        establishmentRollCounts: expect.any(Object),
+        date: expect.anything(),
+        useWorkingCapacity: true,
+        displayOvernights: false,
+      })
     })
 
-    it('renders the establishmentRoll page when the eRollRebuild flag is not present', async () => {
+    it('renders overnights card when locations API is used and eRollRebuild flag is true', async () => {
       establishmentRollService.getEstablishmentRollCounts.mockResolvedValue({ todayStats: {}, totals: {}, wings: [] })
-      establishmentRollService.isResiLocationServiceActive.mockResolvedValue(false)
+      establishmentRollService.isResiLocationServiceActive.mockResolvedValue(true)
 
       const controller = new EstablishmentRollController(
         establishmentRollService as unknown as EstablishmentRollService,
@@ -276,10 +286,16 @@ describe('EstablishmentRollController', () => {
       const req = mockReq()
       const res = mockRes()
       const next = mockNext()
+      req.featureFlags = { eRollRebuild: true }
 
       await controller.getEstablishmentRoll(false)(req, res, next)
 
-      expect(res.render).toHaveBeenCalledWith('pages/establishmentRoll', expect.any(Object))
+      expect(res.render).toHaveBeenCalledWith('pages/establishmentRoll', {
+        establishmentRollCounts: expect.any(Object),
+        date: expect.anything(),
+        useWorkingCapacity: true,
+        displayOvernights: true,
+      })
     })
   })
 })
