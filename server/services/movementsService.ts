@@ -100,9 +100,8 @@ export default class MovementsService {
     const { content: overnightPrisoners } = await prisonerSearchClient.getOvernightPrisonersInEstablishment(caseLoadId)
     if (!overnightPrisoners?.length) return []
 
-    console.log('overnightPrisoners', overnightPrisoners)
+    const prisonerNumbers = overnightPrisoners.map(prisoner => prisoner.prisonerNumber)
 
-  /*  const prisonerNumbers = movements.map(movement => movement.offenderNo)
     const [prisoners, recentMovements] = await Promise.all([
       prisonerSearchClient.getPrisonersById(prisonerNumbers),
       prisonApi.getRecentMovements(prisonerNumbers),
@@ -119,7 +118,7 @@ export default class MovementsService {
           from: recentMovement?.fromAgencyDescription,
           timeArrived: recentMovement?.movementTime,
         }
-      })*/
+      })
   }
 
   public async getInReceptionPrisoners(
