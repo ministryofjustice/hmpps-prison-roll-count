@@ -90,6 +90,38 @@ export default class MovementsService {
       })
   }
 
+  public async getOvernightPrisoners(
+    clientToken: string,
+    caseLoadId: string,
+  ): Promise<(PrisonerWithAlerts & { from: string; timeArrived: string })[]> {
+    const prisonApi = this.prisonApiClientBuilder(clientToken)
+    const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
+
+    const { content: overnightPrisoners } = await prisonerSearchClient.getOvernightPrisonersInEstablishment(caseLoadId)
+    if (!overnightPrisoners?.length) return []
+
+    console.log('overnightPrisoners', overnightPrisoners)
+
+  /*  const prisonerNumbers = movements.map(movement => movement.offenderNo)
+    const [prisoners, recentMovements] = await Promise.all([
+      prisonerSearchClient.getPrisonersById(prisonerNumbers),
+      prisonApi.getRecentMovements(prisonerNumbers),
+    ])
+
+    return prisoners
+      .sort((a, b) => a.lastName.localeCompare(b.lastName, 'en', { ignorePunctuation: true }))
+      .map(prisoner => {
+        const recentMovement = recentMovements.find(movement => movement.offenderNo === prisoner.prisonerNumber)
+
+        return {
+          ...prisoner,
+          alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
+          from: recentMovement?.fromAgencyDescription,
+          timeArrived: recentMovement?.movementTime,
+        }
+      })*/
+  }
+
   public async getInReceptionPrisoners(
     clientToken: string,
     caseLoadId: string,
