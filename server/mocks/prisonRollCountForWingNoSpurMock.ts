@@ -9,6 +9,7 @@ const prisonRollCountForWingNoSpurMock: PrisonRollCount = {
   numStillToArrive: 21,
   numOutToday: 1,
   numNoCellAllocated: 3,
+  numOvernights: 10,
   totals: {
     bedsInUse: 885,
     currentlyInCell: 869,

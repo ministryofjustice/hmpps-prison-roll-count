@@ -9,6 +9,7 @@ const locationPrisonRollCountMock: PrisonRollCount = {
   numStillToArrive: 500,
   numOutToday: 600,
   numNoCellAllocated: 700,
+  numOvernights: 800,
   totals: {
     bedsInUse: 10,
     currentlyInCell: 20,

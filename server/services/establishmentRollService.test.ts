@@ -36,6 +36,7 @@ describe('establishmentRollService', () => {
         outToday: 600,
         unassignedIn: 400,
         unlockRoll: 100,
+        overnights: 800,
       })
     })
 

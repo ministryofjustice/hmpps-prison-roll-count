@@ -36,6 +36,7 @@ export default function establishmentRollRouter(services: Services): Router {
   get('/no-cell-allocated', establishmentRollController.getUnallocated())
   get('/total-currently-out', establishmentRollController.getTotalCurrentlyOut())
   get('/:livingUnitId/currently-out', establishmentRollController.getCurrentlyOut())
+  get('/overnights', establishmentRollController.getOvernights())
 
   get('/prisonerImage/:prisonerNumber', imageController.prisonerImage)
 
