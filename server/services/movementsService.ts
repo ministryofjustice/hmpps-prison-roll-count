@@ -93,7 +93,7 @@ export default class MovementsService {
   public async getOvernightPrisoners(
     clientToken: string,
     caseLoadId: string,
-  ): Promise<(PrisonerWithAlerts & { from: string; timeArrived: string })[]> {
+  ): Promise<(PrisonerWithAlerts & { from: string; movementTime: string })[]> {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
 
@@ -115,8 +115,10 @@ export default class MovementsService {
         return {
           ...prisoner,
           alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
-          from: recentMovement?.fromAgencyDescription,
-          timeArrived: recentMovement?.movementTime,
+          from: recentMovement?.toAddress,
+          movementTime: recentMovement?.movementTime,
+          movementDate: recentMovement?.movementDate,
+          reason: recentMovement?.movementReason,
         }
       })
   }
