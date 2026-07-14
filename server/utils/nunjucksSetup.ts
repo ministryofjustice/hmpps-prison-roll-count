@@ -5,6 +5,7 @@ import express from 'express'
 import fs from 'fs'
 import { formatName, initialiseName, prisonerBelongsToUsersCaseLoad, userHasAllRoles, userHasRoles } from './utils'
 import { formatDate, formatDateTime, formatTime, timeFromDate, toUnixTimeStamp } from './dateHelpers'
+import { prisonerProfileUrl, prisonerProfileBackLinkUrl } from './linkHelpers'
 import config from '../config'
 import logger from '../logger'
 
@@ -47,6 +48,11 @@ export default function nunjucksSetup(app: express.Express): void {
   njkEnv.addGlobal('prisonerBelongsToUsersCaseLoad', prisonerBelongsToUsersCaseLoad)
   njkEnv.addGlobal('userHasRoles', userHasRoles)
   njkEnv.addGlobal('userHasAllRoles', userHasAllRoles)
+
+  // linkHelpers
+  njkEnv.addGlobal('prisonerProfileUrl', prisonerProfileUrl)
+  njkEnv.addGlobal('prisonerProfileBackLinkUrl', prisonerProfileBackLinkUrl)
+
 
   // Expose the google tag manager container ID to the nunjucks environment
   const {
