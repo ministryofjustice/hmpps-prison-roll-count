@@ -16,7 +16,6 @@ declare global {
           locations?: Location[]
         },
       ): Chainable<AUTWindow>
-
       setupUserCaseloads(options?: { caseLoads?: CaseLoad[] }): Chainable<AUTWindow>
 
       setupComponentsData(options?: {
