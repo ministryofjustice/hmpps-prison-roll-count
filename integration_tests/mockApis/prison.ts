@@ -7,6 +7,7 @@ import { movementsOutMock } from '../../server/test/mocks/movementsOutMock'
 import { movementsEnRouteMock } from '../../server/test/mocks/movementsEnRouteMock'
 import { movementsInReceptionMock } from '../../server/test/mocks/movementsInReceptionMock'
 import { movementsRecentMock } from '../../server/test/mocks/movementsRecentMock'
+import { movementsOvernightMock } from '../../server/test/mocks/movementsOvernightMock'
 import { offenderCellHistoryMock } from '../../server/test/mocks/offenderCellHistoryMock'
 import userDetailsMock from '../../server/test/mocks/userDetailsMock'
 import pagedListMock from '../../server/test/mocks/pagedListMock'
@@ -156,6 +157,22 @@ export default {
           'Content-Type': 'application/json;charset=UTF-8',
         },
         jsonBody: movementsEnRouteMock,
+      },
+    })
+  },
+
+  stubMovementsOvernight: () => {
+    return stubFor({
+      request: {
+        method: 'POST',
+        urlPattern: `/prison/api/movements/offenders`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: movementsOvernightMock,
       },
     })
   },
