@@ -22,9 +22,9 @@ context('Currently Out Page', () => {
     Page.verifyOnPage(TotalOutPage)
   })
 
-  it('should display a table row for each prisoner en-route', () => {
+  it('should display a table row for each prisoner', () => {
     const page = Page.verifyOnPage(TotalOutPage)
-    page.currentlyOutRows().should('have.length', 2)
+    page.currentlyOutRows().should('have.length', 3)
 
     page.currentlyOutRows().first().find('td').eq(1).should('contain.text', 'Shannon, Eddie')
     page.currentlyOutRows().first().find('td').eq(2).should('contain.text', 'A1234AB')
@@ -37,7 +37,7 @@ context('Currently Out Page', () => {
 
   it('should display alerts and category if cat A', () => {
     const page = Page.verifyOnPage(TotalOutPage)
-    page.currentlyOutRows().should('have.length', 2)
+    page.currentlyOutRows().should('have.length', 3)
 
     page.currentlyOutRows().eq(1).find('td').eq(5).should('contain.text', 'Hidden disability')
     page.currentlyOutRows().eq(1).find('td').eq(5).should('contain.text', 'CAT A')

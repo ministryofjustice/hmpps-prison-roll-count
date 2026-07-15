@@ -21,7 +21,7 @@ context('Arrived Today Page', () => {
     Page.verifyOnPage(ArrivedTodayPage)
   })
 
-  it('should display a table row for each wing level assignedRollCount', () => {
+  it('should display a table row for each prisoner', () => {
     const page = Page.verifyOnPage(ArrivedTodayPage)
     page.arrivedTodayRows().should('have.length', 2)
 
@@ -31,14 +31,29 @@ context('Arrived Today Page', () => {
     page.arrivedTodayRows().first().find('td').eq(4).should('contain.text', '1-1-1')
     page.arrivedTodayRows().first().find('td').eq(5).should('contain.text', '10:30')
     page.arrivedTodayRows().first().find('td').eq(6).should('contain.text', 'York Train Station, York, YO24 1AB')
-    page.arrivedTodayRows().first().find('td').eq(7).should('contain.text', '')
+    // Column index 7 checked in the alerts and category test
   })
 
   it('should display alerts and category if cat A', () => {
     const page = Page.verifyOnPage(ArrivedTodayPage)
     page.arrivedTodayRows().should('have.length', 2)
 
-    page.arrivedTodayRows().last().find('td').eq(7).should('contain.text', 'Hidden disability')
-    page.arrivedTodayRows().last().find('td').eq(7).should('contain.text', 'CAT A')
+    page.arrivedTodayRows().eq(1).find('td').eq(7).should('contain.text', 'Hidden disability')
+    page.arrivedTodayRows().eq(1).find('td').eq(7).should('contain.text', 'CAT A')
+  })
+
+  it('makes Name, "Time arrived" and "Arrived from" sortable but not the other columns', () => {
+    const page = Page.verifyOnPage(ArrivedTodayPage)
+
+    // Sortable columns expose aria-sort
+    page.arrivedTodayHeaders().eq(1).should('have.attr', 'aria-sort') // Name
+    page.arrivedTodayHeaders().eq(5).should('have.attr', 'aria-sort') // Time arrived
+    page.arrivedTodayHeaders().eq(6).should('have.attr', 'aria-sort') // Arrived from
+
+    // Non-sortable columns do not
+    page.arrivedTodayHeaders().eq(2).should('not.have.attr', 'aria-sort') // Prison number
+    page.arrivedTodayHeaders().eq(3).should('not.have.attr', 'aria-sort') // Date of birth
+    page.arrivedTodayHeaders().eq(4).should('not.have.attr', 'aria-sort') // Location
+    page.arrivedTodayHeaders().eq(7).should('not.have.attr', 'aria-sort') // Alert flags
   })
 })

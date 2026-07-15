@@ -6,4 +6,6 @@ export default class OutTodayPage extends Page {
   }
 
   outTodayRows = (): PageElement => cy.get('table.out-today-roll__table tbody tr')
+  
+  outTodayHeaders = (): PageElement => cy.get('table.out-today-roll__table thead th')
 }

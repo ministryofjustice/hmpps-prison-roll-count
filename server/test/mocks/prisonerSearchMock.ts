@@ -47,6 +47,25 @@ const prisonerSearchMock: Prisoner[] = [
     csra: 'Standard',
     alerts: [],
   },
+  {
+    prisonerNumber: 'A1234AC',
+    bookingId: 789,
+    firstName: 'Norman',
+    lastName: 'Zesch',
+    dateOfBirth: '1980-01-01',
+    gender: '',
+    ethnicity: '',
+    youthOffender: false,
+    maritalStatus: '',
+    religion: '',
+    nationality: '',
+    status: '',
+    cellLocation: '1-1-1',
+    mostSeriousOffence: '',
+    restrictedPatient: false,
+    // No csra
+    alerts: [],
+  },
 ]
 
 export default prisonerSearchMock
