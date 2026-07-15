@@ -115,7 +115,7 @@ export default class MovementsService {
         return {
           ...prisoner,
           alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
-          from: recentMovement?.toAddress,
+          from: recentMovement.movementType === 'CRT' ? recentMovement?.toAgencyDescription : '',
           movementTime: recentMovement?.movementTime,
           movementDate: recentMovement?.movementDate,
           reason: recentMovement?.movementReason,
