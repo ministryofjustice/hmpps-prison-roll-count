@@ -30,14 +30,16 @@ context('En Route Page', () => {
     page.enRouteRows().first().find('td').eq(4).should('contain.text', '11:0025/12/2023')
     page.enRouteRows().first().find('td').eq(5).should('contain.text', 'Leeds')
     page.enRouteRows().first().find('td').eq(6).should('contain.text', 'Normal Transfer')
-    page.enRouteRows().first().find('td').eq(7).should('contain.text', '')
+    page.enRouteRows().first().find('td').eq(7).should('contain.text', 'Standard')
+    page.enRouteRows().first().find('td').eq(8).should('contain.text', '')
   })
 
   it('should display alerts and category if cat A', () => {
     const page = Page.verifyOnPage(EnRoutePage)
     page.enRouteRows().should('have.length', 2)
 
-    page.enRouteRows().eq(1).find('td').eq(7).should('contain.text', 'Hidden disability')
-    page.enRouteRows().eq(1).find('td').eq(7).should('contain.text', 'CAT A')
+    page.enRouteRows().eq(1).find('td').eq(8).should('contain.text', 'Hidden disability')
+    page.enRouteRows().eq(1).find('td').eq(8).should('contain.text', 'CAT A')
+
   })
 })
