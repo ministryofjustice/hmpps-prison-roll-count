@@ -40,6 +40,5 @@ context('En Route Page', () => {
 
     page.enRouteRows().eq(1).find('td').eq(8).should('contain.text', 'Hidden disability')
     page.enRouteRows().eq(1).find('td').eq(8).should('contain.text', 'CAT A')
-
   })
 })
