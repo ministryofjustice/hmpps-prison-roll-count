@@ -1,7 +1,6 @@
 import Page from '../pages/page'
 import Role from '../../server/enums/role'
 import OvernightsPage from '../pages/overnights'
-import EnRoutePage from '../pages/enRoute'
 
 context('Overnights Page', () => {
   beforeEach(() => {
