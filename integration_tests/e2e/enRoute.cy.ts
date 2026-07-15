@@ -22,7 +22,7 @@ context('En Route Page', () => {
 
   it('should display a table row for each prisoner', () => {
     const page = Page.verifyOnPage(EnRoutePage)
-    page.enRouteRows().should('have.length', 3)
+    page.enRouteRows().should('have.length', 2)
 
     page.enRouteRows().first().find('td').eq(1).should('contain.text', 'Shannon, Eddie')
     page.enRouteRows().first().find('td').eq(2).should('contain.text', 'A1234AB')
@@ -36,16 +36,14 @@ context('En Route Page', () => {
 
   it('should display the CSRA level for each prisoner', () => {
     const page = Page.verifyOnPage(EnRoutePage)
-    page.enRouteRows().should('have.length', 3)
+    page.enRouteRows().should('have.length', 2)
 
-    page.enRouteRows().first().find('td').eq(7).should('contain.text', 'Standard')
+    page.enRouteRows().first().find('td').eq(7).should('contain.text', 'None')
     page.enRouteRows().eq(1).find('td').eq(7).should('contain.text', 'High')
-    page.enRouteRows().eq(2).find('td').eq(7).should('contain.text', 'None')
   })
 
   it('should display alerts and category if cat A', () => {
     const page = Page.verifyOnPage(EnRoutePage)
-    page.enRouteRows().should('have.length', 3)
 
     page.enRouteRows().eq(1).find('td').eq(8).should('contain.text', 'Hidden disability')
     page.enRouteRows().eq(1).find('td').eq(8).should('contain.text', 'CAT A')

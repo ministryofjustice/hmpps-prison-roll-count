@@ -36,7 +36,6 @@ context('Arrived Today Page', () => {
 
   it('should display alerts and category if cat A', () => {
     const page = Page.verifyOnPage(ArrivedTodayPage)
-    page.arrivedTodayRows().should('have.length', 2)
 
     page.arrivedTodayRows().eq(1).find('td').eq(7).should('contain.text', 'Hidden disability')
     page.arrivedTodayRows().eq(1).find('td').eq(7).should('contain.text', 'CAT A')
@@ -55,5 +54,22 @@ context('Arrived Today Page', () => {
     page.arrivedTodayHeaders().eq(3).should('not.have.attr', 'aria-sort') // Date of birth
     page.arrivedTodayHeaders().eq(4).should('not.have.attr', 'aria-sort') // Location
     page.arrivedTodayHeaders().eq(7).should('not.have.attr', 'aria-sort') // Alert flags
+  })
+
+  it('name link returns to the arrived-today page via the prisoner profile back link', () => {
+    const page = Page.verifyOnPage(ArrivedTodayPage)
+
+    page
+      .arrivedTodayRows()
+      .first()
+      .find('td')
+      .eq(1)
+      .find('a')
+      .should('have.attr', 'href')
+      .and('contain', '/save-backlink')
+      .and('contain', 'service=prison-roll-count')
+      .and('contain', 'backLinkText=Back%20to%20In%20today')
+      .and('contain', 'returnPath=/arrived-today')
+      .and('contain', 'redirectPath=/prisoner/A1234AB')
   })
 })

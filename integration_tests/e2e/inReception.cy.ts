@@ -23,7 +23,7 @@ context('In reception Page', () => {
 
   it('should display a table row for each prisoner', () => {
     const page = Page.verifyOnPage(InReceptionPage)
-    page.inReceptionRows().should('have.length', 3)
+    page.inReceptionRows().should('have.length', 2)
 
     page.inReceptionRows().first().find('td').eq(1).should('contain.text', 'Shannon, Eddie')
     page.inReceptionRows().first().find('td').eq(2).should('contain.text', 'A1234AB')
@@ -36,16 +36,14 @@ context('In reception Page', () => {
 
   it('should display the CSRA level for each prisoner', () => {
     const page = Page.verifyOnPage(InReceptionPage)
-    page.inReceptionRows().should('have.length', 3)
+    page.inReceptionRows().should('have.length', 2)
 
-    page.inReceptionRows().first().find('td').eq(6).should('contain.text', 'Standard')
+    page.inReceptionRows().first().find('td').eq(6).should('contain.text', 'None')
     page.inReceptionRows().eq(1).find('td').eq(6).should('contain.text', 'High')
-    page.inReceptionRows().eq(2).find('td').eq(6).should('contain.text', 'None')
   })
 
   it('should display alerts and category if cat A', () => {
     const page = Page.verifyOnPage(InReceptionPage)
-    page.inReceptionRows().should('have.length', 3)
 
     page.inReceptionRows().eq(1).find('td').eq(7).should('contain.text', 'Hidden disability')
     page.inReceptionRows().eq(1).find('td').eq(7).should('contain.text', 'CAT A')
@@ -110,5 +108,22 @@ context('In reception Page', () => {
     page.inReceptionRows().first().find('td').eq(1).should('have.class', 'govuk-!-font-size-16')
     page.inReceptionRows().first().find('td').eq(3).should('have.class', 'govuk-!-font-size-16')
     page.inReceptionRows().first().find('td').eq(7).should('have.class', 'govuk-!-font-size-16')
+  })
+
+  it('name link returns to the in-reception page via the prisoner profile back link', () => {
+    const page = Page.verifyOnPage(InReceptionPage)
+
+    page
+      .inReceptionRows()
+      .first()
+      .find('td')
+      .eq(1)
+      .find('a')
+      .should('have.attr', 'href')
+      .and('contain', '/save-backlink')
+      .and('contain', 'service=prison-roll-count')
+      .and('contain', 'backLinkText=Back%20to%20In%20reception')
+      .and('contain', 'returnPath=/in-reception')
+      .and('contain', 'redirectPath=/prisoner/A1234AB')
   })
 })

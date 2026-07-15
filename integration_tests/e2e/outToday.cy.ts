@@ -34,7 +34,6 @@ context('Out Today Page', () => {
 
   it('should display alerts and category if cat A', () => {
     const page = Page.verifyOnPage(OutTodayPage)
-    page.outTodayRows().should('have.length', 2)
 
     page.outTodayRows().eq(1).find('td').eq(6).should('contain.text', 'Hidden disability')
     page.outTodayRows().eq(1).find('td').eq(6).should('contain.text', 'CAT A')

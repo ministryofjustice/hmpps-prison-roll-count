@@ -6,4 +6,6 @@ export default class NoCellAllocatedPage extends Page {
   }
 
   noCellAllocatedRows = (): PageElement => cy.get('table.unallocated-roll__table tbody tr')
+
+  noCellAllocatedHeaders = (): PageElement => cy.get('table.unallocated-roll__table thead th')
 }

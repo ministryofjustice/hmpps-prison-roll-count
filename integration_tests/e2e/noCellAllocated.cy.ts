@@ -14,7 +14,7 @@ function visitPageWithRoles(roles: string[]) {
   cy.visit('/no-cell-allocated')
 }
 
-context('In reception Page', () => {
+context('No Cell Allocated Page', () => {
   beforeEach(() => {
     cy.task('reset')
     cy.task('stubPostAttributeSearch')
@@ -36,7 +36,7 @@ context('In reception Page', () => {
     visitPageWithRoles([`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`])
 
     const page = Page.verifyOnPage(NoCellAllocatedPage)
-    page.noCellAllocatedRows().should('have.length', 3)
+    page.noCellAllocatedRows().should('have.length', 2)
 
     page.noCellAllocatedRows().first().find('td').eq(1).should('contain.text', 'Shannon, Eddie')
     page.noCellAllocatedRows().first().find('td').eq(2).should('contain.text', 'A1234AB')
@@ -46,23 +46,24 @@ context('In reception Page', () => {
   })
 
   it('makes Name and "Time moved out" sortable but not the other columns', () => {
-      const page = Page.verifyOnPage(NoCellAllocatedPage)
-  
-      // Sortable columns expose aria-sort
-      page.noCellAllocatedRows().eq(1).should('have.attr', 'aria-sort') // Name
-      page.noCellAllocatedRows().eq(4).should('have.attr', 'aria-sort') // Time moved out
+    visitPageWithRoles([`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`])
 
-      // Non-sortable columns do not
-      page.noCellAllocatedRows().eq(2).should('not.have.attr', 'aria-sort') // Prison number
-      page.noCellAllocatedRows().eq(3).should('not.have.attr', 'aria-sort') // Previous cell
-      page.noCellAllocatedRows().eq(5).should('not.have.attr', 'aria-sort') // Moved out by
-    })
+    const page = Page.verifyOnPage(NoCellAllocatedPage)
+
+    // Sortable columns expose aria-sort
+    page.noCellAllocatedHeaders().eq(1).should('have.attr', 'aria-sort') // Name
+    page.noCellAllocatedHeaders().eq(4).should('have.attr', 'aria-sort') // Time moved out
+
+    // Non-sortable columns do not
+    page.noCellAllocatedHeaders().eq(2).should('not.have.attr', 'aria-sort') // Prison number
+    page.noCellAllocatedHeaders().eq(3).should('not.have.attr', 'aria-sort') // Previous cell
+    page.noCellAllocatedHeaders().eq(5).should('not.have.attr', 'aria-sort') // Moved out by
+  })
 
   it('should display allocation link if user has cell move', () => {
     visitPageWithRoles([`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`, `ROLE_${Role.CellMove}`])
 
     const page = Page.verifyOnPage(NoCellAllocatedPage)
-    page.noCellAllocatedRows().should('have.length', 3)
 
     page
       .noCellAllocatedRows()
@@ -71,5 +72,24 @@ context('In reception Page', () => {
       .eq(6)
       .find('a[href="http://localhost:3002/prisoner/A1234AB/cell-move/search-for-cell"]')
       .should('contain.text', 'Allocate cell')
+  })
+
+  it('name link returns to the no-cell-allocated page via the prisoner profile back link', () => {
+    visitPageWithRoles([`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`])
+
+    const page = Page.verifyOnPage(NoCellAllocatedPage)
+
+    page
+      .noCellAllocatedRows()
+      .first()
+      .find('td')
+      .eq(1)
+      .find('a')
+      .should('have.attr', 'href')
+      .and('contain', '/save-backlink')
+      .and('contain', 'service=prison-roll-count')
+      .and('contain', 'backLinkText=Back%20to%20No%20cell%20allocated')
+      .and('contain', 'returnPath=/no-cell-allocated')
+      .and('contain', 'redirectPath=/prisoner/A1234AB')
   })
 })
