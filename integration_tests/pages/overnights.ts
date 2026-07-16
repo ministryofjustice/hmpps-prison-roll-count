@@ -6,4 +6,6 @@ export default class OvernightsPage extends Page {
   }
 
   overnightsRows = (): PageElement => cy.get('table.overnights-roll__table tbody tr')
+
+  overnightsHeaders = (): PageElement => cy.get('table.overnights-roll__table thead th')
 }

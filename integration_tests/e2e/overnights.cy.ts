@@ -44,7 +44,17 @@ context('Overnights Page', () => {
     page.overnightsRows().eq(1).find('td').eq(7).should('contain.text', 'CAT A')
   })
 
-  it('should show Agency address structure without postcode for CRT movementType', () => {})
+  it('makes Name, Time departed, Reason and CSRA sortable but not the other columns', () => {
+    const page = Page.verifyOnPage(OvernightsPage)
 
-  it('should show prisoners that have not yet returned', () => {})
+    // Sortable columns expose aria-sort
+    page.overnightsHeaders().eq(1).should('have.attr', 'aria-sort') // Name
+    page.overnightsHeaders().eq(3).should('have.attr', 'aria-sort') // Time departed
+    page.overnightsHeaders().eq(5).should('have.attr', 'aria-sort') // Reason
+    page.overnightsHeaders().eq(6).should('have.attr', 'aria-sort') // CSRA
+
+    // Non-sortable columns do not
+    page.overnightsHeaders().eq(2).should('not.have.attr', 'aria-sort') // Prison number
+    page.overnightsHeaders().eq(7).should('not.have.attr', 'aria-sort') // Alert flags
+  })
 })
