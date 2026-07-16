@@ -50,7 +50,7 @@
                             <td class="govuk-table__cell">{{ prisoner.from }}</td>
                             <td class="govuk-table__cell">{{ prisoner.reason }}</td>
                             {% set csraLevel = prisoner.csra or 'None' %}
-                            <td class="govuk-table__cell" data-sort-value="{{ csraLevel }}"><a href="{{ prisonerProfileBackLinkUrl('Back to Incoming transfers', '/en-route', prisoner.prisonerNumber ~ '/csra-history') }}" class="govuk-link">{{ csraLevel }}</a></td>
+                            <td class="govuk-table__cell" data-sort-value="{{ csraLevel }}"><a href="{{ prisonerProfileBackLinkUrl('Back to Incoming transfers', '/en-route', prisoner.prisonerNumber, '/csra-history') }}" class="govuk-link">{{ csraLevel }}</a></td>
                             <td class="govuk-table__cell">{{ alertFlags(prisoner.alertFlags) }}{{categoryFlag("", prisoner.category) | safe}}</td>
                         </tr>
                     {% endfor %}
