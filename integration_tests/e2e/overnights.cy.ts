@@ -56,4 +56,36 @@ context('Overnights Page', () => {
     page.overnightsHeaders().eq(2).should('not.have.attr', 'aria-sort') // Prison number
     page.overnightsHeaders().eq(6).should('not.have.attr', 'aria-sort') // Alert flags
   })
+
+  it('name link returns to the Overnights page via the prisoner profile back link', () => {
+    const page = Page.verifyOnPage(OvernightsPage)
+
+    page
+      .overnightsRows()
+      .first()
+      .find('td')
+      .eq(1)
+      .find('a')
+      .should('have.attr', 'href')
+      .and('contain', '/save-backlink')
+      .and('contain', 'service=prison-roll-count')
+      .and('contain', 'returnPath=/overnights')
+      .and('contain', 'redirectPath=/prisoner/A1234AB')
+  })
+
+  it('CSRA link goes to the CSRA history page and returns to the Overnights page via the back link', () => {
+    const page = Page.verifyOnPage(OvernightsPage)
+
+    page
+      .overnightsRows()
+      .first()
+      .find('td')
+      .eq(5)
+      .find('a')
+      .should('have.attr', 'href')
+      .and('contain', '/save-backlink')
+      .and('contain', 'service=prison-roll-count')
+      .and('contain', 'returnPath=/overnights')
+      .and('contain', 'redirectPath=/prisoner/A1234AB/csra-history')
+  })
 })
