@@ -6,4 +6,6 @@ export default class EnRoutePage extends Page {
   }
 
   enRouteRows = (): PageElement => cy.get('table.en-route-roll__table tbody tr')
+
+  enRouteHeaders = (): PageElement => cy.get('table.en-route-roll__table thead th')
 }

@@ -44,7 +44,7 @@ const prisonerSearchMock: Prisoner[] = [
     cellLocation: '1-1-1',
     mostSeriousOffence: '',
     restrictedPatient: false,
-    csra: 'Standard',
+    // csra: 'Standard',
     alerts: [],
   },
 ]

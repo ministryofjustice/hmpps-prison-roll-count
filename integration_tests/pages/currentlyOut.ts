@@ -6,4 +6,6 @@ export default class CurrentlyOutPage extends Page {
   }
 
   currentlyOutRows = (): PageElement => cy.get('table.currently-out-roll__table tbody tr')
+
+  currentlyOutHeaders = (): PageElement => cy.get('table.currently-out-roll__table thead th')
 }

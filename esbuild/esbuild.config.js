@@ -77,12 +77,12 @@ const main = () => {
     process.stderr.write('\u{1b}[1m\u{1F52D} Watching for changes...\u{1b}[0m\n')
     // Assets
     chokidar
-      .watch(['assets/**/*'], chokidarOptions)
+      .watch(['assets'], chokidarOptions)
       .on('all', () => buildAssets(buildConfig).catch(e => process.stderr.write(`${e}\n`)))
 
     // App
     chokidar
-      .watch(['server/**/*'], { ...chokidarOptions, ignored: ['**/*.test.ts'] })
+      .watch(['server'], { ...chokidarOptions, ignored: ['**/*.test.ts'] })
       .on('all', () => buildApp(buildConfig).catch(e => process.stderr.write(`${e}\n`)))
   }
 }

@@ -42,13 +42,13 @@
                         {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell"><img src="/prisonerImage/{{ prisoner.prisonerNumber or 'placeholder' }}" alt="Image of {{ prisonerName }}" class="results-table__results__image" /></td>
-                            <td class="govuk-table__cell govuk-!-font-size-16" data-sort-value="{{ prisonerName }}" ><a href="{{ config.serviceUrls.prisonerProfile }}/save-backlink?service=prison-roll-count&backLinkText=Back%20to%20In%20reception&returnPath=/in-reception&redirectPath=/prisoner/{{ prisoner.prisonerNumber }}" class="govuk-link">{{ prisonerName }}</a></td>
+                            <td class="govuk-table__cell govuk-!-font-size-16" data-sort-value="{{ prisonerName }}" ><a href="{{ prisonerProfileBackLinkUrl('Back to In reception', '/in-reception', prisoner.prisonerNumber) }}" class="govuk-link">{{ prisonerName }}</a></td>
                             <td class="govuk-table__cell govuk-!-font-size-16">{{ prisoner.prisonerNumber }}</td>
                             <td class="govuk-table__cell govuk-!-font-size-16" data-sort-value="{{ prisoner.dateOfBirth }}">{{ prisoner.dateOfBirth | formatDate('short')}}</td>
                             <td class="govuk-table__cell govuk-!-font-size-16">{{ prisoner.timeArrived | formatTime }}</td>
                             <td class="govuk-table__cell govuk-!-font-size-16">{{ prisoner.from }}</td>
                             {% set csraLevel = prisoner.csra or 'None' %}
-                            <td class="govuk-table__cell govuk-!-font-size-16" data-sort-value="{{ csraLevel }}"><a href="{{ config.serviceUrls.prisonerProfile }}/save-backlink?service=prison-roll-count&backLinkText=Back%20to%20In%20reception&returnPath=/in-reception&redirectPath=/prisoner/{{ prisoner.prisonerNumber }}/csra-history" class="govuk-link">{{ csraLevel }}</a></td>
+                            <td class="govuk-table__cell govuk-!-font-size-16" data-sort-value="{{ csraLevel }}"><a href="{{ prisonerProfileBackLinkUrl('Back to In reception', '/in-reception', prisoner.prisonerNumber, '/csra-history') }}" class="govuk-link">{{ csraLevel }}</a></td>
                             <td class="govuk-table__cell govuk-!-font-size-16">{{ alertFlags(prisoner.alertFlags) if prisoner.alertFlags | length else "No relevant alerts" }}{{categoryFlag("", prisoner.category) | safe}}</td>
                         </tr>
                     {% endfor %}

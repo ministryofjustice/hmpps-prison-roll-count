@@ -155,15 +155,15 @@ The template app is, by default, configured not to use REDIS when running locall
 
 The easiest way to run the app is to use docker compose to create the service and all dependencies.
 
-`docker compose pull`
+`docker-compose pull`
 
-`docker compose up`
+`docker-compose up`
 
 ### Running the app for development
 
 To start the main services excluding the example typescript template app:
 
-`docker compose up --scale=app=0`
+`docker-compose up --scale=app=0`
 
 Create an environment file by copying `.env.example` -> `.env`
 Environment variables set in here will be available when running `start:dev`
@@ -202,7 +202,7 @@ for the in-memory DB used by Auth
 
 For local running, start a wiremock instance by:
 
-`docker compose -f docker-compose-test.yml up`
+`docker-compose -f docker-compose-test.yml up`
 
 Then run the server in test mode by:
 
