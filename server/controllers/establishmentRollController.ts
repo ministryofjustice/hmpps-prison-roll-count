@@ -171,10 +171,12 @@ export default class EstablishmentRollController {
       const { user } = res.locals
       const { clientToken } = req.middleware
 
-      // Keeping in for reference during dev
-      const prisonersEnRoute = await this.movementsService.getEnRoutePrisoners(clientToken, user.activeCaseLoadId)
+      const prisonersOutOvernight = await this.movementsService.getOvernightPrisoners(
+        clientToken,
+        user.activeCaseLoadId,
+      )
 
-      res.render('pages/overnights', { prisoners: prisonersEnRoute, prison: user.activeCaseLoad.description })
+      res.render('pages/overnights', { prisoners: prisonersOutOvernight, prison: user.activeCaseLoad.description })
     }
   }
 }
