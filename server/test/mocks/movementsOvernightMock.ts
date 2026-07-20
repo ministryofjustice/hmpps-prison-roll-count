@@ -21,7 +21,6 @@ export const movementsOvernightMock: OffenderMovement[] = [
     movementDate: '2023-12-25',
     toCity: 'Doncaster',
     commentText: 'Some Doncaster comment',
-    toAddress: 'Fresh Start Cafe 1A Essex Street PR1 1QE',
   },
   {
     offenderNo: 'A1234AB',
@@ -42,7 +41,6 @@ export const movementsOvernightMock: OffenderMovement[] = [
     movementDate: '2023-12-25',
     toCity: 'Sheffield',
     commentText: 'Some Sheffield comment',
-    toAddress: '1A Essex Street PR1 1QE',
   },
   {
     offenderNo: 'A1234AC',
@@ -63,7 +61,6 @@ export const movementsOvernightMock: OffenderMovement[] = [
     movementDate: '2023-12-25',
     toCity: 'Sheffield',
     commentText: 'Some Sheffield comment',
-    toAddress: '1A Essex Street PR1 1QE',
   },
   {
     offenderNo: 'A1234AD',
@@ -84,6 +81,5 @@ export const movementsOvernightMock: OffenderMovement[] = [
     movementDate: '2023-12-25',
     toCity: 'Sheffield',
     commentText: 'Some Sheffield comment',
-    toAddress: '1A Essex Street PR1 1QE',
   },
 ]
