@@ -20,7 +20,6 @@ export const movementsEnRouteMock: OffenderMovement[] = [
     movementTime: '10:00',
     movementDate: '2023-12-25',
     toCity: 'Doncaster',
-    toAddress: '1A Essex Street PR1 1QE',
   },
   {
     offenderNo: 'A1234AB',
@@ -40,6 +39,5 @@ export const movementsEnRouteMock: OffenderMovement[] = [
     movementTime: '11:00',
     movementDate: '2023-12-25',
     toCity: 'Sheffield',
-    toAddress: 'Fresh Start Cafe 1A Essex Street PR1 1QE',
   },
 ]
