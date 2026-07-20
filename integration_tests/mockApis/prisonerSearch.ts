@@ -1,4 +1,5 @@
 import { stubFor } from './wiremock'
+import { Prisoner } from '../../server/data/interfaces/prisoner'
 import prisonerSearchMock from '../../server/test/mocks/prisonerSearchMock'
 import pagedListMock from '../../server/test/mocks/pagedListMock'
 
@@ -14,7 +15,9 @@ export default {
       },
     }),
 
-  stubPostSearchPrisonersById: () => {
+  stubPostSearchPrisonersById: (options?: { payload?: Prisoner[] } | null) => {
+    const payload = options?.payload ?? prisonerSearchMock
+
     return stubFor({
       request: {
         method: 'POST',
@@ -25,12 +28,14 @@ export default {
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        jsonBody: prisonerSearchMock,
+        jsonBody: payload,
       },
     })
   },
 
-  stubPostAttributeSearch: () => {
+  stubPostAttributeSearch: (options?: { payload?: Prisoner[] } | null) => {
+    const payload = options?.payload ?? prisonerSearchMock
+
     return stubFor({
       request: {
         method: 'POST',
@@ -41,7 +46,7 @@ export default {
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        jsonBody: pagedListMock(prisonerSearchMock),
+        jsonBody: pagedListMock(payload),
       },
     })
   },
