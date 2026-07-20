@@ -18,5 +18,4 @@ export interface OffenderMovement {
   directionCode: 'IN' | 'OUT'
   movementTime: string
   movementDate: string
-  toAddress: string
 }
