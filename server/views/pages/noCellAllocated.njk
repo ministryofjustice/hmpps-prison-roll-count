@@ -41,6 +41,7 @@
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
+                {% if prisoners.length > 0 %}
                     {% for prisoner in prisoners %}
                         {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
                         <tr class="govuk-table__row">
@@ -57,6 +58,11 @@
                             {% endif %}
                         </tr>
                     {% endfor %}
+                {% else %}
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell--tall" colspan="7">No people to display</td>
+                    </tr>
+                {% endif %}
                 </tbody>
             </table>
         </div>
