@@ -38,6 +38,7 @@
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
+                {% if prisoners.length > 0 %}
                     {% for prisoner in prisoners %}
                         {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
                         <tr class="govuk-table__row">
@@ -51,7 +52,11 @@
                             <td class="govuk-table__cell">{{ alertFlags(prisoner.alertFlags) }}{{categoryFlag("", prisoner.category) | safe}}</td>
                         </tr>
                     {% endfor %}
-
+                {% else %}
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell--tall" colspan="8">No people to display</td>
+                    </tr>
+                {% endif %}
                 </tbody>
             </table>
         </div>

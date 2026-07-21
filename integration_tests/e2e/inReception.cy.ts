@@ -127,3 +127,30 @@ context('In reception Page', () => {
       .and('contain', 'redirectPath=/prisoner/A1234AB')
   })
 })
+
+context('In reception Page without prisoner data', () => {
+  beforeEach(() => {
+    cy.task('reset')
+    cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
+    cy.setupComponentsData()
+    cy.task('stubMovementsInReceptionEmpty')
+    cy.task('stubRecentMovements')
+    cy.task('stubPostSearchPrisonersById')
+    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
+    cy.task('stubLocationPrisonRollCount')
+    cy.task('stubPrisonConfiguration')
+    cy.signIn({ redirectPath: '/in-reception' })
+    cy.visit('/in-reception')
+  })
+
+  it('Page is visible', () => {
+    Page.verifyOnPage(InReceptionPage)
+  })
+
+  it('should display a single table row explaining there is no data to display', () => {
+    const page = Page.verifyOnPage(InReceptionPage)
+    page.inReceptionRows().should('have.length', 1)
+
+    page.inReceptionRows().first().find('td').should('contain.text', 'No people to display')
+  })
+})
