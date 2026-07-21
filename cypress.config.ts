@@ -5,6 +5,7 @@ import auth from './integration_tests/mockApis/auth'
 import feComponents from './integration_tests/mockApis/feComponents'
 import locations from './integration_tests/mockApis/locations'
 import prison from './integration_tests/mockApis/prison'
+import prisonEmpty from './integration_tests/mockApis/prisonEmpty'
 import prisonerSearch from './integration_tests/mockApis/prisonerSearch'
 import tokenVerification from './integration_tests/mockApis/tokenVerification'
 
@@ -41,6 +42,7 @@ export default defineConfig({
         ...feComponents,
         ...locations,
         ...prison,
+        ...prisonEmpty,
         ...prisonerSearch,
         ...tokenVerification,
       })

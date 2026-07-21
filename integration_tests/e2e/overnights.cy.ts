@@ -89,3 +89,31 @@ context('Overnights Page', () => {
       .and('contain', 'redirectPath=/prisoner/A1234AB/csra-history')
   })
 })
+
+context('Overnights Page without prisoner data', () => {
+  beforeEach(() => {
+    cy.task('reset')
+    cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
+    cy.setupComponentsData()
+    cy.task('stubPostAttributeSearch', { payload: [] })
+    cy.task('stubPostSearchPrisonersById', { payload: [] })
+    cy.task('stubMovementsEmpty')
+    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
+    cy.task('stubLocationPrisonRollCount')
+    cy.task('stubPrisonConfiguration')
+    cy.task('setFeatureFlag', { eRollRebuild: true })
+    cy.signIn({ redirectPath: '/overnights' })
+    cy.visit('/overnights')
+  })
+
+  it('Page is visible', () => {
+    Page.verifyOnPage(OvernightsPage)
+  })
+
+  it('should display a single table row explaining there is no data to display', () => {
+    const page = Page.verifyOnPage(OvernightsPage)
+    page.overnightsRows().should('have.length', 1)
+
+    page.overnightsRows().first().find('td').should('contain.text', 'No people to display')
+  })
+})
