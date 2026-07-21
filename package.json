@@ -155,7 +155,7 @@
   },
   "overrides": {
     "cypress": {
-      "systeminformation": "5.31.6"
+      "systeminformation": "5.31.7"
     },
     "cypress-multi-reporters": {
       "mocha": {
