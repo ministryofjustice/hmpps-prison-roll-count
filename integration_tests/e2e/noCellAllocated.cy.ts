@@ -93,3 +93,28 @@ context('No Cell Allocated Page', () => {
       .and('contain', 'redirectPath=/prisoner/A1234AB')
   })
 })
+
+context('No Cell Allocated Page without prisoner data', () => {
+  beforeEach(() => {
+    cy.task('reset')
+    cy.task('stubPostAttributeSearch', { payload: [] })
+    cy.task('stubGetOffenderCellHistory', '')
+    cy.task('getUserDetailsList')
+    cy.task('stubActivePrisons', { activeAgencies: ['MDI'] })
+    cy.task('stubLocationPrisonRollCount', { prisonCode: 'MDI' })
+    cy.task('stubPrisonConfiguration', { prisonId: 'MDI', resiLocationServiceActive: 'ACTIVE' })
+  })
+
+  it('Page is visible', () => {
+    visitPageWithRoles([`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`])
+    Page.verifyOnPage(NoCellAllocatedPage)
+  })
+
+  it('should display a message explaining there is no data to display', () => {
+    visitPageWithRoles([`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`])
+
+    cy.contains('h1', 'No cell allocated').should('exist')
+
+    cy.contains('p', 'No people to display').should('exist')
+  })
+})

@@ -99,3 +99,29 @@ context('En Route Page', () => {
       .and('contain', 'redirectPath=/prisoner/A1234AB/csra-history')
   })
 })
+
+context('En Route Page without prisoner data', () => {
+  beforeEach(() => {
+    cy.task('reset')
+    cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
+    cy.setupComponentsData()
+    cy.task('stubPostSearchPrisonersById', { payload: [] })
+    cy.task('stubMovementsEnRouteEmpty')
+    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
+    cy.task('stubLocationPrisonRollCount')
+    cy.task('stubPrisonConfiguration')
+    cy.signIn({ redirectPath: '/en-route' })
+    cy.visit('/en-route')
+  })
+
+  it('Page is visible', () => {
+    Page.verifyOnPage(EnRoutePage)
+  })
+
+  it('should display a single table row explaining there is no data to display', () => {
+    const page = Page.verifyOnPage(EnRoutePage)
+    page.enRouteRows().should('have.length', 1)
+
+    page.enRouteRows().first().find('td').should('contain.text', 'No people to display')
+  })
+})

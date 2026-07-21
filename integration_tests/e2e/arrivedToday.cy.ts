@@ -73,3 +73,30 @@ context('Arrived Today Page', () => {
       .and('contain', 'redirectPath=/prisoner/A1234AB')
   })
 })
+
+context('Arrived Today page without prisoner data', () => {
+  beforeEach(() => {
+    cy.task('reset')
+    cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
+    cy.setupComponentsData()
+    cy.task('stubMovementsInEmpty')
+    cy.task('stubPostSearchPrisonersById')
+    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
+    cy.task('stubPrisonRollCount')
+    cy.task('stubLocationPrisonRollCount')
+    cy.task('stubPrisonConfiguration')
+    cy.signIn({ redirectPath: '/arrived-today' })
+    cy.visit('/arrived-today')
+  })
+
+  it('Page is visible', () => {
+    Page.verifyOnPage(ArrivedTodayPage)
+  })
+
+  it('should display a single table row explaining there is no data to display', () => {
+    const page = Page.verifyOnPage(ArrivedTodayPage)
+    page.arrivedTodayRows().should('have.length', 1)
+
+    page.arrivedTodayRows().first().find('td').should('contain.text', 'No people to display')
+  })
+})
