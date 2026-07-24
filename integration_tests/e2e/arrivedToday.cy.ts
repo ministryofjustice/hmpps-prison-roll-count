@@ -37,23 +37,24 @@ context('Arrived Today Page', () => {
   it('should display alerts and category if cat A', () => {
     const page = Page.verifyOnPage(ArrivedTodayPage)
 
-    page.arrivedTodayRows().eq(1).find('td').eq(7).should('contain.text', 'Hidden disability')
-    page.arrivedTodayRows().eq(1).find('td').eq(7).should('contain.text', 'CAT A')
+    page.arrivedTodayRows().eq(1).find('td').eq(8).should('contain.text', 'Hidden disability')
+    page.arrivedTodayRows().eq(1).find('td').eq(8).should('contain.text', 'CAT A')
   })
 
-  it('makes Name, "Time arrived" and "Arrived from" sortable but not the other columns', () => {
+  it('makes Name, "Time arrived", "Arrived from" and "CSRA" sortable but not the other columns', () => {
     const page = Page.verifyOnPage(ArrivedTodayPage)
 
     // Sortable columns expose aria-sort
     page.arrivedTodayHeaders().eq(1).should('have.attr', 'aria-sort') // Name
     page.arrivedTodayHeaders().eq(5).should('have.attr', 'aria-sort') // Time arrived
     page.arrivedTodayHeaders().eq(6).should('have.attr', 'aria-sort') // Arrived from
+    page.arrivedTodayHeaders().eq(7).should('have.attr', 'aria-sort') // CSRA
 
     // Non-sortable columns do not
     page.arrivedTodayHeaders().eq(2).should('not.have.attr', 'aria-sort') // Prison number
     page.arrivedTodayHeaders().eq(3).should('not.have.attr', 'aria-sort') // Date of birth
     page.arrivedTodayHeaders().eq(4).should('not.have.attr', 'aria-sort') // Location
-    page.arrivedTodayHeaders().eq(7).should('not.have.attr', 'aria-sort') // Alert flags
+    page.arrivedTodayHeaders().eq(8).should('not.have.attr', 'aria-sort') // Alert flags
   })
 
   it('name link returns to the arrived-today page via the prisoner profile back link', () => {
