@@ -166,7 +166,7 @@
       "chokidar": "5.0.0"
     },
     "eslint-plugin-import": {
-      "minimatch": "^5.1.9"
+      "minimatch": "^10.2.5"
     },
     "diff": "9.0.0",
     "fast-xml-builder": "^1.2.0",
