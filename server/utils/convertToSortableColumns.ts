@@ -12,6 +12,11 @@ export const convertToSortableColumns = (
 
   return headings.map(heading => {
     const { text, key, ...others } = heading
+    const existingAttributes = ((others as { attributes?: Record<string, string> }).attributes ?? {}) as Record<
+      string,
+      string
+    >
+
     if (!key) {
       return heading
     }
@@ -19,29 +24,32 @@ export const convertToSortableColumns = (
     if (key === sortingKey) {
       if (sortingDirection === 'asc') {
         return {
+          ...others,
           attributes: {
+            ...existingAttributes,
             'aria-sort': 'ascending',
           },
           html: `<a href="${urlFromTemplate(hrefTemplate, key, 'desc')}" role="button">${text}</a>`,
-          ...others,
         }
       }
       if (sortingDirection === 'desc') {
         return {
+          ...others,
           attributes: {
+            ...existingAttributes,
             'aria-sort': 'descending',
           },
           html: `<a href="${urlFromTemplate(hrefTemplate, key, 'asc')}" role="button">${text}</a>`,
-          ...others,
         }
       }
     }
     return {
+      ...others,
       attributes: {
+        ...existingAttributes,
         'aria-sort': 'none',
       },
       html: `<a href="${urlFromTemplate(hrefTemplate, key, 'asc')}" role="button">${text}</a>`,
-      ...others,
     }
   })
 }

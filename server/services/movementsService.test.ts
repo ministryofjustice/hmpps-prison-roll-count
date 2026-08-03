@@ -201,6 +201,47 @@ describe('movementsService', () => {
     })
   })
 
+  describe('getOvernightPrisoners', () => {
+    beforeEach(() => {
+      prisonerSearchApiClientMock.getOvernightPrisonersInEstablishment = jest
+        .fn()
+        .mockResolvedValue(pagedListMock(prisonerSearchMock))
+      prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
+      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue(movementsRecentMock)
+    })
+
+    it('should return prisoners sorted by last name descending by default', async () => {
+      const result = await movementsService.getOvernightPrisoners('token', 'LEI')
+
+      expect(prisonerSearchApiClientMock.getOvernightPrisonersInEstablishment).toHaveBeenCalledWith('LEI')
+      expect(prisonerSearchApiClientMock.getPrisonersById).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
+      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
+      expect(result.map(prisoner => prisoner.prisonerNumber)).toEqual(['A1234AA', 'A1234AB'])
+    })
+
+    it('should sort by last name ascending when requested', async () => {
+      const result = await movementsService.getOvernightPrisoners('token', 'LEI', 'lastName,asc')
+
+      expect(result.map(prisoner => prisoner.prisonerNumber)).toEqual(['A1234AB', 'A1234AA'])
+    })
+
+    it('should sort by departed time ascending when requested', async () => {
+      const result = await movementsService.getOvernightPrisoners('token', 'LEI', 'timeDateDeparted,asc')
+
+      expect(result.map(prisoner => prisoner.prisonerNumber)).toEqual(['A1234AA', 'A1234AB'])
+    })
+
+    it('should return empty array if no overnight prisoners', async () => {
+      prisonerSearchApiClientMock.getOvernightPrisonersInEstablishment = jest.fn().mockResolvedValue(pagedListMock([]))
+
+      const result = await movementsService.getOvernightPrisoners('token', 'LEI')
+
+      expect(prisonerSearchApiClientMock.getPrisonersById).not.toHaveBeenCalled()
+      expect(prisonApiClientMock.getRecentMovements).not.toHaveBeenCalled()
+      expect(result).toEqual([])
+    })
+  })
+
   describe('getNoCellAllocatedPrisoners', () => {
     beforeEach(() => {
       prisonerSearchApiClientMock.getCswapPrisonersInEstablishment = jest
