@@ -24,96 +24,68 @@
 		</div>
 
 		<div class="govuk-grid-row govuk-!-margin-bottom-9">
-
-      {% if prisoners.length > 0 %}
-
-      {% set rows = [] %}
-      {% for prisoner in prisoners %}
-        {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
-        {% set csraLevel = prisoner.csra or 'None' %}
-        {% set rows = (rows.push([
-          { html: '<img src="/prisonerImage/' ~ (prisoner.prisonerNumber or 'placeholder') ~ '" alt="Image of ' ~ prisonerName ~ '" class="results-table__results__image" />' },
-          { html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Overnights (due to return)', '/overnights', prisoner.prisonerNumber) ~ '" class="govuk-link">' ~ prisonerName ~ '</a>', sortValue: prisonerName },
-          { text: prisoner.prisonerNumber },
-          { text: prisoner.movementTime | formatTime ~ '<br />' ~ prisoner.movementDate | formatDate('short'), sortValue: prisoner.movementDate | toUnixTimeStamp(prisoner.movementTime) },
-          { text: prisoner.reason },
-          { html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Overnights (due to return)', '/overnights', prisoner.prisonerNumber, '/csra-history') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>', sortValue: csraLevel },
-          { html: alertFlags(prisoner.alertFlags) ~ categoryFlag("", prisoner.category) | safe }
-        ]), rows) %}
-      {% endfor %}
-
-      {{ govukTable({
-        caption: 'Overnights due to return (column headers with buttons are sortable)',
-        captionClasses: 'govuk-visually-hidden',
-        firstCellIsHeader: false,
-        classes: 'table-vertical-align-middle govuk-!-margin-top-6 sortable-table',
-        head: [
-          {
-            text: ''
-          },
-          {
-            text: "Name",
-            key: 'lastName'
-          },
-          {
-            text: "Prison number"
-          },
-          {
-            text: "Time and date departed",
-            key: 'timeDateDeparted'
-          },
-          {
-            text: 'Reason',
-            key: 'reason'
-          },
-          {
-            text: 'CSRA',
-            key: 'csra'
-          },
-          {
-            text: 'Relevant alerts'
-          }
-        ] | convertToSortableColumns(sort or 'start,asc', '?sort={sortKey},{sortDirection}&page=1&' + filterQueries),
-        rows: rows
-      }) }}
-
-      {% endif %}
-
       <div class="govuk-grid-column-full results-table results-table__results">
-        <table class="govuk-table overnights-roll__table" data-module="moj-sortable-table">
-          <thead class="govuk-table__head">
-          <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Picture</span></th>
-            <th scope="col" class="govuk-table__header govuk-!-font-size-16" aria-sort="ascending">Name</th>
-            <th scope="col" class="govuk-table__header govuk-!-font-size-16">Prison number</th>
-            <th scope="col" class="govuk-table__header govuk-!-font-size-16" aria-sort="none">Time and date departed</th>
-            <th scope="col" class="govuk-table__header govuk-!-font-size-16" aria-sort="none">Reason</th>
-            <th scope="col" class="govuk-table__header govuk-!-font-size-16" aria-sort="none">CSRA</th>
-            <th scope="col" class="govuk-table__header govuk-!-font-size-16">Relevant alerts</th>
-          </tr>
-          </thead>
-          <tbody class="govuk-table__body">
-          {% if prisoners.length > 0 %}
-          {% for prisoner in prisoners %}
-            {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
-            <tr class="govuk-table__row">
-              <td class="govuk-table__cell govuk-!-font-size-16"><img src="/prisonerImage/{{ prisoner.prisonerNumber or 'placeholder' }}" alt="Image of {{ prisonerName }}" class="results-table__results__image" /></td>
-              <td class="govuk-table__cell govuk-!-font-size-16" data-sort-value="{{ prisonerName }}" ><a href="{{ prisonerProfileBackLinkUrl('Back to Overnights (due to return)', '/overnights', prisoner.prisonerNumber) }}" class="govuk-link">{{ prisonerName }}</a></td>
-              <td class="govuk-table__cell govuk-!-font-size-16">{{ prisoner.prisonerNumber }}</td>
-              <td class="govuk-table__cell govuk-!-font-size-16" data-sort-value="{{ prisoner.movementDate | toUnixTimeStamp(prisoner.movementTime) }}">{{ prisoner.movementTime | formatTime }}<br />{{ prisoner.movementDate | formatDate('short')}}</td>
-              <td class="govuk-table__cell govuk-!-font-size-16">{{ prisoner.reason }}</td>
-              {% set csraLevel = prisoner.csra or 'None' %}
-              <td class="govuk-table__cell govuk-!-font-size-16" data-sort-value="{{ csraLevel }}"><a href="{{ prisonerProfileBackLinkUrl('Back to Overnights (due to return)', '/overnights', prisoner.prisonerNumber, '/csra-history') }}" class="govuk-link">{{ csraLevel }}</a></td>
-              <td class="govuk-table__cell govuk-!-font-size-16">{{ alertFlags(prisoner.alertFlags) }}{{categoryFlag("", prisoner.category) | safe}}</td>
-            </tr>
-          {% endfor %}
-          {% else %}
-            <tr class="govuk-table__row">
-              <td class="govuk-table__cell--tall" colspan="7">No people to display</td>
-            </tr>
-          {% endif %}
-          </tbody>
-        </table>
+        {% if prisoners.length > 0 %}
+              {% set rows = [] %}
+              {% for prisoner in prisoners %}
+                {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
+                {% set csraLevel = prisoner.csra or 'None' %}
+                {% set rows = (rows.push([
+                  { html: '<img src="/prisonerImage/' ~ (prisoner.prisonerNumber or 'placeholder') ~ '" alt="Image of ' ~ prisonerName ~ '" class="results-table__results__image" />' },
+                  { html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Overnights (due to return)', '/overnights', prisoner.prisonerNumber) ~ '" class="govuk-link">' ~ prisonerName ~ '</a>', sortValue: prisonerName },
+                  { text: prisoner.prisonerNumber },
+                  { html: prisoner.movementTime | formatTime ~ '<br />' ~ prisoner.movementDate | formatDate('short'), sortValue: prisoner.movementDate | toUnixTimeStamp(prisoner.movementTime) },
+                  { text: prisoner.reason },
+                  { html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Overnights (due to return)', '/overnights', prisoner.prisonerNumber, '/csra-history') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>', sortValue: csraLevel },
+                  { html: alertFlags(prisoner.alertFlags) ~ categoryFlag("", prisoner.category) | safe }
+                ]), rows) %}
+              {% endfor %}
+
+              {{ govukTable({
+                caption: 'Overnights due to return (column headers with buttons are sortable)',
+                captionClasses: 'govuk-visually-hidden',
+                firstCellIsHeader: false,
+                classes: 'govuk-table overnights-roll__table table-vertical-align-middle sortable-table govuk-!-font-size-16',
+                head: [
+                  {
+                    text: ''
+                  },
+                  {
+                    text: "Name",
+                    key: 'lastName',
+                    classes: 'govuk-!-font-size-16'
+                  },
+                  {
+                    text: "Prison number",
+                    classes: 'govuk-!-font-size-16'
+                  },
+                  {
+                    text: "Time and date departed",
+                    key: 'timeDateDeparted',
+                    classes: 'govuk-!-font-size-16'
+                  },
+                  {
+                    text: 'Reason',
+                    key: 'reason',
+                    classes: 'govuk-!-font-size-16'
+                  },
+                  {
+                    text: 'CSRA',
+                    key: 'csra',
+                    classes: 'govuk-!-font-size-16'
+                  },
+                  {
+                    text: 'Relevant alerts',
+                    classes: 'govuk-!-font-size-16'
+                  }
+                ] | convertToSortableColumns(sort or 'start,asc', '?sort={sortKey},{sortDirection}&page=1&' + filterQueries),
+                rows: rows,
+                attributes: { "data-module": "moj-sortable-table" }
+              }) }}
+
+              {% endif %}
+
+              /* TODO: pagination */
       </div>
     </div>
 
