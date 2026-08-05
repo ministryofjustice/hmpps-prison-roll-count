@@ -7,7 +7,7 @@ describe('convertToSortableColumns', () => {
         text: 'Time and date departed',
         key: 'timeDateDeparted',
         attributes: {
-          'aria-sort': 'ascending',
+          'aria-sort': 'descending',
           'data-persistent-id': 'timeDateDeparted',
         },
       },
@@ -17,20 +17,20 @@ describe('convertToSortableColumns', () => {
       },
     ]
 
-    const [nameHeading, reasonHeading] = convertToSortableColumns(headings, 'lastName,asc') as Array<{
+    const [nameHeading, reasonHeading] = convertToSortableColumns(headings, 'timeDateDeparted,desc') as Array<{
       attributes: Record<string, string>
       html: string
     }>
 
     expect(nameHeading.attributes).toEqual({
-      'aria-sort': 'ascending',
-      'data-persistent-id': 'prisoner-name',
+      'aria-sort': 'descending',
+      'data-persistent-id': 'timeDateDeparted',
     })
-    expect(nameHeading.html).toContain('sort=lastName,desc')
+    expect(nameHeading.html).toContain('sort=timeDateDeparted,asc')
 
     expect(reasonHeading.attributes).toEqual({
       'aria-sort': 'none',
     })
-    expect(reasonHeading.html).toContain('sort=reason,asc')
+    expect(reasonHeading.html).toContain('sort=reason,desc')
   })
 })

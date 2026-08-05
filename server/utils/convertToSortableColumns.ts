@@ -49,7 +49,7 @@ export const convertToSortableColumns = (
         ...existingAttributes,
         'aria-sort': 'none',
       },
-      html: `<a href="${urlFromTemplate(hrefTemplate, key, 'asc')}" role="button">${text}</a>`,
+      html: `<a href="${urlFromTemplate(hrefTemplate, key, sortingDirection)}" role="button">${text}</a>`,
     }
   })
 }

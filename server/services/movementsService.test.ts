@@ -214,7 +214,7 @@ describe('movementsService', () => {
       prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue(movementsRecentMock)
     })
 
-    it('should return prisoners sorted by last name descending by default', async () => {
+    it('should return prisoners sorted by time and date departed (descending) by default', async () => {
       const result = await movementsService.getOvernightPrisoners('token', 'LEI')
 
       expect(prisonerSearchApiClientMock.getOvernightPrisonersInEstablishment).toHaveBeenCalledWith('LEI')
@@ -224,7 +224,7 @@ describe('movementsService', () => {
       expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(
         expect.arrayContaining(['A1234AA', 'A1234AB']),
       )
-      expect(result.map(prisoner => prisoner.prisonerNumber)).toEqual(['A1234AA', 'A1234AB'])
+      expect(result.map(prisoner => prisoner.prisonerNumber)).toEqual(['A1234AB', 'A1234AA'])
     })
 
     it('should sort by last name ascending when requested', async () => {

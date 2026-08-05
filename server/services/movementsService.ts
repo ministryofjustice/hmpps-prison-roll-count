@@ -93,7 +93,7 @@ export default class MovementsService {
   public async getOvernightPrisoners(
     clientToken: string,
     caseLoadId: string,
-    sort: string = 'timeDateDeparted,asc',
+    sort: string = 'timeDateDeparted,desc',
   ): Promise<(PrisonerWithAlerts & { movementTime: string })[]> {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
