@@ -12,5 +12,6 @@ export function prisonerProfileBackLinkUrl(
   prisonerNumber: string,
   subPath?: string,
 ): string {
-  return `${config.serviceUrls.prisonerProfile}/save-backlink?service=${serviceName}&backLinkText=${encodeURIComponent(backLinkText)}&returnPath=${returnPath}&redirectPath=/prisoner/${prisonerNumber}${subPath ?? ''}`
+  const returnPathParam = returnPath.includes('?') ? encodeURIComponent(returnPath) : returnPath
+  return `${config.serviceUrls.prisonerProfile}/save-backlink?service=${serviceName}&backLinkText=${encodeURIComponent(backLinkText)}&returnPath=${returnPathParam}&redirectPath=/prisoner/${prisonerNumber}${subPath ?? ''}`
 }

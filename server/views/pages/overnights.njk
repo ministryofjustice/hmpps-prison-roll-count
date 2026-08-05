@@ -22,9 +22,11 @@
 		<div class="govuk-!-margin-bottom-6">
 				<h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ pageTitle }}</h1>
 		</div>
-
+		
 		<div class="govuk-grid-row govuk-!-margin-bottom-9">
       <div class="govuk-grid-column-full results-table results-table__results">
+        {% set sortParam = sort or 'timeDateDeparted,desc' %}
+        {% set returnPathWithSort = '/overnights?sort=' ~ sortParam %}
         {% set rows = [] %}
         {% set blankRows = [
           [
@@ -42,7 +44,7 @@
                 html: '<img src="/prisonerImage/' ~ (prisoner.prisonerNumber or 'placeholder') ~ '" alt="Image of ' ~ prisonerName ~ '" class="results-table__results__image" />'
               },
               {
-                html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Overnights (due to return)', '/overnights', prisoner.prisonerNumber) ~ '" class="govuk-link">' ~ prisonerName ~ '</a>',
+                html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Overnights (due to return)', returnPathWithSort, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ prisonerName ~ '</a>',
                 sortValue: prisonerName,
                 attributes: {
                   "data-sort-value": prisoner.lastName.toLowerCase() if prisoner.displayName else ''
@@ -58,7 +60,8 @@
                 text: prisoner.reason
               },
               {
-                html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Overnights (due to return)', '/overnights', prisoner.prisonerNumber, '/csra-history') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>', sortValue: csraLevel
+                html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Overnights (due to return)', returnPathWithSort, prisoner.prisonerNumber, '/csra-history') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>',
+                sortValue: csraLevel
               },
               {
                 html: alertFlags(prisoner.alertFlags) ~ categoryFlag("", prisoner.category) | safe
@@ -108,7 +111,7 @@
               text: 'Relevant alerts',
               classes: 'govuk-!-font-size-16'
             }
-           ] | convertToSortableColumns(sort or 'lastName,desc', '?sort={sortKey},{sortDirection}'),
+           ] | convertToSortableColumns(sortParam, '?sort={sortKey},{sortDirection}'),
             rows: rows if prisoners.length > 0 else blankRows
             }) }}
       </div>
