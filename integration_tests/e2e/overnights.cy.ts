@@ -38,7 +38,6 @@ context('Overnights Page', () => {
   it('should display alerts and category if cat A', () => {
     const page = Page.verifyOnPage(OvernightsPage)
     page.overnightsRows().should('have.length', 4)
-
     page.overnightsRows().eq(2).find('td').eq(6).should('contain.text', 'Hidden disability')
     page.overnightsRows().eq(2).find('td').eq(6).should('contain.text', 'CAT A')
   })
