@@ -11,6 +11,7 @@ const establishmentRollService = {
 const movementsService = {
   getOffendersCurrentlyOutOfBed: jest.fn(),
   getOffendersCurrentlyOutOfLivingUnit: jest.fn(),
+  getOvernightPrisoners: jest.fn(),
 }
 const locationService = {
   getInternalLocationInfo: jest.fn(),
@@ -295,6 +296,57 @@ describe('EstablishmentRollController', () => {
         date: expect.anything(),
         useWorkingCapacity: true,
         displayOvernights: true,
+      })
+    })
+  })
+
+  describe('getOvernights', () => {
+    it('defaults sort to timeDateDeparted,desc when no query is provided', async () => {
+      movementsService.getOvernightPrisoners.mockResolvedValue([])
+
+      const controller = new EstablishmentRollController(
+        establishmentRollService as unknown as EstablishmentRollService,
+        movementsService as unknown as MovementsService,
+        locationService as unknown as LocationService,
+      )
+
+      const req = mockReq()
+      const res = mockRes()
+      const next = mockNext()
+
+      await controller.getOvernights()(req, res, next)
+
+      expect(movementsService.getOvernightPrisoners).toHaveBeenCalledWith('token', 'LEI', 'timeDateDeparted,desc')
+      expect(res.render).toHaveBeenCalledWith('pages/overnights', {
+        prisoners: [],
+        prison: 'Leeds',
+        sort: 'timeDateDeparted,desc',
+      })
+    })
+
+    it('passes through sort query when provided', async () => {
+      movementsService.getOvernightPrisoners.mockResolvedValue([])
+
+      const controller = new EstablishmentRollController(
+        establishmentRollService as unknown as EstablishmentRollService,
+        movementsService as unknown as MovementsService,
+        locationService as unknown as LocationService,
+      )
+
+      const req = {
+        ...mockReq(),
+        query: { sort: 'reason,asc' },
+      } as unknown as Request
+      const res = mockRes()
+      const next = mockNext()
+
+      await controller.getOvernights()(req, res, next)
+
+      expect(movementsService.getOvernightPrisoners).toHaveBeenCalledWith('token', 'LEI', 'reason,asc')
+      expect(res.render).toHaveBeenCalledWith('pages/overnights', {
+        prisoners: [],
+        prison: 'Leeds',
+        sort: 'reason,asc',
       })
     })
   })
