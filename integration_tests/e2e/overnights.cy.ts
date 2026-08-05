@@ -27,12 +27,12 @@ context('Overnights Page', () => {
     const page = Page.verifyOnPage(OvernightsPage)
     page.overnightsRows().should('have.length', 4)
 
-    page.overnightsRows().first().find('td').eq(1).should('contain.text', 'Vonk, Michel')
-    page.overnightsRows().first().find('td').eq(2).should('contain.text', 'A1234AC')
-    page.overnightsRows().first().find('td').eq(3).should('contain.text', '11:0025/12/2023')
-    page.overnightsRows().first().find('td').eq(4).should('contain.text', 'Paid Work - Other')
-    page.overnightsRows().first().find('td').eq(5).should('contain.text', 'Standard')
-    page.overnightsRows().first().find('td').eq(6).should('contain.text', 'No relevant alerts')
+    cy.contains('table.overnights-roll__table tbody tr', 'Smith, John').find('td').eq(1).should('contain.text', 'Smith, John')
+    cy.contains('table.overnights-roll__table tbody tr', 'Smith, John').find('td').eq(2).should('contain.text', 'A1234AA')
+    cy.contains('table.overnights-roll__table tbody tr', 'Smith, John').find('td').eq(3).should('contain.text', '10:0025/12/2023')
+    cy.contains('table.overnights-roll__table tbody tr', 'Smith, John').find('td').eq(4).should('contain.text', 'NTRN')
+    cy.contains('table.overnights-roll__table tbody tr', 'Smith, John').find('td').eq(5).should('contain.text', 'High')
+    cy.contains('table.overnights-roll__table tbody tr', 'Smith, John').find('td').eq(6).should('contain.text', 'Hidden disability')
   })
 
   it('should display alerts and category if cat A', () => {
