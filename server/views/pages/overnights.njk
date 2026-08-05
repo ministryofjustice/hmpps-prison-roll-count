@@ -79,11 +79,7 @@
             {
               text: "Name",
               key: 'lastName',
-              classes: 'govuk-!-font-size-16',
-              attributes: {
-                  "aria-sort": "descending",
-                  'data-persistent-id': 'prisoner-name'
-              }
+              classes: 'govuk-!-font-size-16'
             },
             {
               text: "Prison number",
@@ -92,7 +88,11 @@
             {
               text: "Time and date departed",
               key: 'timeDateDeparted',
-              classes: 'govuk-!-font-size-16'
+              classes: 'govuk-!-font-size-16',
+              attributes: {
+                  "aria-sort": "ascending",
+                  'data-persistent-id': 'timeDateDeparted'
+              }
             },
             {
               text: 'Reason',

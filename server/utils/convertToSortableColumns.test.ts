@@ -4,12 +4,12 @@ describe('convertToSortableColumns', () => {
   it('updates aria-sort and preserves existing heading attributes', () => {
     const headings = [
       {
-        text: 'Name',
-        key: 'lastName',
+        text: "Time and date departed",
+        key: 'timeDateDeparted',
         attributes: {
-          'aria-sort': 'descending',
-          'data-persistent-id': 'prisoner-name',
-        },
+          "aria-sort": "ascending",
+          'data-persistent-id': 'timeDateDeparted'
+        }
       },
       {
         text: 'Reason',
