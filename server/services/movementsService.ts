@@ -109,16 +109,16 @@ export default class MovementsService {
     ])
 
     const mappedPrisoners = prisoners.map(prisoner => {
-        const recentMovement = recentMovements.find(movement => movement.offenderNo === prisoner.prisonerNumber)
+      const recentMovement = recentMovements.find(movement => movement.offenderNo === prisoner.prisonerNumber)
 
-        return {
-          ...prisoner,
-          alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
-          movementTime: recentMovement?.movementTime,
-          movementDate: recentMovement?.movementDate,
-          reason: recentMovement?.movementReason,
-        }
-      })
+      return {
+        ...prisoner,
+        alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
+        movementTime: recentMovement?.movementTime,
+        movementDate: recentMovement?.movementDate,
+        reason: recentMovement?.movementReason,
+      }
+    })
 
     const [sortKey = 'lastName', sortDirection = 'desc'] = sort.split(',')
     const isAscending = sortDirection === 'asc'

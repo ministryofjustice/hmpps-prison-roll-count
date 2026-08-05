@@ -34,4 +34,3 @@ describe('convertToSortableColumns', () => {
     expect(reasonHeading.html).toContain('sort=reason,asc')
   })
 })
-

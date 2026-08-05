@@ -165,7 +165,9 @@ describe('movementsService', () => {
       expect(prisonerSearchApiClientMock.getPrisonersById).toHaveBeenCalledWith(
         expect.arrayContaining(['A1234AA', 'A1234AB']),
       )
-      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(expect.arrayContaining(['A1234AA', 'A1234AB']))
+      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(
+        expect.arrayContaining(['A1234AA', 'A1234AB']),
+      )
 
       expect(result).toEqual([
         {
@@ -219,7 +221,9 @@ describe('movementsService', () => {
       expect(prisonerSearchApiClientMock.getPrisonersById).toHaveBeenCalledWith(
         expect.arrayContaining(['A1234AA', 'A1234AB']),
       )
-      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(expect.arrayContaining(['A1234AA', 'A1234AB']))
+      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(
+        expect.arrayContaining(['A1234AA', 'A1234AB']),
+      )
       expect(result.map(prisoner => prisoner.prisonerNumber)).toEqual(['A1234AA', 'A1234AB'])
     })
 
