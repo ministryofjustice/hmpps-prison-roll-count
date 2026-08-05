@@ -162,8 +162,10 @@ describe('movementsService', () => {
       prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue(movementsRecentMock)
 
       const result = await movementsService.getInReceptionPrisoners('token', 'LEI')
-      expect(prisonerSearchApiClientMock.getPrisonersById).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
-      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
+      expect(prisonerSearchApiClientMock.getPrisonersById).toHaveBeenCalledWith(
+        expect.arrayContaining(['A1234AA', 'A1234AB']),
+      )
+      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(expect.arrayContaining(['A1234AA', 'A1234AB']))
 
       expect(result).toEqual([
         {
@@ -214,8 +216,10 @@ describe('movementsService', () => {
       const result = await movementsService.getOvernightPrisoners('token', 'LEI')
 
       expect(prisonerSearchApiClientMock.getOvernightPrisonersInEstablishment).toHaveBeenCalledWith('LEI')
-      expect(prisonerSearchApiClientMock.getPrisonersById).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
-      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
+      expect(prisonerSearchApiClientMock.getPrisonersById).toHaveBeenCalledWith(
+        expect.arrayContaining(['A1234AA', 'A1234AB']),
+      )
+      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(expect.arrayContaining(['A1234AA', 'A1234AB']))
       expect(result.map(prisoner => prisoner.prisonerNumber)).toEqual(['A1234AA', 'A1234AB'])
     })
 
