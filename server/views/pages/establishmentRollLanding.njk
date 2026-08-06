@@ -25,36 +25,42 @@
         <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ pageTitle }}</h1>
         {{ printLink(align = "right") }}
     </div>
-
     <div class="govuk-grid-row govuk-!-margin-bottom-9">
-        <div class="govuk-grid-column-three-quarters">
+        <div class="govuk-grid-column-full">
             <table class="govuk-table landing-roll__table">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header"></th>
+                        <th scope="col" class="govuk-table__header">Cell</th>
                         <th scope="col" class="govuk-table__header">Beds in use</th>
-                        <th scope="col" class="govuk-table__header">Currently in cell</th>
-                        <th scope="col" class="govuk-table__header">Currently out</th>
-                        <th scope="col" class="govuk-table__header">{{ capacityLabel }}</th>
-                        <th scope="col" class="govuk-table__header">Net vacancies</th>
+                        <th scope="col" class="govuk-table__header">Occupants</th>
+                        <th scope="col" class="govuk-table__header">Location</th>
+                        <th scope="col" class="govuk-table__header">CSRA</th>
+                        <th scope="col" class="govuk-table__header">Relevant alerts</th>
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
                     {% for cell in cellRollCounts %}
+                        {% set cellPrisoners = prisonersByCell[cell.fullLocationPath] %}
                         <tr class="govuk-table__row" id="{{ cell.locationId }}">
                             <td class="govuk-table__cell">{{ cell.localName or cell.locationCode }}</td>
                             <td class="govuk-table__cell">{{ cell.rollCount.bedsInUse }}</td>
-                            <td class="govuk-table__cell">{{ cell.rollCount.currentlyInCell }}</td>
-                            <td class="govuk-table__cell">
-                                {% if cell.rollCount.currentlyOut > 0 %}
-                                    <a class="govuk-link" href="/{{cell.locationId}}/currently-out">{{cell.rollCount.currentlyOut}}</a>
-                                {% else %} 0 {% endif %}
-                            </td>
-                            <td class="govuk-table__cell">{{ cell.rollCount.workingCapacity }}</td>
-                            <td class="govuk-table__cell">{{ cell.rollCount.netVacancies }}</td>
+                            {% if cellPrisoners %}
+                              {% for prisoner in cellPrisoners %}
+                                <td class="govuk-table__cell">
+                                    <strong>{{ prisoner.firstName }} {{ prisoner.lastName }}</strong> ({{ prisoner.prisonerNumber }}) - {{ prisoner.inOutStatus }}
+                                </td>
+                                <td class="govuk-table__cell">{{ prisoner.locationDescription }}</td>
+                                <td class="govuk-table__cell">{{ prisoner.csra }}</td>
+                                <td class="govuk-table__cell">{{ prisoner.relevantAlerts }}</td>
+                              {% endfor %}
+                            {% else %}
+                                <td class="govuk-table__cell">{{ 'No occupants' }}</td>
+                                <td class="govuk-table__cell">{{ 'Not applicable' }}</td>
+                                <td class="govuk-table__cell">{{ 'Not applicable' }}</td>
+                                <td class="govuk-table__cell">{{ 'Not applicable' }}</td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
-
                 </tbody>
             </table>
         </div>

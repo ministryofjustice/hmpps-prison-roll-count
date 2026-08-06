@@ -3,11 +3,13 @@ import EstablishmentRollCount from './interfaces/EstablishmentRollCount'
 import EstablishmentRollSummary from './interfaces/EstablishmentRollSummary'
 import { PrisonApiClient } from '../data/interfaces/prisonApiClient'
 import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
+import { PrisonerSearchClient } from '../data/interfaces/prisonerSearchClient'
 
 export default class EstablishmentRollService {
   constructor(
     private readonly prisonApiClientBuilder: RestClientBuilder<PrisonApiClient>,
     private readonly locationsInsidePrisonApiClientBuilder: RestClientBuilder<LocationsInsidePrisonApiClient>,
+    private readonly prisonerSearchClientBuilder: RestClientBuilder<PrisonerSearchClient>,
   ) {}
 
   public async isResiLocationServiceActive(clientToken: string, caseLoadId: string): Promise<boolean> {
@@ -47,7 +49,11 @@ export default class EstablishmentRollService {
     }
   }
 
-  public async getLandingRollCounts(clientToken: string, caseLoadId: string, wingId: string, landingId: string) {
+  public async getLandingRollCounts(
+    clientToken: string,
+    caseLoadId: string,
+    wingId: string,
+    landingId: string) {
     const locationsApi = this.locationsInsidePrisonApiClientBuilder(clientToken)
     const prisonApi = this.prisonApiClientBuilder(clientToken)
 
@@ -56,6 +62,13 @@ export default class EstablishmentRollService {
     const rollCountForWing = prisonIsActiveForResi
       ? await locationsApi.getPrisonRollCountForLocation(caseLoadId, wingId)
       : await prisonApi.getPrisonRollCountForLocation(caseLoadId, wingId)
+
+    // Get prisoner details for the wing
+    const prisonersInLocations = await locationsApi.getPrisonersAtLocation(wingId)
+    const prisonersByCell: Record<string, any[]> = {}
+    prisonersInLocations.forEach(pl => {
+      prisonersByCell[pl.cellLocation] = pl.prisoners
+    })
 
     const wing = rollCountForWing.locations[0]
 
@@ -66,6 +79,7 @@ export default class EstablishmentRollService {
         landingName: landingOnWing.localName || landingOnWing.locationCode,
         cellRollCounts: landingOnWing.subLocations,
         useWorkingCapacity: prisonIsActiveForResi,
+        prisonersByCell,
       }
     }
 
@@ -81,6 +95,7 @@ export default class EstablishmentRollService {
       landingName: landing?.localName || landing?.locationCode,
       cellRollCounts: landing.subLocations,
       useWorkingCapacity: prisonIsActiveForResi,
+      prisonersByCell,
     }
   }
 

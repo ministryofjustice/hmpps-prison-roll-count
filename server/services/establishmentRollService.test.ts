@@ -5,15 +5,19 @@ import prisonRollCountForWingNoSpurMock from '../mocks/prisonRollCountForWingNoS
 import prisonRollCountForWingWithSpurMock from '../mocks/prisonRollCountForWingWithSpurMock'
 import prisonEstablishmentRollSummaryMock from '../mocks/prisonRollCountSummaryMock'
 import locationsInsidePrisonApiClientMock from '../test/mocks/locationsInsidePrisonApiClientMock'
+import prisonerSearchApiClientMock from '../test/mocks/prisonerSearchApiClientMock'
+import prisonerInLocation from '../test/mocks/prisonersInLocation'
 
 describe('establishmentRollService', () => {
   let establishmentRollService: EstablishmentRollService
 
   beforeEach(() => {
     jest.clearAllMocks()
+    locationsInsidePrisonApiClientMock.getPrisonersAtLocation = jest.fn().mockResolvedValue([])
     establishmentRollService = new EstablishmentRollService(
       () => prisonApiClientMock,
       () => locationsInsidePrisonApiClientMock,
+      () => prisonerSearchApiClientMock
     )
   })
 
