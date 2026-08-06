@@ -170,13 +170,19 @@ export default class EstablishmentRollController {
     return async (req: Request, res: Response) => {
       const { user } = res.locals
       const { clientToken } = req.middleware
+      const sort = typeof req.query?.sort === 'string' ? req.query.sort : 'timeDateDeparted,desc'
 
       const prisonersOutOvernight = await this.movementsService.getOvernightPrisoners(
         clientToken,
         user.activeCaseLoadId,
+        sort,
       )
 
-      res.render('pages/overnights', { prisoners: prisonersOutOvernight, prison: user.activeCaseLoad.description })
+      res.render('pages/overnights', {
+        prisoners: prisonersOutOvernight,
+        prison: user.activeCaseLoad.description,
+        sort,
+      })
     }
   }
 }

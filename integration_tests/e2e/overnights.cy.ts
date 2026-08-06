@@ -27,20 +27,35 @@ context('Overnights Page', () => {
     const page = Page.verifyOnPage(OvernightsPage)
     page.overnightsRows().should('have.length', 4)
 
-    page.overnightsRows().first().find('td').eq(1).should('contain.text', 'Shannon, Eddie')
-    page.overnightsRows().first().find('td').eq(2).should('contain.text', 'A1234AB')
-    page.overnightsRows().first().find('td').eq(3).should('contain.text', '11:0025/12/2023')
-    page.overnightsRows().first().find('td').eq(4).should('contain.text', 'Unpaid Work - Other')
-    page.overnightsRows().first().find('td').eq(5).should('contain.text', 'Standard')
-    page.overnightsRows().first().find('td').eq(6).should('contain.text', '')
+    cy.contains('table.overnights-roll__table tbody tr', 'Smith, John')
+      .find('td')
+      .eq(1)
+      .should('contain.text', 'Smith, John')
+    cy.contains('table.overnights-roll__table tbody tr', 'Smith, John')
+      .find('td')
+      .eq(2)
+      .should('contain.text', 'A1234AA')
+    cy.contains('table.overnights-roll__table tbody tr', 'Smith, John')
+      .find('td')
+      .eq(3)
+      .should('contain.text', '10:0025/12/2023')
+    cy.contains('table.overnights-roll__table tbody tr', 'Smith, John').find('td').eq(4).should('contain.text', 'NTRN')
+    cy.contains('table.overnights-roll__table tbody tr', 'Smith, John').find('td').eq(5).should('contain.text', 'High')
+    cy.contains('table.overnights-roll__table tbody tr', 'Smith, John')
+      .find('td')
+      .eq(6)
+      .should('contain.text', 'Hidden disability')
   })
 
   it('should display alerts and category if cat A', () => {
     const page = Page.verifyOnPage(OvernightsPage)
     page.overnightsRows().should('have.length', 4)
 
-    page.overnightsRows().eq(1).find('td').eq(6).should('contain.text', 'Hidden disability')
-    page.overnightsRows().eq(1).find('td').eq(6).should('contain.text', 'CAT A')
+    cy.contains('table.overnights-roll__table tbody tr', 'Smith, John')
+      .find('td')
+      .eq(6)
+      .should('contain.text', 'Hidden disability')
+    cy.contains('table.overnights-roll__table tbody tr', 'Smith, John').find('td').eq(6).should('contain.text', 'CAT A')
   })
 
   it('makes Name, Time departed, Reason and CSRA sortable but not the other columns', () => {
@@ -59,7 +74,7 @@ context('Overnights Page', () => {
 
   it('name link returns to the Overnights page via the prisoner profile back link', () => {
     const page = Page.verifyOnPage(OvernightsPage)
-
+    const returnPath = encodeURIComponent('/overnights?sort=timeDateDeparted,desc')
     page
       .overnightsRows()
       .first()
@@ -69,13 +84,13 @@ context('Overnights Page', () => {
       .should('have.attr', 'href')
       .and('contain', '/save-backlink')
       .and('contain', 'service=prison-roll-count')
-      .and('contain', 'returnPath=/overnights')
+      .and('contain', `returnPath=${returnPath}`)
       .and('contain', 'redirectPath=/prisoner/A1234AB')
   })
 
   it('CSRA link goes to the CSRA history page and returns to the Overnights page via the back link', () => {
     const page = Page.verifyOnPage(OvernightsPage)
-
+    const returnPath = encodeURIComponent('/overnights?sort=timeDateDeparted,desc')
     page
       .overnightsRows()
       .first()
@@ -85,7 +100,7 @@ context('Overnights Page', () => {
       .should('have.attr', 'href')
       .and('contain', '/save-backlink')
       .and('contain', 'service=prison-roll-count')
-      .and('contain', 'returnPath=/overnights')
+      .and('contain', `returnPath=${returnPath}`)
       .and('contain', 'redirectPath=/prisoner/A1234AB/csra-history')
   })
 })

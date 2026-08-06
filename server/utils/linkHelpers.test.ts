@@ -33,6 +33,7 @@ describe('generate prisoner profile back link URL', () => {
       `${
         prisonerProfileBaseUrl
       }/save-backlink?service=prison-roll-count&backLinkText=&returnPath=&redirectPath=/prisoner/`,
+      undefined,
     ],
     [
       'backLinkText to "Back"',
@@ -43,6 +44,7 @@ describe('generate prisoner profile back link URL', () => {
       `${
         prisonerProfileBaseUrl
       }/save-backlink?service=prison-roll-count&backLinkText=Back&returnPath=&redirectPath=/prisoner/`,
+      undefined,
     ],
     [
       'backLinkText is encoded',
@@ -53,6 +55,7 @@ describe('generate prisoner profile back link URL', () => {
       `${
         prisonerProfileBaseUrl
       }/save-backlink?service=prison-roll-count&backLinkText=Back%20to%20previous%20page&returnPath=&redirectPath=/prisoner/`,
+      undefined,
     ],
     [
       'returnPath to /en-route',
@@ -63,6 +66,7 @@ describe('generate prisoner profile back link URL', () => {
       `${
         prisonerProfileBaseUrl
       }/save-backlink?service=prison-roll-count&backLinkText=&returnPath=/en-route&redirectPath=/prisoner/`,
+      undefined,
     ],
     [
       'redirectPath to prisoner number',
@@ -73,6 +77,7 @@ describe('generate prisoner profile back link URL', () => {
       `${
         prisonerProfileBaseUrl
       }/save-backlink?service=prison-roll-count&backLinkText=&returnPath=&redirectPath=/prisoner/12345678`,
+      undefined,
     ],
     [
       'redirectPath to prisoner number and path',
@@ -83,6 +88,7 @@ describe('generate prisoner profile back link URL', () => {
       `${
         prisonerProfileBaseUrl
       }/save-backlink?service=prison-roll-count&backLinkText=&returnPath=&redirectPath=/prisoner/12345678/csra-history`,
+      undefined,
     ],
     [
       'null subPath',
@@ -93,6 +99,7 @@ describe('generate prisoner profile back link URL', () => {
       `${
         prisonerProfileBaseUrl
       }/save-backlink?service=prison-roll-count&backLinkText=&returnPath=&redirectPath=/prisoner/12345678`,
+      undefined,
     ],
     [
       'undefined subPath',
@@ -103,6 +110,7 @@ describe('generate prisoner profile back link URL', () => {
       `${
         prisonerProfileBaseUrl
       }/save-backlink?service=prison-roll-count&backLinkText=&returnPath=&redirectPath=/prisoner/12345678`,
+      undefined,
     ],
     [
       'empty subPath',
@@ -113,6 +121,37 @@ describe('generate prisoner profile back link URL', () => {
       `${
         prisonerProfileBaseUrl
       }/save-backlink?service=prison-roll-count&backLinkText=&returnPath=&redirectPath=/prisoner/12345678`,
+      undefined,
+    ],
+    [
+      'returnPath with sort query',
+      'Back to list',
+      '/list?sort=lastName',
+      '12345678',
+      undefined,
+      `${
+        prisonerProfileBaseUrl
+      }/save-backlink?service=prison-roll-count&backLinkText=Back%20to%20list&returnPath=%2Flist%3Fsort%3DlastName&redirectPath=/prisoner/12345678`,
+    ],
+    [
+      'returnPath with sort and subPath',
+      'Back to list',
+      '/list?sort=date',
+      '12345678',
+      '/history',
+      `${
+        prisonerProfileBaseUrl
+      }/save-backlink?service=prison-roll-count&backLinkText=Back%20to%20list&returnPath=%2Flist%3Fsort%3Ddate&redirectPath=/prisoner/12345678/history`,
+    ],
+    [
+      'returnPath with sort query is encoded',
+      'Back to list',
+      '/overnights?sort=timeDateDeparted,desc',
+      '12345678',
+      undefined,
+      `${
+        prisonerProfileBaseUrl
+      }/save-backlink?service=prison-roll-count&backLinkText=Back%20to%20list&returnPath=%2Fovernights%3Fsort%3DtimeDateDeparted%2Cdesc&redirectPath=/prisoner/12345678`,
     ],
   ])(
     '%s prisonerProfileBackLinkUrl(%s)',
@@ -121,7 +160,7 @@ describe('generate prisoner profile back link URL', () => {
       backLinkText: string,
       returnPath: string,
       prisonerNumber: string,
-      subPath: string,
+      subPath: string | undefined,
       expected: string,
     ) => {
       expect(prisonerProfileBackLinkUrl(backLinkText, returnPath, prisonerNumber, subPath)).toEqual(expected)
