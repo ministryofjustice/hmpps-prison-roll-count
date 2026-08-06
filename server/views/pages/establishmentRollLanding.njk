@@ -44,16 +44,22 @@
                         <tr class="govuk-table__row" id="{{ cell.locationId }}">
                             <td class="govuk-table__cell">{{ cell.localName or cell.locationCode }}</td>
                             <td class="govuk-table__cell">{{ cell.rollCount.bedsInUse }}</td>
-                            {% if cellPrisoners %}
-                              {% for prisoner in cellPrisoners %}
-                                <td class="govuk-table__cell">
-                                    <strong>{{ prisoner.firstName }} {{ prisoner.lastName }}</strong> ({{ prisoner.prisonerNumber }}) - {{ prisoner.inOutStatus }}
+                              {% if cellPrisoners %}
+                                <td class="govuk-table__cell" colspan="4">
+                                  <table>
+                                    {% for prisoner in cellPrisoners %}
+                                    <tr>
+                                      <td class="govuk-table__cell">
+                                        <strong>{{ prisoner.firstName }} {{ prisoner.lastName }}</strong> ({{ prisoner.prisonerNumber }}) - {{ prisoner.inOutStatus }}
+                                      </td>
+                                      <td class="govuk-table__cell">{{ prisoner.locationDescription }}</td>
+                                      <td class="govuk-table__cell">{{ prisoner.csra }}</td>
+                                      <td class="govuk-table__cell">{{ prisoner.relevantAlerts }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                  </table>
                                 </td>
-                                <td class="govuk-table__cell">{{ prisoner.locationDescription }}</td>
-                                <td class="govuk-table__cell">{{ prisoner.csra }}</td>
-                                <td class="govuk-table__cell">{{ prisoner.relevantAlerts }}</td>
-                              {% endfor %}
-                            {% else %}
+                              {% else %}
                                 <td class="govuk-table__cell">{{ 'No occupants' }}</td>
                                 <td class="govuk-table__cell">{{ 'Not applicable' }}</td>
                                 <td class="govuk-table__cell">{{ 'Not applicable' }}</td>
