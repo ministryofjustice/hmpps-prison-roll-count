@@ -12,6 +12,12 @@
 
       .govuk-table--fixed {
         table-layout: fixed;
+
+        .govuk-table--fixed,
+        .govuk-table--fixed .govuk-table__row:last-of-type .govuk-table__cell { // Nested table shouldn't have any padding or border as it sits within existing td
+          margin-bottom: 0;
+          border-bottom-width: 0;
+        }
       }
 
       .govuk-table--visually-hidden-head {  // Table head hidden when tables are nested and column names are displayed above
@@ -32,6 +38,10 @@
         &--tall {
           @include govuk-responsive-padding(4, 'top');
           @include govuk-responsive-padding(4, 'bottom');
+        }
+
+        &--nested-child {
+          padding: 0 20px 0 0;
         }
       }
 

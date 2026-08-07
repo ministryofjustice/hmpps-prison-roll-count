@@ -23,6 +23,7 @@
 {% block content %}
   <div class="govuk-width-container govuk-!-margin-top-8">
     <div class="govuk-!-margin-bottom-6">
+      <span class="govuk-heading-m">Locations and vacancies</span>
       <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ pageTitle }}</h1>
       {{ printLink(align = "right") }}
     </div>
@@ -135,7 +136,8 @@
                     }
                   ],
                   rows: prisonerRows if cellPrisoners.length > 0 else blankChildRows
-                }) ,
+                }),
+              classes: 'govuk-table__cell--nested-child',
               colspan: 4
             }
           ]), cellRows) %}
