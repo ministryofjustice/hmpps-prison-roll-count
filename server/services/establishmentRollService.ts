@@ -49,11 +49,7 @@ export default class EstablishmentRollService {
     }
   }
 
-  public async getLandingRollCounts(
-    clientToken: string,
-    caseLoadId: string,
-    wingId: string,
-    landingId: string) {
+  public async getLandingRollCounts(clientToken: string, caseLoadId: string, wingId: string, landingId: string) {
     const locationsApi = this.locationsInsidePrisonApiClientBuilder(clientToken)
     const prisonApi = this.prisonApiClientBuilder(clientToken)
 
@@ -65,7 +61,7 @@ export default class EstablishmentRollService {
 
     // Get prisoner details for the wing
     const prisonersInLocations = await locationsApi.getPrisonersAtLocation(wingId)
-    const prisonersByCell: Record<string, any[]> = {}
+    const prisonersByCell: Record<string, object[]> = {}
     prisonersInLocations.forEach(pl => {
       prisonersByCell[pl.cellLocation] = pl.prisoners
     })

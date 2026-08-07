@@ -10,6 +10,18 @@
         }
       }
 
+      .govuk-table--fixed {
+        table-layout: fixed;
+      }
+
+      .govuk-table--visually-hidden-head {  // Table head hidden when tables are nested and column names are displayed above
+        .govuk-table__header {
+          font-size: 0;
+          padding: 0;
+          border-width: 0;
+        }
+      }
+
       .govuk-table__header {
         vertical-align: middle;
       }
@@ -20,6 +32,12 @@
         &--tall {
           @include govuk-responsive-padding(4, 'top');
           @include govuk-responsive-padding(4, 'bottom');
+        }
+      }
+
+      &--valign-top {
+        .govuk-table__cell {
+          vertical-align: top;
         }
       }
 
