@@ -45,16 +45,28 @@
         {% set blankChildRows = [
           [
             {
-              text: 'No occupants'
+              text: 'No occupants',
+              attributes: {
+                width: '30%'
+              }
             },
             {
-              text: 'Not applicable'
+              text: 'Not applicable',
+              attributes: {
+                width: '20.5%'
+              }
             },
             {
-              text: 'Not applicable'
+              text: 'Not applicable',
+              attributes: {
+                width: '16.5%'
+              }
             },
             {
-              text: 'Not applicable'
+              text: 'Not applicable',
+              attributes: {
+                width: '24%'
+              }
             }
           ]
         ] %}
@@ -73,25 +85,25 @@
                   </div>
                 </div>',
                 attributes: {
-                  width: '40%'
+                  width: '39%'
                 }
               },
               {
                 text: prisoner.inOutStatus,
                 attributes: {
-                  width: '21%'
+                  width: '20.5%'
                 }
               },
               {
                 html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to ' ~ pageTitle, '/establishment-roll/landing/' ~ landingId, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>',
                 attributes: {
-                  width: '17%'
+                  width: '16.5%'
                 }
               },
               {
                 html: alertFlags(prisoner.alertFlags) ~ categoryFlag("", prisoner.category) | safe,
                 attributes: {
-                  width: '22%'
+                  width: '24%'
                 }
               }
             ]), prisonerRows) %}
@@ -120,25 +132,25 @@
                     {
                       text: 'Occupants',
                       attributes: {
-                        width: '40%'
+                        width: '39%'
                       }
                     },
                     {
                       text: 'Location',
                       attributes: {
-                        width: '21%'
+                        width: '20.5%'
                       }
                     },
                     {
                       text: 'CSRA',
                       attributes: {
-                        width: '17%'
+                        width: '16.5%'
                       }
                     },
                     {
                       text: 'Relevant alerts',
                       attributes: {
-                        width: '22%'
+                        width: '24%'
                       }
                     }
                   ],

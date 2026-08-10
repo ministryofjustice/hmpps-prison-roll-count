@@ -50,54 +50,54 @@ export default class EstablishmentRollService {
     }
   }
 
-   public async getLandingRollCounts(clientToken: string, caseLoadId: string, wingId: string, landingId: string) {
-     const locationsApi = this.locationsInsidePrisonApiClientBuilder(clientToken)
-     const prisonApi = this.prisonApiClientBuilder(clientToken)
+  public async getLandingRollCounts(clientToken: string, caseLoadId: string, wingId: string, landingId: string) {
+    const locationsApi = this.locationsInsidePrisonApiClientBuilder(clientToken)
+    const prisonApi = this.prisonApiClientBuilder(clientToken)
 
-     const prisonIsActiveForResi = await this.isResiLocationServiceActive(clientToken, caseLoadId)
+    const prisonIsActiveForResi = await this.isResiLocationServiceActive(clientToken, caseLoadId)
 
-     const rollCountForWing = prisonIsActiveForResi
-       ? await locationsApi.getPrisonRollCountForLocation(caseLoadId, wingId)
-       : await prisonApi.getPrisonRollCountForLocation(caseLoadId, wingId)
+    const rollCountForWing = prisonIsActiveForResi
+      ? await locationsApi.getPrisonRollCountForLocation(caseLoadId, wingId)
+      : await prisonApi.getPrisonRollCountForLocation(caseLoadId, wingId)
 
-     // Get prisoner details for the wing
-     const prisonersInLocations = await locationsApi.getPrisonersAtLocation(wingId)
-     const prisonersByCell: Record<string, object[]> = {}
-     prisonersInLocations.forEach(pl => {
-       prisonersByCell[pl.cellLocation] = pl.prisoners.map(prisoner => ({
-         ...prisoner,
-         alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
-       }))
-     })
+    // Get prisoner details for the wing
+    const prisonersInLocations = await locationsApi.getPrisonersAtLocation(wingId)
+    const prisonersByCell: Record<string, object[]> = {}
+    prisonersInLocations.forEach(pl => {
+      prisonersByCell[pl.cellLocation] = pl.prisoners.map(prisoner => ({
+        ...prisoner,
+        alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
+      }))
+    })
 
-     const wing = rollCountForWing.locations[0]
+    const wing = rollCountForWing.locations[0]
 
-     const landingOnWing = rollCountForWing.locations[0].subLocations.find(location => location.locationId === landingId)
-     if (landingOnWing) {
-       return {
-         wingName: wing.localName || wing.locationCode,
-         landingName: landingOnWing.localName || landingOnWing.locationCode,
-         cellRollCounts: landingOnWing.subLocations,
-         useWorkingCapacity: prisonIsActiveForResi,
-         prisonersByCell,
-       }
-     }
+    const landingOnWing = rollCountForWing.locations[0].subLocations.find(location => location.locationId === landingId)
+    if (landingOnWing) {
+      return {
+        wingName: wing.localName || wing.locationCode,
+        landingName: landingOnWing.localName || landingOnWing.locationCode,
+        cellRollCounts: landingOnWing.subLocations,
+        useWorkingCapacity: prisonIsActiveForResi,
+        prisonersByCell,
+      }
+    }
 
-     const spur = wing.subLocations.find(location =>
-       location.subLocations.find(subLocation => subLocation.locationId === landingId),
-     )
+    const spur = wing.subLocations.find(location =>
+      location.subLocations.find(subLocation => subLocation.locationId === landingId),
+    )
 
-     const landing = spur?.subLocations.find(location => location.locationId === landingId)
+    const landing = spur?.subLocations.find(location => location.locationId === landingId)
 
-     return {
-       wingName: wing.localName || wing.locationCode,
-       spurName: spur?.localName || spur?.locationCode,
-       landingName: landing?.localName || landing?.locationCode,
-       cellRollCounts: landing.subLocations,
-       useWorkingCapacity: prisonIsActiveForResi,
-       prisonersByCell,
-     }
-   }
+    return {
+      wingName: wing.localName || wing.locationCode,
+      spurName: spur?.localName || spur?.locationCode,
+      landingName: landing?.localName || landing?.locationCode,
+      cellRollCounts: landing.subLocations,
+      useWorkingCapacity: prisonIsActiveForResi,
+      prisonersByCell,
+    }
+  }
 
   getEstablishmentRollSummary(clientToken: string, caseLoadId: string): Promise<EstablishmentRollSummary> {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
