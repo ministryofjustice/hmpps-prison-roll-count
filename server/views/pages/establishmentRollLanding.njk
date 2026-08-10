@@ -2,6 +2,8 @@
 {% from "../macros/printLink.njk" import printLink %}
 {% from "../macros/establishmentRollStat.njk" import establishmentRollStat %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "../macros/alertFlags.njk" import alertFlags %}
+{% from "../macros/categoryFlag.njk" import categoryFlag %}
 
 {% set pageTitle = wingName + " - " + (spurName + " - " if spurName else "") + landingName %}
 {% set mainClasses = "govuk-body govuk-main-wrapper--auto-spacing" %}
@@ -64,7 +66,12 @@
             {% set csraLevel = prisoner.csra or 'None' %}
             {% set prisonerRows = (prisonerRows.push([
               {
-                html: '<img src="/prisonerImage/' ~ (prisoner.prisonerNumber or 'placeholder') ~ '" alt="Image of ' ~ prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) ~ '" class="results-table__results__image" /><a href="' ~ prisonerProfileBackLinkUrl('Back to ' ~ pageTitle, '/establishment-roll/landing/' ~ landingId, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) ~ '</a>' ~ prisoner.prisonerNumber,
+                html: '<div class="govuk-table__profile">
+                  <img src="/prisonerImage/' ~ (prisoner.prisonerNumber or 'placeholder') ~ '" alt="Image of ' ~ prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) ~ '" class="results-table__results__image" />
+                  <div class="govuk-table__profile-text">
+                    <a href="' ~ prisonerProfileBackLinkUrl('Back to ' ~ pageTitle, '/establishment-roll/landing/' ~ landingId, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) ~ '</a><span class="govuk-!-margin-top-2">' ~ prisoner.prisonerNumber ~ '</span>
+                  </div>
+                </div>',
                 attributes: {
                   width: '40%'
                 }
@@ -76,15 +83,15 @@
                 }
               },
               {
-                text: csraLevel,
+                html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to ' ~ pageTitle, '/establishment-roll/landing/' ~ landingId, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>',
                 attributes: {
-                  width: '15%'
+                  width: '17%'
                 }
               },
               {
-                text: prisoner.relevantAlerts,
+                html: alertFlags(prisoner.alertFlags) ~ categoryFlag("", prisoner.category) | safe,
                 attributes: {
-                  width: '24%'
+                  width: '22%'
                 }
               }
             ]), prisonerRows) %}
@@ -125,13 +132,13 @@
                     {
                       text: 'CSRA',
                       attributes: {
-                        width: '15%'
+                        width: '17%'
                       }
                     },
                     {
                       text: 'Relevant alerts',
                       attributes: {
-                        width: '24%'
+                        width: '22%'
                       }
                     }
                   ],
@@ -170,19 +177,19 @@
             {
               text: "Location",
               attributes: {
-                width: '16%'
+                width: '15%'
               }
             },
             {
               text: 'CSRA',
               attributes: {
-              width: '12%'
+              width: '11.5%'
             }
             },
             {
               text: 'Relevant alerts',
               attributes: {
-                width: '18%'
+                width: '19.5%'
               }
             }
           ],

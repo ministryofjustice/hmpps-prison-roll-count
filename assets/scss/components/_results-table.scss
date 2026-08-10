@@ -39,9 +39,15 @@
           @include govuk-responsive-padding(4, 'top');
           @include govuk-responsive-padding(4, 'bottom');
         }
+        
+        .govuk-table__profile {
+          display: flex;
 
-        &--nested-child {
-          padding: 0 20px 0 0;
+          .govuk-table__profile-text {
+            display: flex;
+            flex-direction: column;
+            padding: 0 20px;
+          }
         }
       }
 
