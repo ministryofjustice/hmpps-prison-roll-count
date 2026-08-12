@@ -66,7 +66,7 @@ export default class EstablishmentRollService {
     prisonersInLocations.forEach(pl => {
       prisonersByCell[pl.cellLocation] = pl.prisoners.map(prisoner => ({
         ...prisoner,
-        alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
+        alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts || []),
       }))
     })
 
