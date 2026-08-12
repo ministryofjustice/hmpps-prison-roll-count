@@ -1,13 +1,16 @@
+import dpsShared from '@ministryofjustice/hmpps-connect-dps-shared-items'
 import { RestClientBuilder } from '../data'
 import EstablishmentRollCount from './interfaces/EstablishmentRollCount'
 import EstablishmentRollSummary from './interfaces/EstablishmentRollSummary'
 import { PrisonApiClient } from '../data/interfaces/prisonApiClient'
 import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
+import { PrisonerSearchClient } from '../data/interfaces/prisonerSearchClient'
 
 export default class EstablishmentRollService {
   constructor(
     private readonly prisonApiClientBuilder: RestClientBuilder<PrisonApiClient>,
     private readonly locationsInsidePrisonApiClientBuilder: RestClientBuilder<LocationsInsidePrisonApiClient>,
+    private readonly prisonerSearchClientBuilder: RestClientBuilder<PrisonerSearchClient>,
   ) {}
 
   public async isResiLocationServiceActive(clientToken: string, caseLoadId: string): Promise<boolean> {
@@ -57,6 +60,16 @@ export default class EstablishmentRollService {
       ? await locationsApi.getPrisonRollCountForLocation(caseLoadId, wingId)
       : await prisonApi.getPrisonRollCountForLocation(caseLoadId, wingId)
 
+    // Get prisoner details for the wing
+    const prisonersInLocations = await locationsApi.getPrisonersAtLocation(wingId)
+    const prisonersByCell: Record<string, object[]> = {}
+    prisonersInLocations.forEach(pl => {
+      prisonersByCell[pl.cellLocation] = pl.prisoners.map(prisoner => ({
+        ...prisoner,
+        alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts || []),
+      }))
+    })
+
     const wing = rollCountForWing.locations[0]
 
     const landingOnWing = rollCountForWing.locations[0].subLocations.find(location => location.locationId === landingId)
@@ -66,6 +79,7 @@ export default class EstablishmentRollService {
         landingName: landingOnWing.localName || landingOnWing.locationCode,
         cellRollCounts: landingOnWing.subLocations,
         useWorkingCapacity: prisonIsActiveForResi,
+        prisonersByCell,
       }
     }
 
@@ -81,6 +95,7 @@ export default class EstablishmentRollService {
       landingName: landing?.localName || landing?.locationCode,
       cellRollCounts: landing.subLocations,
       useWorkingCapacity: prisonIsActiveForResi,
+      prisonersByCell,
     }
   }
 

@@ -20,6 +20,7 @@ export const services = () => {
   const establishmentRollService = new EstablishmentRollService(
     prisonApiClientBuilder,
     locationsInsidePrisonApiClientBuilder,
+    prisonerSearchApiClientBuilder,
   )
   const feComponentsService = new FeComponentsService(feComponentsClient)
   const locationsService = new LocationService(prisonApiClientBuilder, locationsInsidePrisonApiClientBuilder)

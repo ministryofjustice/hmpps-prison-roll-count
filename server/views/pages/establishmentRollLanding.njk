@@ -1,63 +1,213 @@
 {% extends "../partials/layout.njk" %}
 {% from "../macros/printLink.njk" import printLink %}
 {% from "../macros/establishmentRollStat.njk" import establishmentRollStat %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "../macros/alertFlags.njk" import alertFlags %}
+{% from "../macros/categoryFlag.njk" import categoryFlag %}
 
 {% set pageTitle = wingName + " - " + (spurName + " - " if spurName else "") + landingName %}
 {% set mainClasses = "govuk-body govuk-main-wrapper--auto-spacing" %}
-{% set todayStats = establishmentRollCounts.todayStats %}
 {% set capacityLabel = "Working capacity" if useWorkingCapacity else "Operational capacity" %}
 
 {% set breadCrumbs = [
-    {
-        text: 'Digital Prison Services',
-        href:  dpsUrl
-    },
-    {
-        text: 'Establishment roll',
-        href:  '/'
-    }
+  {
+    text: 'Digital Prison Services',
+    href:  dpsUrl
+  },
+  {
+    text: 'Establishment roll',
+    href:  '/'
+  }
 ] %}
-
+{% set showPrintLink = true %}
+{{ printLink(align = "right") }}
 
 {% block content %}
-<div class="govuk-width-container govuk-!-margin-top-8">
+  <div class="govuk-width-container govuk-!-margin-top-4">
     <div class="govuk-!-margin-bottom-6">
-        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ pageTitle }}</h1>
-        {{ printLink(align = "right") }}
+      <h1 class="govuk-heading-l govuk-!-margin-bottom-0">
+        <span class="govuk-heading__caption govuk-heading-m govuk-!-margin-bottom-1">Locations and vacancies</span>
+        {{ pageTitle }}</h1>
     </div>
 
     <div class="govuk-grid-row govuk-!-margin-bottom-9">
-        <div class="govuk-grid-column-three-quarters">
-            <table class="govuk-table landing-roll__table">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header"></th>
-                        <th scope="col" class="govuk-table__header">Beds in use</th>
-                        <th scope="col" class="govuk-table__header">Currently in cell</th>
-                        <th scope="col" class="govuk-table__header">Currently out</th>
-                        <th scope="col" class="govuk-table__header">{{ capacityLabel }}</th>
-                        <th scope="col" class="govuk-table__header">Net vacancies</th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    {% for cell in cellRollCounts %}
-                        <tr class="govuk-table__row" id="{{ cell.locationId }}">
-                            <td class="govuk-table__cell">{{ cell.localName or cell.locationCode }}</td>
-                            <td class="govuk-table__cell">{{ cell.rollCount.bedsInUse }}</td>
-                            <td class="govuk-table__cell">{{ cell.rollCount.currentlyInCell }}</td>
-                            <td class="govuk-table__cell">
-                                {% if cell.rollCount.currentlyOut > 0 %}
-                                    <a class="govuk-link" href="/{{cell.locationId}}/currently-out">{{cell.rollCount.currentlyOut}}</a>
-                                {% else %} 0 {% endif %}
-                            </td>
-                            <td class="govuk-table__cell">{{ cell.rollCount.workingCapacity }}</td>
-                            <td class="govuk-table__cell">{{ cell.rollCount.netVacancies }}</td>
-                        </tr>
-                    {% endfor %}
+      <div class="govuk-grid-column-full results-table results-table__results results-table__results--valign-top results-table__results--fixed">
+        {% set cellRows = [] %}
+        {% set prisonerRows = [] %}
+        {% set blankParentRows = [
+          [
+            {
+              html: 'No people to display',
+              colspan: 7
+            }
+          ]
+        ] %}
+        {% set blankChildRows = [
+          [
+            {
+              text: 'No occupants',
+              attributes: {
+                width: '30%'
+              }
+            },
+            {
+              text: 'Not applicable',
+              attributes: {
+                width: '20.5%'
+              }
+            },
+            {
+              text: 'Not applicable',
+              attributes: {
+                width: '16.5%'
+              }
+            },
+            {
+              text: 'Not applicable',
+              attributes: {
+                width: '24%'
+              }
+            }
+          ]
+        ] %}
+        {% for cell in cellRollCounts %}
+          {% set cellPrisoners = prisonersByCell[cell.fullLocationPath] or [] %}
+          {% set prisonerRows = [] %}
+          {% for prisoner in cellPrisoners %}
+            {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
+            {% set csraLevel = prisoner.csra or 'None' %}
+            {% set prisonerRows = (prisonerRows.push([
+              {
+                html: '<div class="govuk-table__profile">
+                  <img src="/prisonerImage/' ~ (prisoner.prisonerNumber or 'placeholder') ~ '" alt="Image of ' ~ prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) ~ '" class="results-table__results__image" />
+                  <div class="govuk-table__profile-text">
+                    <a href="' ~ prisonerProfileBackLinkUrl('Back to ' ~ pageTitle, '/establishment-roll/landing/' ~ landingId, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) ~ '</a><span class="govuk-!-margin-top-2">' ~ prisoner.prisonerNumber ~ '</span>
+                  </div>
+                </div>',
+                attributes: {
+                  width: '39%'
+                }
+              },
+              {
+                text: prisoner.inOutStatus,
+                attributes: {
+                  width: '20.5%'
+                }
+              },
+              {
+                html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to ' ~ pageTitle, '/establishment-roll/landing/' ~ landingId, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>',
+                attributes: {
+                  width: '16.5%'
+                }
+              },
+              {
+                html: alertFlags(prisoner.alertFlags) ~ categoryFlag("", prisoner.category) | safe,
+                attributes: {
+                  width: '24%'
+                }
+              }
+            ]), prisonerRows) %}
+          {% endfor %}
+          {% set cellRows = (cellRows.push([
+            {
+              html: cell.localName or cell.locationCode,
+              attributes: {
+                width: '12%'
+              }
+            },
+            {
+              text: cell.rollCount.bedsInUse,
+              attributes: {
+              width: '12%'
+            }
+            },
+            {
+              html:
+                govukTable({
+                  caption: wingName + " - " + (spurName + " - " if spurName else "") + landingName,
+                  captionClasses: 'govuk-visually-hidden',
+                  firstCellIsHeader: false,
+                  classes: 'govuk-table govuk-table--fixed govuk-table--visually-hidden-head wing-landing__table--prisoner govuk-!-font-size-16',
+                  head: [
+                    {
+                      text: 'Occupants',
+                      attributes: {
+                        width: '39%'
+                      }
+                    },
+                    {
+                      text: 'Location',
+                      attributes: {
+                        width: '20.5%'
+                      }
+                    },
+                    {
+                      text: 'CSRA',
+                      attributes: {
+                        width: '16.5%'
+                      }
+                    },
+                    {
+                      text: 'Relevant alerts',
+                      attributes: {
+                        width: '24%'
+                      }
+                    }
+                  ],
+                  rows: prisonerRows if cellPrisoners.length > 0 else blankChildRows
+                }),
+              classes: 'govuk-table__cell--nested-child',
+              colspan: 4
+            }
+          ]), cellRows) %}
+        {% endfor %}
 
-                </tbody>
-            </table>
-        </div>
+        {{ govukTable({
+          caption: wingName + " - " + (spurName + " - " if spurName else "") + landingName,
+          captionClasses: 'govuk-visually-hidden',
+          firstCellIsHeader: false,
+          classes: 'govuk-table govuk-table--fixed wing-landing__table sortable-table govuk-!-font-size-16',
+          head: [
+            {
+              text: 'Cell',
+              attributes: {
+                width: '12%'
+              }
+            },
+            {
+              text: "Beds available",
+              attributes: {
+                width: '12%'
+              }
+            },
+            {
+              text: "Occupants",
+              attributes: {
+                width: '30%'
+              }
+            },
+            {
+              text: "Location",
+              attributes: {
+                width: '15%'
+              }
+            },
+            {
+              text: 'CSRA',
+              attributes: {
+              width: '11.5%'
+            }
+            },
+            {
+              text: 'Relevant alerts',
+              attributes: {
+                width: '19.5%'
+              }
+            }
+          ],
+          rows: cellRows if cellRollCounts.length > 0 else blankParentRows
+        }) }}
+      </div>
     </div>
-</div>
+  </div>
 {% endblock %}
