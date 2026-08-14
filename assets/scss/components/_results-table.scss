@@ -16,6 +16,23 @@
 .results-table__results .govuk-table--fixed {
   table-layout: fixed;
 
+  .govuk-table__cell {
+    padding: govuk-spacing(4) govuk-spacing(4) govuk-spacing(4) 0;
+
+    &:first-child {
+      padding-left: 0;
+    }
+
+    &.govuk-table__cell--nested-child {
+      padding: govuk-spacing(4) govuk-spacing(4) govuk-spacing(4) 0;
+    }
+  }
+
+  // Nested table doesn't need extra padding
+  .govuk-table--fixed .govuk-table__cell {
+    padding: 0 10px 0 0;
+  }
+
   &,
   .govuk-table__row:last-of-type .govuk-table__cell {
     // Nested table shouldn't have any padding or border as it sits within existing td
@@ -32,8 +49,7 @@
 }
 
 // Vertical alignment for table headers and cells
-.results-table__results .govuk-table__header,
-.results-table__results .govuk-table__cell {
+.results-table__results .govuk-table__header {
   vertical-align: middle;
 }
 
@@ -47,6 +63,8 @@
 .results-table__results .govuk-table__profile {
   display: flex;
 }
+
+// Nested tables: inner table has no padding
 
 .results-table__results .govuk-table__profile-text {
   display: flex;

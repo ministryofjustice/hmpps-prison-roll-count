@@ -80,6 +80,8 @@ export default class EstablishmentRollService {
         cellRollCounts: landingOnWing.subLocations,
         useWorkingCapacity: prisonIsActiveForResi,
         prisonersByCell,
+        landingId,
+        wingId,
       }
     }
 
@@ -96,6 +98,8 @@ export default class EstablishmentRollService {
       cellRollCounts: landing.subLocations,
       useWorkingCapacity: prisonIsActiveForResi,
       prisonersByCell,
+      landingId,
+      wingId,
     }
   }
 

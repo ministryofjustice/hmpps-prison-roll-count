@@ -32,6 +32,8 @@
 
     <div class="govuk-grid-row govuk-!-margin-bottom-9">
       <div class="govuk-grid-column-full results-table results-table__results results-table__results--valign-top results-table__results--fixed">
+        {% set sortParam = sort or 'cellLocationCode,desc' %}
+        {% set returnPathWithSort = '?sort=' ~ sortParam %}
         {% set cellRows = [] %}
         {% set prisonerRows = [] %}
         {% set blankParentRows = [
@@ -81,7 +83,7 @@
                 html: '<div class="govuk-table__profile">
                   <img src="/prisonerImage/' ~ (prisoner.prisonerNumber or 'placeholder') ~ '" alt="Image of ' ~ prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) ~ '" class="results-table__results__image" />
                   <div class="govuk-table__profile-text">
-                    <a href="' ~ prisonerProfileBackLinkUrl('Back to ' ~ pageTitle, '/establishment-roll/landing/' ~ landingId, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) ~ '</a><span class="govuk-!-margin-top-2">' ~ prisoner.prisonerNumber ~ '</span>
+                    <a href="' ~ prisonerProfileBackLinkUrl('Back to ' ~ pageTitle, '/wing/' ~ wingId ~ '/landing/' ~ landingId, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) ~ '</a><span class="govuk-!-margin-top-2">' ~ prisoner.prisonerNumber ~ '</span>
                   </div>
                 </div>',
                 attributes: {
@@ -95,7 +97,7 @@
                 }
               },
               {
-                html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to ' ~ pageTitle, '/establishment-roll/landing/' ~ landingId, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>',
+                html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to ' ~ pageTitle, '/wing/' ~ wingId ~ '/landing/' ~ landingId, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>',
                 attributes: {
                   width: '16.5%'
                 }
@@ -111,12 +113,14 @@
           {% set cellRows = (cellRows.push([
             {
               html: '<span>' ~ (cell.localName or cell.locationCode) ~ '</span><br/>' ~ ("<span class='govuk-table__cell-tag govuk-!-margin-top-2'>Inactive</span>" if cell.rollCount.outOfOrder else ""),
+              sortValue: cellLocationCode,
               attributes: {
                 width: '12%'
               }
             },
             {
               text: cell.rollCount.bedsInUse,
+              sortValue: bedsInUse,
               attributes: {
               width: '12%'
             }
@@ -170,12 +174,14 @@
           head: [
             {
               text: 'Cell',
+              key: 'cellLocationCode',
               attributes: {
                 width: '12%'
               }
             },
             {
               text: "Beds available",
+              key: 'bedsInUse',
               attributes: {
                 width: '12%'
               }
@@ -204,7 +210,7 @@
                 width: '19.5%'
               }
             }
-          ],
+          ] | convertToSortableColumns(sortParam, '?sort={sortKey},{sortDirection}'),
           rows: cellRows if cellRollCounts.length > 0 else blankParentRows
         }) }}
       </div>
