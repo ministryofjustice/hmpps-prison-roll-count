@@ -26,11 +26,16 @@
     &.govuk-table__cell--nested-child {
       padding: govuk-spacing(4) govuk-spacing(4) govuk-spacing(4) 0;
     }
-  }
 
-  // Nested table doesn't need extra padding
-  .govuk-table--fixed .govuk-table__cell {
-    padding: 0 10px 0 0;
+    // First row in nested table doesn't need extra top padding
+    .govuk-table__row:first-child .govuk-table__cell {
+      padding-top: 0;
+    }
+
+    // Last row in nested table doesn't need extra bottom padding
+    .govuk-table__row:last-child .govuk-table__cell {
+      padding-bottom: 0;
+    }
   }
 
   &,

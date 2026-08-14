@@ -120,6 +120,7 @@ export default class MovementsService {
       }
     })
 
+    // Sorting functionality
     const [sortKey = 'lastName', sortDirection = 'desc'] = sort.split(',')
     const isAscending = sortDirection === 'asc'
 

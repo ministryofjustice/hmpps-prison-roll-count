@@ -78,6 +78,22 @@
           {% for prisoner in cellPrisoners %}
             {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
             {% set csraLevel = prisoner.csra or 'None' %}
+
+            {# Set movement type based on lastMovementTypeCode #}
+            {% if prisoner.lastMovementTypeCode === "ADM" %}
+              {% set movementType = "Admission" %}
+            {% elseif prisoner.lastMovementTypeCode === "REL" %}
+              {% set movementType = "Release" %}
+            {% elseif prisoner.lastMovementTypeCode === "TRN" %}
+              {% set movementType = "Transfer" %}
+            {% elseif prisoner.lastMovementTypeCode === "CRT" %}
+              {% set movementType = "At court" %}
+            {% elseif prisoner.lastMovementTypeCode === "TAP" %}
+              {% set movementType = "Temporary absence" %}
+            {% else %}
+              {% set movementType = "" %}
+            {% endif %}
+
             {% set prisonerRows = (prisonerRows.push([
               {
                 html: '<div class="govuk-table__profile">
@@ -91,7 +107,7 @@
                 }
               },
               {
-                text: prisoner.inOutStatus,
+                html: ("Out of establishment" if prisoner.inOutStatus === 'OUT' else 'In establishment') ~ "<br/>" ~ (movementType if prisoner.inOutStatus === 'OUT' else ''),
                 attributes: {
                   width: '20.5%'
                 }
