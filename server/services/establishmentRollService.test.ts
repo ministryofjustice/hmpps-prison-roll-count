@@ -161,6 +161,7 @@ describe('establishmentRollService', () => {
           'LEI',
           '13075',
           '13076',
+          'cellLocationCode,asc',
         )
 
         const establishmentRollCounts2 = await establishmentRollService.getLandingRollCounts(
@@ -168,13 +169,14 @@ describe('establishmentRollService', () => {
           'LEI',
           '13075',
           '13104',
+          'cellLocationCode,asc',
         )
 
         const expectedLandingOne = [...prisonRollCountForWingNoSpurMock.locations[0].subLocations[0].subLocations].sort(
-          (a, b) => b.locationCode.localeCompare(a.locationCode, 'en', { ignorePunctuation: true }),
+          (a, b) => a.locationCode.localeCompare(b.locationCode, 'en', { ignorePunctuation: true }),
         )
         const expectedLandingTwo = [...prisonRollCountForWingNoSpurMock.locations[0].subLocations[1].subLocations].sort(
-          (a, b) => b.locationCode.localeCompare(a.locationCode, 'en', { ignorePunctuation: true }),
+          (a, b) => a.locationCode.localeCompare(b.locationCode, 'en', { ignorePunctuation: true }),
         )
 
         expect(establishmentRollCounts1.cellRollCounts).toEqual(expectedLandingOne)
@@ -284,11 +286,12 @@ describe('establishmentRollService', () => {
           'HOI',
           '39255',
           '39270',
+          'cellLocationCode,asc',
         )
 
         const expectedCells = [
           ...prisonRollCountForWingWithSpurMock.locations[0].subLocations[0].subLocations[1].subLocations,
-        ].sort((a, b) => b.locationCode.localeCompare(a.locationCode, 'en', { ignorePunctuation: true }))
+        ].sort((a, b) => a.locationCode.localeCompare(b.locationCode, 'en', { ignorePunctuation: true }))
 
         expect(establishmentRollCounts1.cellRollCounts).toEqual(expectedCells)
       })

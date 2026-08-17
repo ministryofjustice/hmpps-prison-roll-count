@@ -67,7 +67,7 @@ export default class EstablishmentRollService {
       ? await locationsApi.getPrisonRollCountForLocation(caseLoadId, wingId)
       : await prisonApi.getPrisonRollCountForLocation(caseLoadId, wingId)
 
-    const [sortKey = 'cellLocationCode', sortDirection = 'desc'] = sort.split(',')
+    const [sortKey = 'cellLocationCode', sortDirection = 'asc'] = sort.split(',')
     const isAscending = sortDirection === 'asc'
 
     const compareStrings = (left: string, right: string) => left.localeCompare(right, 'en', { ignorePunctuation: true })
