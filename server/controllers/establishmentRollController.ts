@@ -42,15 +42,17 @@ export default class EstablishmentRollController {
       const { user } = res.locals
       const { clientToken } = req.middleware
       const { landingId, wingId } = req.params as { landingId: string; wingId: string }
+      const sort = typeof req.query?.sort === 'string' ? req.query.sort : 'cellLocationCode,asc'
 
       const rollCounts = await this.establishmentRollService.getLandingRollCounts(
         clientToken,
         user.activeCaseLoadId,
         wingId,
         landingId,
+        sort,
       )
 
-      res.render('pages/establishmentRollLanding', rollCounts)
+      res.render('pages/establishmentRollLanding', { ...rollCounts, sort })
     }
   }
 

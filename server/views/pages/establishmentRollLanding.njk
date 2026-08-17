@@ -32,7 +32,7 @@
 
     <div class="govuk-grid-row govuk-!-margin-bottom-9">
       <div class="govuk-grid-column-full results-table results-table__results results-table__results--valign-top results-table__results--fixed">
-        {% set sortParam = sort or 'cellLocationCode,desc' %}
+        {% set sortParam = sort or 'cellLocationCode,asc' %}
         {% set returnPathWithSort = '?sort=' ~ sortParam %}
         {% set cellRows = [] %}
         {% set prisonerRows = [] %}
@@ -135,7 +135,7 @@
               }
             },
             {
-              text: cell.rollCount.bedsInUse,
+              text: cell.rollCount.workingCapacity - cell.rollCount.bedsInUse,
               sortValue: bedsInUse,
               attributes: {
               width: '12%'

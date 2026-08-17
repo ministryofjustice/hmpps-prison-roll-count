@@ -32,10 +32,10 @@ context('Establishment Roll Landing Page', () => {
 
     page.landingRows().should('have.length', 13)
 
-    page.landingRows().first().find('td').eq(0).should('contain.text', '013')
-    page.landingRows().first().find('td').eq(1).should('contain.text', '1')
+    page.landingRows().first().find('td').eq(0).should('contain.text', '025')
+    page.landingRows().first().find('td').eq(1).should('contain.text', '0')
 
-    page.landingRows().eq(1).find('td').eq(0).should('contain.text', '014')
+    page.landingRows().eq(1).find('td').eq(0).should('contain.text', '024')
     page.landingRows().eq(1).find('td').eq(1).should('contain.text', '0')
   })
 
