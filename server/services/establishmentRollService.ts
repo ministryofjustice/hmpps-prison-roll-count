@@ -56,7 +56,7 @@ export default class EstablishmentRollService {
     caseLoadId: string,
     wingId: string,
     landingId: string,
-    sort: string = 'cellLocationCode,asc',
+    sort: string = 'cellLocationCode&direction=ascending',
   ) {
     const locationsApi = this.locationsInsidePrisonApiClientBuilder(clientToken)
     const prisonApi = this.prisonApiClientBuilder(clientToken)
@@ -67,8 +67,9 @@ export default class EstablishmentRollService {
       ? await locationsApi.getPrisonRollCountForLocation(caseLoadId, wingId)
       : await prisonApi.getPrisonRollCountForLocation(caseLoadId, wingId)
 
-    const [sortKey = 'cellLocationCode', sortDirection = 'asc'] = sort.split(',')
-    const isAscending = sortDirection === 'asc'
+    const [sortKey = 'cellLocationCode', sortDirection = 'ascending'] = sort.split('&direction=')
+
+    const isAscending = sortDirection === 'ascending'
 
     const compareStrings = (left: string, right: string) => left.localeCompare(right, 'en', { ignorePunctuation: true })
     const compareNumbers = (left: number, right: number) => left - right

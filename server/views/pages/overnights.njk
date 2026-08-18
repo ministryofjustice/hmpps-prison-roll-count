@@ -25,7 +25,7 @@
 
 		<div class="govuk-grid-row govuk-!-margin-bottom-9">
       <div class="govuk-grid-column-full results-table results-table__results">
-        {% set sortParam = sort or 'timeDateDeparted,desc' %}
+        {% set sortParam = sort or 'timeDateDeparted&direction=descending' %}
         {% set returnPathWithSort = '/overnights?sort=' ~ sortParam %}
         {% set rows = [] %}
         {% set blankRows = [
@@ -111,7 +111,7 @@
               text: 'Relevant alerts',
               classes: 'govuk-!-font-size-16'
             }
-           ] | convertToSortableColumns(sortParam, '?sort={sortKey},{sortDirection}'),
+           ] | convertToSortableColumns(sortParam, '?sort={sortKey}&direction={sortDirection}'),
             rows: rows if prisoners.length > 0 else blankRows
             }) }}
       </div>

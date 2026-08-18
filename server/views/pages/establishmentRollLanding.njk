@@ -32,7 +32,7 @@
 
     <div class="govuk-grid-row govuk-!-margin-bottom-9">
       <div class="govuk-grid-column-full results-table results-table__results results-table__results--valign-top results-table__results--fixed">
-        {% set sortParam = sort or 'cellLocationCode,asc' %}
+        {% set sortParam = sort or 'cellLocationCode&direction=ascending' %}
         {% set returnPathWithSort = '?sort=' ~ sortParam %}
         {% set cellRows = [] %}
         {% set prisonerRows = [] %}
@@ -226,7 +226,7 @@
               width: '21%'
             }
             }
-          ] | convertToSortableColumns(sortParam, '?sort={sortKey},{sortDirection}'),
+          ] | convertToSortableColumns(sortParam, '?sort={sortKey}&direction={sortDirection}'),
           rows: cellRows if cellRollCounts.length > 0 else blankParentRows
         }) }}
       </div>

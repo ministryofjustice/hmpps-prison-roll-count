@@ -205,7 +205,7 @@ describe('establishmentRollService', () => {
           'LEI',
           '13075',
           '13076',
-          'bedsInUse,asc',
+          'bedsInUse&direction=ascending',
         )
 
         const bedsInUse = establishmentRollCounts.cellRollCounts.map(cell => cell.rollCount.bedsInUse)

@@ -6,9 +6,9 @@ function urlFromTemplate(hrefTemplate: string, key: string, direction: string) {
 export const convertToSortableColumns = (
   headings: { text: string; key?: string }[],
   sort: string,
-  hrefTemplate: string = '?sort={sortKey},{sortDirection}',
+  hrefTemplate: string = '?sort={sortKey}&direction={sortDirection}',
 ) => {
-  const [sortingKey, sortingDirection] = sort.split(',')
+  const [sortingKey, sortingDirection] = sort.split('&direction=')
 
   return headings.map(heading => {
     const { text, key, ...others } = heading
@@ -22,24 +22,24 @@ export const convertToSortableColumns = (
     }
 
     if (key === sortingKey) {
-      if (sortingDirection === 'asc') {
+      if (sortingDirection === 'ascending') {
         return {
           ...others,
           attributes: {
             ...existingAttributes,
             'aria-sort': 'ascending',
           },
-          html: `<a href="${urlFromTemplate(hrefTemplate, key, 'desc')}" role="button">${text}</a>`,
+          html: `<a href="${urlFromTemplate(hrefTemplate, key, 'descending')}" role="button">${text}</a>`,
         }
       }
-      if (sortingDirection === 'desc') {
+      if (sortingDirection === 'descending') {
         return {
           ...others,
           attributes: {
             ...existingAttributes,
             'aria-sort': 'descending',
           },
-          html: `<a href="${urlFromTemplate(hrefTemplate, key, 'asc')}" role="button">${text}</a>`,
+          html: `<a href="${urlFromTemplate(hrefTemplate, key, 'ascending')}" role="button">${text}</a>`,
         }
       }
     }
