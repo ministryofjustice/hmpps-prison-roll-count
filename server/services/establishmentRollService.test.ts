@@ -161,7 +161,7 @@ describe('establishmentRollService', () => {
           'LEI',
           '13075',
           '13076',
-          'cellLocationCode,asc',
+          'cellLocationCode&direction=ascending',
         )
 
         const establishmentRollCounts2 = await establishmentRollService.getLandingRollCounts(
@@ -169,7 +169,7 @@ describe('establishmentRollService', () => {
           'LEI',
           '13075',
           '13104',
-          'cellLocationCode,asc',
+          'cellLocationCode&direction=ascending',
         )
 
         const expectedLandingOne = [...prisonRollCountForWingNoSpurMock.locations[0].subLocations[0].subLocations].sort(
@@ -189,7 +189,7 @@ describe('establishmentRollService', () => {
           'LEI',
           '13075',
           '13076',
-          'cellLocationCode,asc',
+          'cellLocationCode&direction=ascending',
         )
 
         const locationCodes = establishmentRollCounts.cellRollCounts.map(cell => cell.locationCode)
@@ -286,7 +286,7 @@ describe('establishmentRollService', () => {
           'HOI',
           '39255',
           '39270',
-          'cellLocationCode,asc',
+          'cellLocationCode&direction=ascending',
         )
 
         const expectedCells = [
