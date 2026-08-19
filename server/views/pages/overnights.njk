@@ -2,6 +2,7 @@
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "../macros/alertFlags.njk" import alertFlags %}
 {% from "../macros/categoryFlag.njk" import categoryFlag %}
+{% from "../macros/pagination.njk" import pagination %}
 
 {% set pageTitle = "Overnights due to return" %}
 {% set mainClasses = "govuk-body govuk-main-wrapper--auto-spacing" %}
@@ -70,7 +71,16 @@
 
         {% endfor %}
 
-         {{ govukTable({
+        {% set sortBase = '/overnights' %}
+        {% if filterQueryParams.length %}
+          {% set sortBase = sortBase ~ '?' ~ (filterQueryParams | join('&')) %}
+        {% endif %}
+        {% set paginationBase = sortBase ~ ('&' if '?' in sortBase else '?') ~ 'sort=' ~ (sort | urlencode) ~ '&direction=' ~ (direction | urlencode) %}
+
+        {{ pagination(currentPage, totalPages, paginationBase, prisoners.length, pageSize) }}
+
+
+        {{ govukTable({
             caption: 'Overnights due to return (column headers with buttons are sortable)',
             captionClasses: 'govuk-visually-hidden',
             firstCellIsHeader: false,
@@ -111,9 +121,11 @@
               text: 'Relevant alerts',
               classes: 'govuk-!-font-size-16'
             }
-           ] | convertToSortableColumns(sortParam, '?sort={sortKey}&direction={sortDirection}'),
+           ] | convertToSortableColumns(sortParam, '?sort=' ~ (sortKey | urlencode) ~ '&direction=' ~ (sortDirection | urlencode)),
             rows: rows if prisoners.length > 0 else blankRows
             }) }}
+
+        {{ pagination(currentPage, totalPages, paginationBase, prisoners.length, pageSize) }}
       </div>
     </div>
 

@@ -16,6 +16,8 @@ const getSortParam = (
   return `${sortKey}&direction=${direction}`
 }
 
+const pageSize = 25
+
 export default class EstablishmentRollController {
   constructor(
     private readonly establishmentRollService: EstablishmentRollService,
@@ -195,6 +197,7 @@ export default class EstablishmentRollController {
         prisoners: prisonersOutOvernight,
         prison: user.activeCaseLoad.description,
         sort,
+        pageSize,
       })
     }
   }
