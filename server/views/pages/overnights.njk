@@ -73,7 +73,7 @@
 
         {% set paginationBase = '/overnights' %}
 
-        {{ pagination(currentPage, totalPages, paginationBase, prisoners.length, 5) }}
+        {{ pagination(currentPage, totalPages, paginationBase, totalResults, pageSize) }}
 
          {{ govukTable({
             caption: 'Overnights due to return (column headers with buttons are sortable)',
@@ -120,7 +120,8 @@
             rows: rows if prisoners.length > 0 else blankRows
             }) }}
 
-            {{ pagination(currentPage, totalPages, paginationBase, prisoners.length, 5) }}
+            {{ pagination(currentPage, totalPages, paginationBase, totalResults, pageSize) }}
+
       </div>
     </div>
 
