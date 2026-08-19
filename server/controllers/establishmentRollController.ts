@@ -5,7 +5,7 @@ import LocationService from '../services/locationsService'
 import { userHasRoles } from '../utils/utils'
 import Role from '../enums/role'
 
-const pageSize = 5
+const pageSize = 25
 
 const getCurrentPage = (query: Request['query'], totalPages: number) => {
   const requestedPage =

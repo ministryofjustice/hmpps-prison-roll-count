@@ -382,7 +382,7 @@ describe('EstablishmentRollController', () => {
         pageSize: 25,
         prisoners: prisoners.slice(25, 50),
         prison: 'Leeds',
-        sort: 'timeDateDeparted&direction=descending',
+        sort: 'timeDateDeparted,desc',
         totalPages: 2,
         totalResults: 30,
       })
