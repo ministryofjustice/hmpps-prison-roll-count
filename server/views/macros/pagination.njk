@@ -20,12 +20,6 @@ Params:
 
   <div class="pagination">
     {% if totalPages > 1 %}
-      {% if totalResults %}
-        <p class="govuk-body pagination-results-summary">
-          Showing <strong>{{ startItem }}</strong> to <strong>{{ endItem }}</strong> of <strong>{{ totalResults }} prisoners</strong>
-        </p>
-      {% endif %}
-
       {% set windowStart = currentPage - 1 %}
       {% if windowStart < 1 %}{% set windowStart = 1 %}{% endif %}
       {% set windowEnd = currentPage + 1 %}
@@ -56,6 +50,12 @@ Params:
         next: { href: baseHref ~ pageParamPrefix ~ "page=" ~ (currentPage + 1) } if currentPage < totalPages,
         items: paginationItems
       }) }}
+
+      {% if totalResults %}
+        <p class="govuk-body pagination-results-summary govuk-!-margin-bottom-6">
+          Showing {{ startItem }} to {{ endItem }} of {{ totalResults }} total results
+        </p>
+      {% endif %}
     {% endif %}
   </div>
 {% endmacro %}
