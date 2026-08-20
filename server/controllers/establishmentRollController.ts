@@ -5,6 +5,17 @@ import LocationService from '../services/locationsService'
 import { userHasRoles } from '../utils/utils'
 import Role from '../enums/role'
 
+const pageSize = 5
+
+const getCurrentPage = (query: Request['query'], totalPages: number) => {
+  const requestedPage =
+    typeof query?.page === 'string' && Number.parseInt(query.page, 10) > 0 ? Number.parseInt(query.page, 10) : 1
+
+  if (totalPages === 0) return 1
+
+  return Math.min(requestedPage, totalPages)
+}
+
 export default class EstablishmentRollController {
   constructor(
     private readonly establishmentRollService: EstablishmentRollService,
@@ -93,7 +104,21 @@ export default class EstablishmentRollController {
       const { clientToken } = req.middleware
 
       const prisonersEnRoute = await this.movementsService.getInReceptionPrisoners(clientToken, user.activeCaseLoadId)
-      res.render('pages/inReception', { prisoners: prisonersEnRoute, prison: user.activeCaseLoad.description })
+
+      const totalResults = prisonersEnRoute.length
+      const totalPages = Math.ceil(prisonersEnRoute.length / pageSize)
+      const currentPage = getCurrentPage(req.query, totalPages)
+      const startIndex = (currentPage - 1) * pageSize
+      const prisonersForCurrentPage = prisonersEnRoute.slice(startIndex, startIndex + pageSize)
+
+      res.render('pages/inReception', {
+        prisoners: prisonersForCurrentPage,
+        prison: user.activeCaseLoad.description,
+        currentPage,
+        totalPages,
+        totalResults,
+        pageSize
+      })
     }
   }
 

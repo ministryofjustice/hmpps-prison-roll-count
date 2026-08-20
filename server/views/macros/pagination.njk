@@ -1,0 +1,61 @@
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
+
+{#
+Renders a govukPagination component with numbered page items and prev/next links,
+along with result count summary.
+
+Params:
+  currentPage {number} - The current 1-based page number
+  totalPages  {number} - The total number of pages
+  baseHref    {string} - The URL to link to, without a page parameter (page=N will be appended)
+  totalResults {number} - Optional: Total number of results (displays "Showing x to y of z")
+  pageSize    {number} - Optional: Number of results per page (default: 25)
+#}
+{% macro pagination(currentPage, totalPages, baseHref, totalResults, pageSize) %}
+  {% set pageSize = pageSize or 25 %}
+  {% set pageParamPrefix = '&' if '?' in baseHref else '?' %}
+  {% set startItem = (currentPage - 1) * pageSize + 1 %}
+  {% set endItem = currentPage * pageSize %}
+  {% if endItem > totalResults %}{% set endItem = totalResults %}{% endif %}
+
+  <div class="pagination">
+    {% if totalPages > 1 %}
+      {% set windowStart = currentPage - 1 %}
+      {% if windowStart < 1 %}{% set windowStart = 1 %}{% endif %}
+      {% set windowEnd = currentPage + 1 %}
+      {% if windowEnd > totalPages %}{% set windowEnd = totalPages %}{% endif %}
+
+      {% set paginationItems = [] %}
+
+      {% if windowStart > 1 %}
+        {% set _ = paginationItems.push({ number: 1, href: baseHref ~ pageParamPrefix ~ "page=1", current: currentPage == 1 }) %}
+        {% if windowStart > 2 %}
+          {% set _ = paginationItems.push({ ellipsis: true }) %}
+        {% endif %}
+      {% endif %}
+
+      {% for i in range(windowStart, windowEnd + 1) %}
+        {% set _ = paginationItems.push({ number: i, href: baseHref ~ pageParamPrefix ~ "page=" ~ i, current: i == currentPage }) %}
+      {% endfor %}
+
+      {% if windowEnd < totalPages %}
+        {% if windowEnd < totalPages - 1 %}
+          {% set _ = paginationItems.push({ ellipsis: true }) %}
+        {% endif %}
+        {% set _ = paginationItems.push({ number: totalPages, href: baseHref ~ pageParamPrefix ~ "page=" ~ totalPages, current: currentPage == totalPages }) %}
+      {% endif %}
+
+      {{ govukPagination({
+        previous: { href: baseHref ~ pageParamPrefix ~ "page=" ~ (currentPage - 1) } if currentPage > 1,
+        next: { href: baseHref ~ pageParamPrefix ~ "page=" ~ (currentPage + 1) } if currentPage < totalPages,
+        items: paginationItems
+      }) }}
+
+      {% if totalResults %}
+        <p class="govuk-body pagination-results-summary govuk-!-margin-bottom-6">
+          Showing {{ startItem }} to {{ endItem }} of {{ totalResults }} total results
+        </p>
+      {% endif %}
+    {% endif %}
+  </div>
+{% endmacro %}
