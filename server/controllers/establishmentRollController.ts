@@ -117,7 +117,7 @@ export default class EstablishmentRollController {
         currentPage,
         totalPages,
         totalResults,
-        pageSize
+        pageSize,
       })
     }
   }
