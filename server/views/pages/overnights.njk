@@ -71,7 +71,7 @@
 
         {% endfor %}
 
-        {% set paginationBase = '/overnights' %}
+        {% set paginationBase = returnPathWithSort %}
 
         {{ pagination(currentPage, totalPages, paginationBase, totalResults, pageSize) }}
 
