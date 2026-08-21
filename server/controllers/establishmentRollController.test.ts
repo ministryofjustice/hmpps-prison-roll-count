@@ -319,7 +319,7 @@ describe('EstablishmentRollController', () => {
       expect(movementsService.getOvernightPrisoners).toHaveBeenCalledWith('token', 'LEI', 'timeDateDeparted,desc')
       expect(res.render).toHaveBeenCalledWith('pages/overnights', {
         currentPage: 1,
-        pageSize: 20,
+        pageSize: 5,
         prisoners: [],
         prison: 'Leeds',
         sort: 'timeDateDeparted,desc',
@@ -349,7 +349,7 @@ describe('EstablishmentRollController', () => {
       expect(movementsService.getOvernightPrisoners).toHaveBeenCalledWith('token', 'LEI', 'reason,asc')
       expect(res.render).toHaveBeenCalledWith('pages/overnights', {
         currentPage: 1,
-        pageSize: 20,
+        pageSize: 5,
         prisoners: [],
         prison: 'Leeds',
         sort: 'reason,asc',
@@ -379,11 +379,11 @@ describe('EstablishmentRollController', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/overnights', {
         currentPage: 2,
-        pageSize: 20,
-        prisoners: prisoners.slice(20, 40),
+        pageSize: 5,
+        prisoners: prisoners.slice(5, 10),
         prison: 'Leeds',
         sort: 'timeDateDeparted,desc',
-        totalPages: 2,
+        totalPages: 6,
         totalResults: 30,
       })
     })
