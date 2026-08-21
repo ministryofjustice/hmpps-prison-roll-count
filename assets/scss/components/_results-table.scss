@@ -20,6 +20,28 @@
 .results-table__results .govuk-table--fixed {
   table-layout: fixed;
 
+  .govuk-table__cell {
+    padding: govuk-spacing(4) govuk-spacing(4) govuk-spacing(4) 0;
+
+    &:first-child {
+      padding-left: 0;
+    }
+
+    &.govuk-table__cell--nested-child {
+      padding: govuk-spacing(4) govuk-spacing(4) govuk-spacing(4) 0;
+    }
+
+    // First row in nested table doesn't need extra top padding
+    .govuk-table__row:first-child .govuk-table__cell {
+      padding-top: 0;
+    }
+
+    // Last row in nested table doesn't need extra bottom padding
+    .govuk-table__row:last-child .govuk-table__cell {
+      padding-bottom: 0;
+    }
+  }
+
   &,
   .govuk-table__row:last-of-type .govuk-table__cell {
     // Nested table shouldn't have any padding or border as it sits within existing td
@@ -36,8 +58,7 @@
 }
 
 // Vertical alignment for table headers and cells
-.results-table__results .govuk-table__header,
-.results-table__results .govuk-table__cell {
+.results-table__results .govuk-table__header {
   vertical-align: middle;
 }
 
@@ -51,6 +72,8 @@
 .results-table__results .govuk-table__profile {
   display: flex;
 }
+
+// Nested tables: inner table has no padding
 
 .results-table__results .govuk-table__profile-text {
   display: flex;
@@ -71,4 +94,10 @@
 // Horizontal stroke between records, but no stroke on the last row's baseline
 .in-reception-roll__table .govuk-table__body .govuk-table__row:last-child .govuk-table__cell {
   border-bottom: 0;
+}
+
+.govuk-table__cell-tag {
+  display: inline-flex;
+  padding: 5px 8px;
+  background-color: govuk-colour('black', $variant: 'tint-95');
 }

@@ -228,7 +228,7 @@ describe('movementsService', () => {
     })
 
     it('should sort by last name ascending when requested', async () => {
-      const result = await movementsService.getOvernightPrisoners('token', 'LEI', 'lastName,asc')
+      const result = await movementsService.getOvernightPrisoners('token', 'LEI', 'lastName&direction=ascending')
 
       expect(result.map(prisoner => prisoner.prisonerNumber)).toEqual(['A1234AB', 'A1234AA'])
     })

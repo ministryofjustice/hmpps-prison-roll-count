@@ -74,7 +74,7 @@ context('Overnights Page', () => {
 
   it('name link returns to the Overnights page via the prisoner profile back link', () => {
     const page = Page.verifyOnPage(OvernightsPage)
-    const returnPath = encodeURIComponent('/overnights?sort=timeDateDeparted,desc')
+    const returnPath = encodeURIComponent('/overnights?sort=timeDateDeparted&direction=descending')
     page
       .overnightsRows()
       .first()
@@ -90,7 +90,7 @@ context('Overnights Page', () => {
 
   it('CSRA link goes to the CSRA history page and returns to the Overnights page via the back link', () => {
     const page = Page.verifyOnPage(OvernightsPage)
-    const returnPath = encodeURIComponent('/overnights?sort=timeDateDeparted,desc')
+    const returnPath = encodeURIComponent('/overnights?sort=timeDateDeparted&direction=descending')
     page
       .overnightsRows()
       .first()

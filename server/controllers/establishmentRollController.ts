@@ -5,6 +5,17 @@ import LocationService from '../services/locationsService'
 import { userHasRoles } from '../utils/utils'
 import Role from '../enums/role'
 
+const getSortParam = (
+  query: Request['query'],
+  defaultSortKey: string,
+  defaultDirection: 'ascending' | 'descending',
+) => {
+  const sortKey = typeof query?.sort === 'string' ? query.sort : defaultSortKey
+  const direction = typeof query?.direction === 'string' ? query.direction : defaultDirection
+
+  return `${sortKey}&direction=${direction}`
+}
+
 const pageSize = 5
 
 const getCurrentPage = (query: Request['query'], totalPages: number) => {
@@ -53,15 +64,17 @@ export default class EstablishmentRollController {
       const { user } = res.locals
       const { clientToken } = req.middleware
       const { landingId, wingId } = req.params as { landingId: string; wingId: string }
+      const sort = getSortParam(req.query, 'cellLocationCode', 'ascending')
 
       const rollCounts = await this.establishmentRollService.getLandingRollCounts(
         clientToken,
         user.activeCaseLoadId,
         wingId,
         landingId,
+        sort,
       )
 
-      res.render('pages/establishmentRollLanding', rollCounts)
+      res.render('pages/establishmentRollLanding', { ...rollCounts, sort })
     }
   }
 
@@ -195,7 +208,7 @@ export default class EstablishmentRollController {
     return async (req: Request, res: Response) => {
       const { user } = res.locals
       const { clientToken } = req.middleware
-      const sort = typeof req.query?.sort === 'string' ? req.query.sort : 'timeDateDeparted,desc'
+      const sort = getSortParam(req.query, 'timeDateDeparted', 'descending')
 
       const prisonersOutOvernight = await this.movementsService.getOvernightPrisoners(
         clientToken,

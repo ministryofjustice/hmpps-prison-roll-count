@@ -301,7 +301,7 @@ describe('EstablishmentRollController', () => {
   })
 
   describe('getOvernights', () => {
-    it('defaults sort to timeDateDeparted,desc when no query is provided', async () => {
+    it('defaults sort to timeDateDeparted&direction=descending when no query is provided', async () => {
       movementsService.getOvernightPrisoners.mockResolvedValue([])
 
       const controller = new EstablishmentRollController(
@@ -316,15 +316,19 @@ describe('EstablishmentRollController', () => {
 
       await controller.getOvernights()(req, res, next)
 
-      expect(movementsService.getOvernightPrisoners).toHaveBeenCalledWith('token', 'LEI', 'timeDateDeparted,desc')
+      expect(movementsService.getOvernightPrisoners).toHaveBeenCalledWith(
+        'token',
+        'LEI',
+        'timeDateDeparted&direction=descending',
+      )
       expect(res.render).toHaveBeenCalledWith('pages/overnights', {
         prisoners: [],
         prison: 'Leeds',
-        sort: 'timeDateDeparted,desc',
+        sort: 'timeDateDeparted&direction=descending',
       })
     })
 
-    it('passes through sort query when provided', async () => {
+    it('combines sort and direction query params when provided', async () => {
       movementsService.getOvernightPrisoners.mockResolvedValue([])
 
       const controller = new EstablishmentRollController(
@@ -335,18 +339,18 @@ describe('EstablishmentRollController', () => {
 
       const req = {
         ...mockReq(),
-        query: { sort: 'reason,asc' },
+        query: { sort: 'reason', direction: 'ascending' },
       } as unknown as Request
       const res = mockRes()
       const next = mockNext()
 
       await controller.getOvernights()(req, res, next)
 
-      expect(movementsService.getOvernightPrisoners).toHaveBeenCalledWith('token', 'LEI', 'reason,asc')
+      expect(movementsService.getOvernightPrisoners).toHaveBeenCalledWith('token', 'LEI', 'reason&direction=ascending')
       expect(res.render).toHaveBeenCalledWith('pages/overnights', {
         prisoners: [],
         prison: 'Leeds',
-        sort: 'reason,asc',
+        sort: 'reason&direction=ascending',
       })
     })
   })
