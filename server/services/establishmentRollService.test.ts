@@ -212,6 +212,46 @@ describe('establishmentRollService', () => {
         expect(bedsInUse).toEqual([...bedsInUse].sort((left, right) => left - right))
       })
 
+      it('should sort cells by csra when requested', async () => {
+        const landingCells = prisonRollCountForWingNoSpurMock.locations[0].subLocations[0].subLocations
+        const makePrisoner = (prisonerNumber: string, csra: string) => ({
+          prisonerNumber,
+          firstName: 'Test',
+          lastName: 'Prisoner',
+          dateOfBirth: '1990-01-01',
+          gender: 'Male',
+          ethnicity: 'White',
+          youthOffender: false,
+          maritalStatus: 'Single',
+          religion: 'None',
+          nationality: 'British',
+          status: 'ACTIVE IN',
+          mostSeriousOffence: 'Test offence',
+          restrictedPatient: false,
+          csra,
+        })
+
+        locationsInsidePrisonApiClientMock.getPrisonersAtLocation = jest.fn().mockResolvedValue(
+          landingCells.map((cell, index) => ({
+            cellLocation: cell.fullLocationPath,
+            prisoners: [
+              makePrisoner(`A1234B${index}`, cell.fullLocationPath === 'E-3-013' ? 'A' : cell.fullLocationPath === 'E-3-014' ? 'B' : 'C'),
+            ],
+          })),
+        )
+
+        const establishmentRollCounts = await establishmentRollService.getLandingRollCounts(
+          'token',
+          'LEI',
+          '13075',
+          '13076',
+          'csra&direction=ascending',
+        )
+
+        expect(establishmentRollCounts.cellRollCounts[0].fullLocationPath).toEqual('E-3-013')
+        expect(establishmentRollCounts.cellRollCounts[1].fullLocationPath).toEqual('E-3-014')
+      })
+
       it('should use locations API when resiLocationServiceActive is ACTIVE', async () => {
         locationsInsidePrisonApiClientMock.getPrisonConfiguration = jest
           .fn()

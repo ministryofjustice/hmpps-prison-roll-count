@@ -70,9 +70,15 @@ export default class EstablishmentRollService {
     const [sortKey = 'cellLocationCode', sortDirection = 'ascending'] = sort.split('&direction=')
 
     const isAscending = sortDirection === 'ascending'
+    const prisonersByCell: Record<string, { csra?: string }[]> = {}
 
     const compareStrings = (left: string, right: string) => left.localeCompare(right, 'en', { ignorePunctuation: true })
     const compareNumbers = (left: number, right: number) => left - right
+
+    const getCellCsraSortValue = (cell: ResidentialLocation) => {
+      const prisonerCsraValues = (prisonersByCell[cell.fullLocationPath] || []).map(prisoner => prisoner.csra || 'None')
+      return prisonerCsraValues.sort(compareStrings)[0] || 'None'
+    }
 
     const sortCellRollCounts = (cellRollCounts: ResidentialLocation[]) => {
       return [...cellRollCounts].sort((left, right) => {
@@ -81,6 +87,9 @@ export default class EstablishmentRollService {
         switch (sortKey) {
           case 'bedsInUse':
             comparison = compareNumbers(left.rollCount?.bedsInUse || 0, right.rollCount?.bedsInUse || 0)
+            break
+          case 'csra':
+            comparison = compareStrings(getCellCsraSortValue(left), getCellCsraSortValue(right))
             break
           case 'cellLocationCode':
           default:
@@ -94,7 +103,6 @@ export default class EstablishmentRollService {
 
     // Get prisoner details for the wing
     const prisonersInLocations = await locationsApi.getPrisonersAtLocation(wingId)
-    const prisonersByCell: Record<string, object[]> = {}
     prisonersInLocations.forEach(pl => {
       prisonersByCell[pl.cellLocation] = pl.prisoners.map(prisoner => ({
         ...prisoner,
