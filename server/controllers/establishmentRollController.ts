@@ -62,6 +62,7 @@ export default class EstablishmentRollController {
       )
 
       res.render('pages/establishmentRollLanding', rollCounts)
+    }
   }
 
   public getArrivedToday(): RequestHandler {
