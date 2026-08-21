@@ -107,7 +107,20 @@ export default class EstablishmentRollController {
 
       const prisonersEnRoute = await this.movementsService.getEnRoutePrisoners(clientToken, user.activeCaseLoadId)
 
-      res.render('pages/enRoute', { prisoners: prisonersEnRoute, prison: user.activeCaseLoad.description })
+      const totalResults = prisonersEnRoute.length
+      const totalPages = Math.ceil(prisonersEnRoute.length / pageSize)
+      const currentPage = getCurrentPage(req.query, totalPages)
+      const startIndex = (currentPage - 1) * pageSize
+      const prisonersForCurrentPage = prisonersEnRoute.slice(startIndex, startIndex + pageSize)
+
+      res.render('pages/enRoute', {
+        prisoners: prisonersForCurrentPage,
+        prison: user.activeCaseLoad.description,
+        currentPage,
+        pageSize,
+        totalPages,
+        totalResults,
+      })
     }
   }
 
