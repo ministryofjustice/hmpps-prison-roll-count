@@ -161,6 +161,7 @@ describe('establishmentRollService', () => {
           'LEI',
           '13075',
           '13076',
+          'cellLocationCode&direction=ascending',
         )
 
         const establishmentRollCounts2 = await establishmentRollService.getLandingRollCounts(
@@ -168,14 +169,47 @@ describe('establishmentRollService', () => {
           'LEI',
           '13075',
           '13104',
+          'cellLocationCode&direction=ascending',
         )
 
-        expect(establishmentRollCounts1.cellRollCounts).toEqual(
-          prisonRollCountForWingNoSpurMock.locations[0].subLocations[0].subLocations,
+        const expectedLandingOne = [...prisonRollCountForWingNoSpurMock.locations[0].subLocations[0].subLocations].sort(
+          (a, b) => a.locationCode.localeCompare(b.locationCode, 'en', { ignorePunctuation: true }),
         )
-        expect(establishmentRollCounts2.cellRollCounts).toEqual(
-          prisonRollCountForWingNoSpurMock.locations[0].subLocations[1].subLocations,
+        const expectedLandingTwo = [...prisonRollCountForWingNoSpurMock.locations[0].subLocations[1].subLocations].sort(
+          (a, b) => a.locationCode.localeCompare(b.locationCode, 'en', { ignorePunctuation: true }),
         )
+
+        expect(establishmentRollCounts1.cellRollCounts).toEqual(expectedLandingOne)
+        expect(establishmentRollCounts2.cellRollCounts).toEqual(expectedLandingTwo)
+      })
+
+      it('should sort cells by location code when requested', async () => {
+        const establishmentRollCounts = await establishmentRollService.getLandingRollCounts(
+          'token',
+          'LEI',
+          '13075',
+          '13076',
+          'cellLocationCode&direction=ascending',
+        )
+
+        const locationCodes = establishmentRollCounts.cellRollCounts.map(cell => cell.locationCode)
+        const sortedLocationCodes = [...locationCodes].sort((left, right) =>
+          left.localeCompare(right, 'en', { ignorePunctuation: true }),
+        )
+        expect(locationCodes).toEqual(sortedLocationCodes)
+      })
+
+      it('should sort cells by beds in use when requested', async () => {
+        const establishmentRollCounts = await establishmentRollService.getLandingRollCounts(
+          'token',
+          'LEI',
+          '13075',
+          '13076',
+          'bedsInUse&direction=ascending',
+        )
+
+        const bedsInUse = establishmentRollCounts.cellRollCounts.map(cell => cell.rollCount.bedsInUse)
+        expect(bedsInUse).toEqual([...bedsInUse].sort((left, right) => left - right))
       })
 
       it('should use locations API when resiLocationServiceActive is ACTIVE', async () => {
@@ -252,11 +286,14 @@ describe('establishmentRollService', () => {
           'HOI',
           '39255',
           '39270',
+          'cellLocationCode&direction=ascending',
         )
 
-        expect(establishmentRollCounts1.cellRollCounts).toEqual(
-          prisonRollCountForWingWithSpurMock.locations[0].subLocations[0].subLocations[1].subLocations,
-        )
+        const expectedCells = [
+          ...prisonRollCountForWingWithSpurMock.locations[0].subLocations[0].subLocations[1].subLocations,
+        ].sort((a, b) => a.locationCode.localeCompare(b.locationCode, 'en', { ignorePunctuation: true }))
+
+        expect(establishmentRollCounts1.cellRollCounts).toEqual(expectedCells)
       })
     })
   })

@@ -5,6 +5,7 @@ import EstablishmentRollSummary from './interfaces/EstablishmentRollSummary'
 import { PrisonApiClient } from '../data/interfaces/prisonApiClient'
 import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
 import { PrisonerSearchClient } from '../data/interfaces/prisonerSearchClient'
+import { ResidentialLocation } from '../data/interfaces/prisonRollCount'
 
 export default class EstablishmentRollService {
   constructor(
@@ -50,7 +51,13 @@ export default class EstablishmentRollService {
     }
   }
 
-  public async getLandingRollCounts(clientToken: string, caseLoadId: string, wingId: string, landingId: string) {
+  public async getLandingRollCounts(
+    clientToken: string,
+    caseLoadId: string,
+    wingId: string,
+    landingId: string,
+    sort: string = 'cellLocationCode&direction=ascending',
+  ) {
     const locationsApi = this.locationsInsidePrisonApiClientBuilder(clientToken)
     const prisonApi = this.prisonApiClientBuilder(clientToken)
 
@@ -59,6 +66,31 @@ export default class EstablishmentRollService {
     const rollCountForWing = prisonIsActiveForResi
       ? await locationsApi.getPrisonRollCountForLocation(caseLoadId, wingId)
       : await prisonApi.getPrisonRollCountForLocation(caseLoadId, wingId)
+
+    const [sortKey = 'cellLocationCode', sortDirection = 'ascending'] = sort.split('&direction=')
+
+    const isAscending = sortDirection === 'ascending'
+
+    const compareStrings = (left: string, right: string) => left.localeCompare(right, 'en', { ignorePunctuation: true })
+    const compareNumbers = (left: number, right: number) => left - right
+
+    const sortCellRollCounts = (cellRollCounts: ResidentialLocation[]) => {
+      return [...cellRollCounts].sort((left, right) => {
+        let comparison = 0
+
+        switch (sortKey) {
+          case 'bedsInUse':
+            comparison = compareNumbers(left.rollCount?.bedsInUse || 0, right.rollCount?.bedsInUse || 0)
+            break
+          case 'cellLocationCode':
+          default:
+            comparison = compareStrings(left.localName || left.locationCode, right.localName || right.locationCode)
+            break
+        }
+
+        return isAscending ? comparison : -comparison
+      })
+    }
 
     // Get prisoner details for the wing
     const prisonersInLocations = await locationsApi.getPrisonersAtLocation(wingId)
@@ -77,9 +109,11 @@ export default class EstablishmentRollService {
       return {
         wingName: wing.localName || wing.locationCode,
         landingName: landingOnWing.localName || landingOnWing.locationCode,
-        cellRollCounts: landingOnWing.subLocations,
+        cellRollCounts: sortCellRollCounts(landingOnWing.subLocations),
         useWorkingCapacity: prisonIsActiveForResi,
         prisonersByCell,
+        landingId,
+        wingId,
       }
     }
 
@@ -93,9 +127,11 @@ export default class EstablishmentRollService {
       wingName: wing.localName || wing.locationCode,
       spurName: spur?.localName || spur?.locationCode,
       landingName: landing?.localName || landing?.locationCode,
-      cellRollCounts: landing.subLocations,
+      cellRollCounts: sortCellRollCounts(landing.subLocations),
       useWorkingCapacity: prisonIsActiveForResi,
       prisonersByCell,
+      landingId,
+      wingId,
     }
   }
 

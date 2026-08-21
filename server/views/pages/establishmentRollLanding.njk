@@ -32,6 +32,8 @@
 
     <div class="govuk-grid-row govuk-!-margin-bottom-9">
       <div class="govuk-grid-column-full results-table results-table__results results-table__results--valign-top results-table__results--fixed">
+        {% set sortParam = sort or 'cellLocationCode&direction=ascending' %}
+        {% set returnPathWithSort = '?sort=' ~ sortParam %}
         {% set cellRows = [] %}
         {% set prisonerRows = [] %}
         {% set blankParentRows = [
@@ -76,12 +78,28 @@
           {% for prisoner in cellPrisoners %}
             {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
             {% set csraLevel = prisoner.csra or 'None' %}
+
+            {# Set movement type based on lastMovementTypeCode #}
+            {% if prisoner.lastMovementTypeCode === "ADM" %}
+              {% set movementType = "Admission" %}
+            {% elseif prisoner.lastMovementTypeCode === "REL" %}
+              {% set movementType = "Release" %}
+            {% elseif prisoner.lastMovementTypeCode === "TRN" %}
+              {% set movementType = "Transfer" %}
+            {% elseif prisoner.lastMovementTypeCode === "CRT" %}
+              {% set movementType = "At court" %}
+            {% elseif prisoner.lastMovementTypeCode === "TAP" %}
+              {% set movementType = "Temporary absence" %}
+            {% else %}
+              {% set movementType = "" %}
+            {% endif %}
+
             {% set prisonerRows = (prisonerRows.push([
               {
                 html: '<div class="govuk-table__profile">
                   <img src="/prisonerImage/' ~ (prisoner.prisonerNumber or 'placeholder') ~ '" alt="Image of ' ~ prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) ~ '" class="results-table__results__image" />
                   <div class="govuk-table__profile-text">
-                    <a href="' ~ prisonerProfileBackLinkUrl('Back to ' ~ pageTitle, '/establishment-roll/landing/' ~ landingId, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) ~ '</a><span class="govuk-!-margin-top-2">' ~ prisoner.prisonerNumber ~ '</span>
+                    <a href="' ~ prisonerProfileBackLinkUrl('Back to ' ~ pageTitle, '/wing/' ~ wingId ~ '/landing/' ~ landingId, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) ~ '</a><span class="govuk-!-margin-top-2">' ~ prisoner.prisonerNumber ~ '</span>
                   </div>
                 </div>',
                 attributes: {
@@ -89,13 +107,13 @@
                 }
               },
               {
-                text: prisoner.inOutStatus,
+                html: ("Out of establishment" if prisoner.inOutStatus === 'OUT' else 'In establishment') ~ "<br/>" ~ (movementType if prisoner.inOutStatus === 'OUT' else ''),
                 attributes: {
                   width: '20.5%'
                 }
               },
               {
-                html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to ' ~ pageTitle, '/establishment-roll/landing/' ~ landingId, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>',
+                html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to ' ~ pageTitle, '/wing/' ~ wingId ~ '/landing/' ~ landingId, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>',
                 attributes: {
                   width: '16.5%'
                 }
@@ -110,13 +128,15 @@
           {% endfor %}
           {% set cellRows = (cellRows.push([
             {
-              html: cell.localName or cell.locationCode,
+              html: '<span>' ~ (cell.localName or cell.locationCode) ~ '</span><br/>' ~ ("<span class='govuk-table__cell-tag govuk-!-margin-top-2'>Inactive</span>" if cell.rollCount.outOfOrder else ""),
+              sortValue: cellLocationCode,
               attributes: {
                 width: '12%'
               }
             },
             {
-              text: cell.rollCount.bedsInUse,
+              text: cell.rollCount.workingCapacity - cell.rollCount.bedsInUse,
+              sortValue: bedsInUse,
               attributes: {
               width: '12%'
             }
@@ -170,12 +190,14 @@
           head: [
             {
               text: 'Cell',
+              key: 'cellLocationCode',
               attributes: {
                 width: '12%'
               }
             },
             {
               text: "Beds available",
+              key: 'bedsInUse',
               attributes: {
                 width: '12%'
               }
@@ -183,14 +205,14 @@
             {
               text: "Occupants",
               attributes: {
-                width: '30%'
-              }
+              width: '29%'
+            }
             },
             {
               text: "Location",
               attributes: {
-                width: '15%'
-              }
+              width: '14.5%'
+            }
             },
             {
               text: 'CSRA',
@@ -201,10 +223,10 @@
             {
               text: 'Relevant alerts',
               attributes: {
-                width: '19.5%'
-              }
+              width: '21%'
             }
-          ],
+            }
+          ] | convertToSortableColumns(sortParam, '?sort={sortKey}&direction={sortDirection}'),
           rows: cellRows if cellRollCounts.length > 0 else blankParentRows
         }) }}
       </div>

@@ -93,7 +93,7 @@ export default class MovementsService {
   public async getOvernightPrisoners(
     clientToken: string,
     caseLoadId: string,
-    sort: string = 'timeDateDeparted,desc',
+    sort: string = 'timeDateDeparted&direction=descending',
   ): Promise<(PrisonerWithAlerts & { movementTime: string })[]> {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
@@ -120,8 +120,10 @@ export default class MovementsService {
       }
     })
 
-    const [sortKey = 'lastName', sortDirection = 'desc'] = sort.split(',')
-    const isAscending = sortDirection === 'asc'
+    // Sorting functionality
+    const [sortKey = 'timeDateDeparted', sortDirection = 'descending'] = sort.split('&direction=')
+
+    const isAscending = sortDirection === 'ascending'
 
     const compareStrings = (left: string, right: string) => left.localeCompare(right, 'en', { ignorePunctuation: true })
 
