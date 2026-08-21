@@ -322,8 +322,12 @@ describe('EstablishmentRollController', () => {
         'timeDateDeparted&direction=descending',
       )
       expect(res.render).toHaveBeenCalledWith('pages/overnights', {
+        currentPage: 1,
+        pageSize: 5,
         prisoners: [],
         prison: 'Leeds',
+        totalPages: 0,
+        totalResults: 0,
         sort: 'timeDateDeparted&direction=descending',
       })
     })
@@ -348,9 +352,43 @@ describe('EstablishmentRollController', () => {
 
       expect(movementsService.getOvernightPrisoners).toHaveBeenCalledWith('token', 'LEI', 'reason&direction=ascending')
       expect(res.render).toHaveBeenCalledWith('pages/overnights', {
+        currentPage: 1,
+        pageSize: 5,
         prisoners: [],
         prison: 'Leeds',
         sort: 'reason&direction=ascending',
+        totalPages: 0,
+        totalResults: 0,
+      })
+    })
+
+    it('renders only prisoners for the requested page', async () => {
+      const prisoners = Array.from({ length: 30 }, (_, index) => ({ prisonerNumber: `A${index}` }))
+      movementsService.getOvernightPrisoners.mockResolvedValue(prisoners)
+
+      const controller = new EstablishmentRollController(
+        establishmentRollService as unknown as EstablishmentRollService,
+        movementsService as unknown as MovementsService,
+        locationService as unknown as LocationService,
+      )
+
+      const req = {
+        ...mockReq(),
+        query: { page: '2' },
+      } as unknown as Request
+      const res = mockRes()
+      const next = mockNext()
+
+      await controller.getOvernights()(req, res, next)
+
+      expect(res.render).toHaveBeenCalledWith('pages/overnights', {
+        currentPage: 2,
+        pageSize: 5,
+        prisoners: prisoners.slice(5, 10),
+        prison: 'Leeds',
+        sort: 'timeDateDeparted&direction=descending',
+        totalPages: 6,
+        totalResults: 30,
       })
     })
   })

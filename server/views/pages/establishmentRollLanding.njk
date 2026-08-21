@@ -34,6 +34,7 @@
       <div class="govuk-grid-column-full results-table results-table__results results-table__results--valign-top results-table__results--fixed">
         {% set sortParam = sort or 'cellLocationCode&direction=ascending' %}
         {% set returnPathWithSort = '/wing/' ~ wingId ~ '/landing/' ~ landingId ~ '?sort=' ~ sortParam %}
+
         {% set cellRows = [] %}
         {% set prisonerRows = [] %}
         {% set blankParentRows = [
