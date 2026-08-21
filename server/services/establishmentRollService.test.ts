@@ -232,12 +232,16 @@ describe('establishmentRollService', () => {
         })
 
         locationsInsidePrisonApiClientMock.getPrisonersAtLocation = jest.fn().mockResolvedValue(
-          landingCells.map((cell, index) => ({
-            cellLocation: cell.fullLocationPath,
-            prisoners: [
-              makePrisoner(`A1234B${index}`, cell.fullLocationPath === 'E-3-013' ? 'A' : cell.fullLocationPath === 'E-3-014' ? 'B' : 'C'),
-            ],
-          })),
+          landingCells.map((cell, index) => {
+            let csra = 'C'
+            if (cell.fullLocationPath === 'E-3-013') csra = 'A'
+            else if (cell.fullLocationPath === 'E-3-014') csra = 'B'
+
+            return {
+              cellLocation: cell.fullLocationPath,
+              prisoners: [makePrisoner(`A1234B${index}`, csra)],
+            }
+          }),
         )
 
         const establishmentRollCounts = await establishmentRollService.getLandingRollCounts(
