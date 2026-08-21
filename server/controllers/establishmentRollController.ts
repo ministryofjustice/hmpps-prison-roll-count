@@ -216,10 +216,20 @@ export default class EstablishmentRollController {
         sort,
       )
 
+      const totalResults = prisonersOutOvernight.length
+      const totalPages = Math.ceil(prisonersOutOvernight.length / pageSize)
+      const currentPage = getCurrentPage(req.query, totalPages)
+      const startIndex = (currentPage - 1) * pageSize
+      const prisonersForCurrentPage = prisonersOutOvernight.slice(startIndex, startIndex + pageSize)
+
       res.render('pages/overnights', {
-        prisoners: prisonersOutOvernight,
+        currentPage,
+        prisoners: prisonersForCurrentPage,
         prison: user.activeCaseLoad.description,
         sort,
+        pageSize,
+        totalPages,
+        totalResults,
       })
     }
   }
