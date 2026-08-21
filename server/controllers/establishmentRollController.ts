@@ -5,7 +5,6 @@ import LocationService from '../services/locationsService'
 import { userHasRoles } from '../utils/utils'
 import Role from '../enums/role'
 
-
 const getSortParam = (
   query: Request['query'],
   defaultSortKey: string,
