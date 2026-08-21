@@ -1,6 +1,10 @@
 // Results table container
 .results-table__results {
   overflow: auto;
+
+  .govuk-pagination {
+    margin-bottom: 10px; // override of govuk component for our layout
+  }
 }
 
 // Image column sizing
