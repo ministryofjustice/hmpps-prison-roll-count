@@ -1,6 +1,7 @@
 {% extends "../partials/layout.njk" %}
 {% from "../macros/alertFlags.njk" import alertFlags %}
 {% from "../macros/categoryFlag.njk" import categoryFlag %}
+{% from "../macros/pagination.njk" import pagination %}
 
 {% set pageTitle = "Incoming transfers" %}
 {% set mainClasses = "govuk-body govuk-main-wrapper--auto-spacing" %}
@@ -17,25 +18,29 @@
 ] %}
 
 {% block content %}
-<div class="govuk-width-container govuk-!-margin-top-8">
-    <div class="govuk-!-margin-bottom-6">
+  <div class="govuk-width-container govuk-!-margin-top-4">
+    <div class="govuk-!-margin-bottom-9">
         <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ pageTitle }}</h1>
     </div>
 
     <div class="govuk-grid-row govuk-!-margin-bottom-9">
         <div class="govuk-grid-column-full results-table results-table__results">
-            <table class="govuk-table en-route-roll__table" data-module="moj-sortable-table">
+          {% set paginationBase = 'en-route' %}
+
+          {{ pagination(currentPage, totalPages, paginationBase, totalResults, pageSize) }}
+
+          <table class="govuk-table en-route-roll__table govuk-!-font-size-16" data-module="moj-sortable-table">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
                         <th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Picture</span></th>
-                        <th scope="col" class="govuk-table__header govuk-!-font-size-16" aria-sort="ascending">Name</th>
-                        <th scope="col" class="govuk-table__header govuk-!-font-size-16">Prison number</th>
-                        <th scope="col" class="govuk-table__header govuk-!-font-size-16">Date of birth</th>
-                        <th scope="col" class="govuk-table__header govuk-!-font-size-16" aria-sort="none">Departed</th>
-                        <th scope="col" class="govuk-table__header govuk-!-font-size-16" aria-sort="none">En route from</th>
-                        <th scope="col" class="govuk-table__header govuk-!-font-size-16">Reason</th>
-                        <th scope="col" class="govuk-table__header govuk-!-font-size-16" aria-sort="none">CSRA</th>
-                        <th scope="col" class="govuk-table__header govuk-!-font-size-16">Alert flags</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="ascending">Name</th>
+                        <th scope="col" class="govuk-table__header">Prison number</th>
+                        <th scope="col" class="govuk-table__header">Date of birth</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Departed</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">En route from</th>
+                        <th scope="col" class="govuk-table__header">Reason</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">CSRA</th>
+                        <th scope="col" class="govuk-table__header">Alert flags</th>
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
@@ -61,7 +66,9 @@
                   </tr>
                 {% endif %}
                 </tbody>
-            </table>
+          </table>
+
+          {{ pagination(currentPage, totalPages, paginationBase, totalResults, pageSize) }}
         </div>
     </div>
 </div>
