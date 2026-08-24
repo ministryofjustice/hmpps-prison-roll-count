@@ -5,7 +5,7 @@ import LocationService from '../services/locationsService'
 import { userHasRoles } from '../utils/utils'
 import Role from '../enums/role'
 
-const getSortParam = (
+const getSortParams = (
   query: Request['query'],
   defaultSortKey: string,
   defaultDirection: 'ascending' | 'descending',
@@ -13,7 +13,7 @@ const getSortParam = (
   const sortKey = typeof query?.sort === 'string' ? query.sort : defaultSortKey
   const direction = typeof query?.direction === 'string' ? query.direction : defaultDirection
 
-  return `${sortKey}&direction=${direction}`
+  return { sort: sortKey, direction }
 }
 
 const pageSize = 5
@@ -64,7 +64,7 @@ export default class EstablishmentRollController {
       const { user } = res.locals
       const { clientToken } = req.middleware
       const { landingId, wingId } = req.params as { landingId: string; wingId: string }
-      const sort = getSortParam(req.query, 'cellLocationCode', 'ascending')
+      const { sort, direction } = getSortParams(req.query, 'cellLocationCode', 'ascending')
 
       const rollCounts = await this.establishmentRollService.getLandingRollCounts(
         clientToken,
@@ -72,9 +72,10 @@ export default class EstablishmentRollController {
         wingId,
         landingId,
         sort,
+        direction,
       )
 
-      res.render('pages/establishmentRollLanding', { ...rollCounts, sort })
+      res.render('pages/establishmentRollLanding', { ...rollCounts, sort, direction })
     }
   }
 
@@ -221,12 +222,13 @@ export default class EstablishmentRollController {
     return async (req: Request, res: Response) => {
       const { user } = res.locals
       const { clientToken } = req.middleware
-      const sort = getSortParam(req.query, 'timeDateDeparted', 'descending')
+      const { sort, direction } = getSortParams(req.query, 'timeDateDeparted', 'descending')
 
       const prisonersOutOvernight = await this.movementsService.getOvernightPrisoners(
         clientToken,
         user.activeCaseLoadId,
         sort,
+        direction,
       )
 
       const totalResults = prisonersOutOvernight.length
@@ -240,6 +242,7 @@ export default class EstablishmentRollController {
         prisoners: prisonersForCurrentPage,
         prison: user.activeCaseLoad.description,
         sort,
+        direction,
         pageSize,
         totalPages,
         totalResults,

@@ -205,7 +205,8 @@ describe('establishmentRollService', () => {
           'LEI',
           '13075',
           '13076',
-          'bedsInUse&direction=ascending',
+          'bedsInUse',
+          'ascending',
         )
 
         const bedsInUse = establishmentRollCounts.cellRollCounts.map(cell => cell.rollCount.bedsInUse)
@@ -249,7 +250,8 @@ describe('establishmentRollService', () => {
           'LEI',
           '13075',
           '13076',
-          'csra&direction=ascending',
+          'csra',
+          'ascending',
         )
 
         expect(establishmentRollCounts.cellRollCounts[0].fullLocationPath).toEqual('E-3-013')
@@ -330,7 +332,8 @@ describe('establishmentRollService', () => {
           'HOI',
           '39255',
           '39270',
-          'cellLocationCode&direction=ascending',
+          'cellLocationCode',
+          'ascending',
         )
 
         const expectedCells = [
