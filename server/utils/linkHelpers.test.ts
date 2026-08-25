@@ -153,6 +153,16 @@ describe('generate prisoner profile back link URL', () => {
         prisonerProfileBaseUrl
       }/save-backlink?service=prison-roll-count&backLinkText=Back%20to%20list&returnPath=%2Fovernights%3Fsort%3DtimeDateDeparted%26direction%3Ddescending&redirectPath=/prisoner/12345678`,
     ],
+    [
+      'returnPath with sort and page query is encoded',
+      'Back to list',
+      '/overnights?sort=timeDateDeparted&direction=descending&page=3',
+      '12345678',
+      undefined,
+      `${
+        prisonerProfileBaseUrl
+      }/save-backlink?service=prison-roll-count&backLinkText=Back%20to%20list&returnPath=%2Fovernights%3Fsort%3DtimeDateDeparted%26direction%3Ddescending%26page%3D3&redirectPath=/prisoner/12345678`,
+    ],
   ])(
     '%s prisonerProfileBackLinkUrl(%s)',
     (

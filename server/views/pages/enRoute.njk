@@ -26,6 +26,8 @@
     <div class="govuk-grid-row govuk-!-margin-bottom-9">
         <div class="govuk-grid-column-full results-table results-table__results">
           {% set paginationBase = 'en-route' %}
+          {% set pageParam = '?page=' ~ currentPage if currentPage > 1 else '' %}
+          {% set returnPathWithPage = '/en-route' ~ pageParam %}
 
           {{ pagination(currentPage, totalPages, paginationBase, totalResults, pageSize) }}
 
@@ -49,14 +51,14 @@
                         {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell"><img src="/prisonerImage/{{ prisoner.prisonerNumber or 'placeholder' }}" alt="Image of {{ prisonerName }}" class="results-table__results__image" /></td>
-                            <td class="govuk-table__cell" data-sort-value="{{ prisonerName }}" ><a href="{{ prisonerProfileBackLinkUrl('Back to Incoming transfers', '/en-route', prisoner.prisonerNumber) }}" class="govuk-link">{{ prisonerName }}</a></td>
+                            <td class="govuk-table__cell" data-sort-value="{{ prisonerName }}" ><a href="{{ prisonerProfileBackLinkUrl('Back to Incoming transfers', returnPathWithPage, prisoner.prisonerNumber) }}" class="govuk-link">{{ prisonerName }}</a></td>
                             <td class="govuk-table__cell">{{ prisoner.prisonerNumber }}</td>
                             <td class="govuk-table__cell">{{ prisoner.dateOfBirth | formatDate('short')}}</td>
                             <td class="govuk-table__cell" data-sort-value="{{ prisoner.movementDate | toUnixTimeStamp(prisoner.movementTime) }}" >{{ prisoner.movementTime | formatTime }}<br />{{ prisoner.movementDate | formatDate('short')}}</td>
                             <td class="govuk-table__cell">{{ prisoner.from }}</td>
                             <td class="govuk-table__cell">{{ prisoner.reason }}</td>
                             {% set csraLevel = prisoner.csra or 'None' %}
-                            <td class="govuk-table__cell" data-sort-value="{{ csraLevel }}"><a href="{{ prisonerProfileBackLinkUrl('Back to Incoming transfers', '/en-route', prisoner.prisonerNumber, '/csra-history') }}" class="govuk-link">{{ csraLevel }}</a></td>
+                            <td class="govuk-table__cell" data-sort-value="{{ csraLevel }}"><a href="{{ prisonerProfileBackLinkUrl('Back to Incoming transfers', returnPathWithPage, prisoner.prisonerNumber, '/csra-history') }}" class="govuk-link">{{ csraLevel }}</a></td>
                             <td class="govuk-table__cell">{{ alertFlags(prisoner.alertFlags) }}{{categoryFlag("", prisoner.category) | safe}}</td>
                         </tr>
                     {% endfor %}
