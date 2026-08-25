@@ -1,16 +1,16 @@
-function urlFromTemplate(hrefTemplate: string, key: string, direction: string) {
-  return hrefTemplate.replace('{sortKey}', key).replace('{sortDirection}', direction)
+import { sortDirection, reverseSortDirection } from './filtering'
+
+export function generateSortableUrl(key: string, direction: sortDirection): string {
+  return `?sort=${key}&direction=${direction}`
 }
 
 // update column header links and add aria-sort attributes to govukTable head row so that moj-sortable-table css will be applied
 export const convertToSortableColumns = (
   headings: { text: string; key?: string }[],
   sort: string,
-  hrefTemplate: string = '?sort={sortKey}&direction={sortDirection}',
+  direction: sortDirection,
 ) => {
-  const [sortingKey, sortingDirection] = sort.split('&direction=')
-  const resolvedSortingDirection = sortingDirection === 'ascending' ? 'ascending' : 'descending'
-
+  console.log(`convertToSortableColumns: sort=${sort}, direction=${direction}`)
   return headings.map(heading => {
     const { text, key, ...others } = heading
 
@@ -23,15 +23,15 @@ export const convertToSortableColumns = (
       return heading
     }
 
-    if (key === sortingKey) {
-      const nextDirection = resolvedSortingDirection === 'ascending' ? 'descending' : 'ascending'
+    if (key === sort) {
+      const nextDirection = reverseSortDirection(direction)
       return {
         ...others,
         attributes: {
           ...existingAttributes,
-          'aria-sort': resolvedSortingDirection,
+          'aria-sort': direction,
         },
-        html: `<a href="${urlFromTemplate(hrefTemplate, key, nextDirection)}" role="button">${text}</a>`,
+        html: `<a href="${generateSortableUrl(key, nextDirection)}" role="button">${text}</a>`,
       }
     }
 
@@ -41,9 +41,7 @@ export const convertToSortableColumns = (
         ...existingAttributes,
         'aria-sort': 'none',
       },
-      html: `<a href="${urlFromTemplate(hrefTemplate, key, 'ascending')}" role="button">${text}</a>`,
+      html: `<a href="${generateSortableUrl(key, sortDirection.ascending)}" role="button">${text}</a>`,
     }
   })
 }
-
-export default convertToSortableColumns

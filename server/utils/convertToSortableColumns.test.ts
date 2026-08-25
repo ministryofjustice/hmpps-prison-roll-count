@@ -1,4 +1,5 @@
 import { convertToSortableColumns } from './convertToSortableColumns'
+import { sortDirection } from './filtering'
 
 describe('convertToSortableColumns', () => {
   it('updates aria-sort, preserves existing heading attributes, and defaults non-active headers to ascending', () => {
@@ -19,7 +20,8 @@ describe('convertToSortableColumns', () => {
 
     const [nameHeading, reasonHeading] = convertToSortableColumns(
       headings,
-      'timeDateDeparted&direction=descending',
+      'timeDateDeparted',
+      sortDirection.descending,
     ) as Array<{
       attributes: Record<string, string>
       html: string
@@ -51,7 +53,8 @@ describe('convertToSortableColumns', () => {
 
     const [activeHeading, inactiveHeading] = convertToSortableColumns(
       headings,
-      'timeDateDeparted&direction=ascending',
+      'timeDateDeparted',
+      sortDirection.ascending,
     ) as Array<{
       attributes: Record<string, string>
       html: string

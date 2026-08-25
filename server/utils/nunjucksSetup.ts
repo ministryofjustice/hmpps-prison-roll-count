@@ -6,7 +6,7 @@ import fs from 'fs'
 import { formatName, initialiseName, prisonerBelongsToUsersCaseLoad, userHasAllRoles, userHasRoles } from './utils'
 import { formatDate, formatDateTime, formatTime, timeFromDate, toUnixTimeStamp } from './dateHelpers'
 import { prisonerProfileUrl, prisonerProfileBackLinkUrl } from './linkHelpers'
-import { convertToSortableColumns } from './convertToSortableColumns'
+import { convertToSortableColumns, generateSortableUrl } from './convertToSortableColumns'
 import config from '../config'
 import logger from '../logger'
 
@@ -69,4 +69,5 @@ export default function nunjucksSetup(app: express.Express): void {
   njkEnv.addFilter('toUnixTimeStamp', toUnixTimeStamp)
   njkEnv.addFilter('timeFromDate', timeFromDate)
   njkEnv.addFilter('convertToSortableColumns', convertToSortableColumns)
+  njkEnv.addGlobal('generateSortableUrl', generateSortableUrl)
 }
