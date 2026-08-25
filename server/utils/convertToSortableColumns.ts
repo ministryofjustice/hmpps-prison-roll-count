@@ -10,7 +10,6 @@ export const convertToSortableColumns = (
   sort: string,
   direction: sortDirection,
 ) => {
-  console.log(`convertToSortableColumns: sort=${sort}, direction=${direction}`)
   return headings.map(heading => {
     const { text, key, ...others } = heading
 
