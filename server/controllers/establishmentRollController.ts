@@ -4,6 +4,7 @@ import MovementsService from '../services/movementsService'
 import LocationService from '../services/locationsService'
 import { userHasRoles } from '../utils/utils'
 import Role from '../enums/role'
+import config from '../config'
 
 const getSortParam = (
   query: Request['query'],
@@ -16,7 +17,7 @@ const getSortParam = (
   return `${sortKey}&direction=${direction}`
 }
 
-const pageSize = Number(process.env.PAGE_SIZE) || 25
+const pageSize = Number(config.envPageSize) || 25
 
 const getCurrentPage = (query: Request['query'], totalPages: number) => {
   const requestedPage =
