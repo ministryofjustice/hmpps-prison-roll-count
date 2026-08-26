@@ -11,7 +11,7 @@ Params:
   totalResults {number} - Optional: Total number of results (displays "Showing x to y of z")
   pageSize    {number} - Optional: Number of results per page (default: 25)
 #}
-{% macro pagination(currentPage, totalPages, baseHref, totalResults, envPageSize) %}
+{% macro pagination(currentPage, totalPages, baseHref, totalResults, pageSize) %}
   {% set pageSize = pageSize or 25 %}
   {% set pageParamPrefix = '&' if '?' in baseHref else '?' %}
   {% set startItem = (currentPage - 1) * pageSize + 1 %}
