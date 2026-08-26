@@ -28,7 +28,7 @@
           {% set paginationBase = '/in-reception' %}
           {% set pageParam = '?page=' ~ currentPage if currentPage > 1 else '' %}
           {% set returnPathWithPage = '/in-reception' ~ pageParam %}
-          {{ pagination(currentPage, totalPages, paginationBase, totalResults, pageSize) }}
+          {{ pagination(currentPage, totalPages, paginationBase, totalResults, envPageSize) }}
 
             <table class="govuk-table in-reception-roll__table" data-module="moj-sortable-table">
                 <thead class="govuk-table__head">

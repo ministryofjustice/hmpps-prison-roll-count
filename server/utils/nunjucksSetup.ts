@@ -54,6 +54,9 @@ export default function nunjucksSetup(app: express.Express): void {
   njkEnv.addGlobal('prisonerProfileUrl', prisonerProfileUrl)
   njkEnv.addGlobal('prisonerProfileBackLinkUrl', prisonerProfileBackLinkUrl)
 
+  // Expose the page size override to the nunjucks environment
+  njkEnv.addGlobal('envPageSize', config.envPageSize)
+
   // Expose the google tag manager container ID to the nunjucks environment
   const {
     analytics: { tagManagerContainerId },

@@ -29,7 +29,7 @@
           {% set pageParam = '?page=' ~ currentPage if currentPage > 1 else '' %}
           {% set returnPathWithPage = '/en-route' ~ pageParam %}
 
-          {{ pagination(currentPage, totalPages, paginationBase, totalResults, pageSize) }}
+          {{ pagination(currentPage, totalPages, paginationBase, totalResults, envPageSize) }}
 
           <table class="govuk-table en-route-roll__table govuk-!-font-size-16" data-module="moj-sortable-table">
                 <thead class="govuk-table__head">
