@@ -16,7 +16,7 @@ const getSortParam = (
   return `${sortKey}&direction=${direction}`
 }
 
-const pageSize = 5
+const pageSize = Number(process.env.PAGE_SIZE) || 25
 
 const getCurrentPage = (query: Request['query'], totalPages: number) => {
   const requestedPage =
