@@ -51,7 +51,7 @@ context('In reception Page', () => {
 
   it('name link returns to the In reception page via the prisoner profile back link', () => {
     const page = Page.verifyOnPage(InReceptionPage)
-
+    const returnPath = encodeURIComponent('/in-reception?sort=prisonerName&direction=ascending')
     page
       .inReceptionRows()
       .first()
@@ -61,13 +61,13 @@ context('In reception Page', () => {
       .should('have.attr', 'href')
       .and('contain', '/save-backlink')
       .and('contain', 'service=prison-roll-count')
-      .and('contain', 'returnPath=/in-reception')
+      .and('contain', `returnPath=${returnPath}`)
       .and('contain', 'redirectPath=/prisoner/A1234AB')
   })
 
   it('CSRA link goes to the CSRA history page and returns to the In reception page via the back link', () => {
     const page = Page.verifyOnPage(InReceptionPage)
-
+    const returnPath = encodeURIComponent('/in-reception?sort=prisonerName&direction=ascending')
     page
       .inReceptionRows()
       .first()
@@ -77,7 +77,7 @@ context('In reception Page', () => {
       .should('have.attr', 'href')
       .and('contain', '/save-backlink')
       .and('contain', 'service=prison-roll-count')
-      .and('contain', 'returnPath=/in-reception')
+      .and('contain', `returnPath=${returnPath}`)
       .and('contain', 'redirectPath=/prisoner/A1234AB/csra-history')
   })
 

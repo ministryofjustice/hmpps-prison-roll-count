@@ -50,19 +50,25 @@
                 html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to In Reception', returnPathWithSort, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ prisonerName ~ '</a>',
                 sortValue: prisonerName,
                 attributes: {
-                "data-sort-value": prisoner.lastName.toLowerCase() if prisoner.displayName else ''
-              }
+                  "data-sort-value": prisoner.lastName.toLowerCase() if prisoner.displayName else ''
+                }
               },
               {
                 text: prisoner.prisonerNumber
               },
               {
                 text: prisoner.dateOfBirth | formatDate('medium'),
-                sortValue: prisoner.dateOfBirth | toUnixTimeStamp()
+                sortValue: prisoner.dateOfBirth | toUnixTimeStamp(),
+                attributes: {
+                  "data-sort-value": prisoner.dateOfBirth
+                }
               },
               {
                 text: prisoner.timeArrived | formatTime,
-                sortValue: prisoner.timeArrived | toUnixTimeStamp()
+                sortValue: prisoner.timeArrived | toUnixTimeStamp(),
+                attributes: {
+                  "data-sort-value": prisoner.timeArrived | formatTime
+                }
               },
               {
                 text: prisoner.from
