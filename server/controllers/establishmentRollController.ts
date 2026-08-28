@@ -129,8 +129,13 @@ export default class EstablishmentRollController {
     return async (req: Request, res: Response) => {
       const { user } = res.locals
       const { clientToken } = req.middleware
+      const sort = getSortParam(req.query, 'prisonerName', 'ascending')
 
-      const prisonersEnRoute = await this.movementsService.getInReceptionPrisoners(clientToken, user.activeCaseLoadId)
+      const prisonersEnRoute = await this.movementsService.getInReceptionPrisoners(
+        clientToken,
+        user.activeCaseLoadId,
+        sort,
+      )
 
       const totalResults = prisonersEnRoute.length
       const totalPages = Math.ceil(prisonersEnRoute.length / pageSize)
@@ -141,6 +146,7 @@ export default class EstablishmentRollController {
       res.render('pages/inReception', {
         prisoners: prisonersForCurrentPage,
         prison: user.activeCaseLoad.description,
+        sort,
         currentPage,
         totalPages,
         totalResults,

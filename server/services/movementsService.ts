@@ -163,6 +163,7 @@ export default class MovementsService {
   public async getInReceptionPrisoners(
     clientToken: string,
     caseLoadId: string,
+    sort: string = 'prisonerName&direction=ascending',
   ): Promise<(PrisonerWithAlerts & { from: string; timeArrived: string })[]> {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
@@ -176,18 +177,48 @@ export default class MovementsService {
       prisonApi.getRecentMovements(prisonerNumbers),
     ])
 
-    return prisoners
-      .sort((a, b) => a.lastName.localeCompare(b.lastName, 'en', { ignorePunctuation: true }))
-      .map(prisoner => {
-        const recentMovement = recentMovements.find(movement => movement.offenderNo === prisoner.prisonerNumber)
+    const mappedPrisoners = prisoners.map((prisoner: PrisonerWithAlerts) => {
+      const recentMovement = recentMovements.find(movement => movement.offenderNo === prisoner.prisonerNumber)
 
-        return {
-          ...prisoner,
-          alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
-          from: recentMovement?.fromAgencyDescription,
-          timeArrived: recentMovement?.movementTime,
+      return {
+        ...prisoner,
+        alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
+        from: recentMovement?.fromAgencyDescription,
+        timeArrived: recentMovement?.movementTime,
+      }
+    })
+
+    const [sortKey = 'prisonerName', sortDirection = 'ascending'] = sort.split('&direction=')
+    const isAscending = sortDirection === 'ascending'
+    const compareStrings = (left: string, right: string) => left.localeCompare(right, 'en', { ignorePunctuation: true })
+
+    const sortedPrisoners = mappedPrisoners.sort((left, right) => {
+      let comparison = 0
+
+      switch (sortKey) {
+        case 'timeArrived':
+          comparison = compareStrings(left.timeArrived || '', right.timeArrived || '')
+          break
+        case 'dateOfBirth':
+          comparison = compareStrings(left.dateOfBirth || '', right.dateOfBirth || '')
+          break
+        case 'csra':
+          comparison = compareStrings(left.csra || 'None', right.csra || 'None')
+          break
+        case 'prisonerName':
+        default: {
+          comparison = compareStrings(left.lastName || '', right.lastName || '')
+          if (comparison === 0) {
+            comparison = compareStrings(left.firstName || '', right.firstName || '')
+          }
+          break
         }
-      })
+      }
+
+      return isAscending ? comparison : -comparison
+    })
+
+    return sortedPrisoners
   }
 
   public async getNoCellAllocatedPrisoners(

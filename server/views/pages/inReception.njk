@@ -47,7 +47,7 @@
                 html: '<img src="/prisonerImage/' ~ (prisoner.prisonerNumber or 'placeholder') ~ '" alt="Image of ' ~ prisonerName ~ '" class="results-table__results__image" />'
               },
               {
-                html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Overnights (due to return)', returnPathWithSort, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ prisonerName ~ '</a>',
+                html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to In Reception', returnPathWithSort, prisoner.prisonerNumber, '') ~ '" class="govuk-link">' ~ prisonerName ~ '</a>',
                 sortValue: prisonerName,
                 attributes: {
                 "data-sort-value": prisoner.lastName.toLowerCase() if prisoner.displayName else ''
@@ -68,7 +68,7 @@
                 text: prisoner.from
               },
               {
-                html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Overnights (due to return)', returnPathWithSort, prisoner.prisonerNumber, '/csra-history') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>',
+                html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to In Reception', returnPathWithSort, prisoner.prisonerNumber, '/csra-history') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>',
                 sortValue: csraLevel
               },
               {
@@ -81,10 +81,10 @@
           {{ pagination(currentPage, totalPages, paginationBase, totalResults, envPageSize) }}
 
           {{ govukTable({
-            caption: 'Overnights due to return (column headers with buttons are sortable)',
+            caption: 'In Reception (column headers with buttons are sortable)',
             captionClasses: 'govuk-visually-hidden',
             firstCellIsHeader: false,
-            classes: 'govuk-table sortable-table govuk-!-font-size-16',
+            classes: 'govuk-table in-reception-roll__table sortable-table govuk-!-font-size-16',
             head: [
               {
                 text: '',
@@ -94,7 +94,7 @@
               },
               {
                 text: "Name",
-                key: 'lastName',
+                key: 'prisonerName',
                 classes: 'govuk-!-font-size-16'
               },
               {
