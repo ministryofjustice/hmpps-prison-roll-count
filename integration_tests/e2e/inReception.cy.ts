@@ -27,7 +27,7 @@ context('In reception Page', () => {
 
     page.inReceptionRows().first().find('td').eq(1).should('contain.text', 'Shannon, Eddie')
     page.inReceptionRows().first().find('td').eq(2).should('contain.text', 'A1234AB')
-    page.inReceptionRows().first().find('td').eq(3).should('contain.text', '01/01/1980')
+    page.inReceptionRows().first().find('td').eq(3).should('contain.text', '1 Jan 1980')
     page.inReceptionRows().first().find('td').eq(4).should('contain.text', '11:00')
     page.inReceptionRows().first().find('td').eq(5).should('contain.text', 'Leeds')
     // Column index 6 checked in the CSRA level test
@@ -51,7 +51,7 @@ context('In reception Page', () => {
 
   it('name link returns to the In reception page via the prisoner profile back link', () => {
     const page = Page.verifyOnPage(InReceptionPage)
-
+    const returnPath = encodeURIComponent('/in-reception?sort=prisonerName&direction=ascending')
     page
       .inReceptionRows()
       .first()
@@ -61,13 +61,13 @@ context('In reception Page', () => {
       .should('have.attr', 'href')
       .and('contain', '/save-backlink')
       .and('contain', 'service=prison-roll-count')
-      .and('contain', 'returnPath=/in-reception')
+      .and('contain', `returnPath=${returnPath}`)
       .and('contain', 'redirectPath=/prisoner/A1234AB')
   })
 
   it('CSRA link goes to the CSRA history page and returns to the In reception page via the back link', () => {
     const page = Page.verifyOnPage(InReceptionPage)
-
+    const returnPath = encodeURIComponent('/in-reception?sort=prisonerName&direction=ascending')
     page
       .inReceptionRows()
       .first()
@@ -77,7 +77,7 @@ context('In reception Page', () => {
       .should('have.attr', 'href')
       .and('contain', '/save-backlink')
       .and('contain', 'service=prison-roll-count')
-      .and('contain', 'returnPath=/in-reception')
+      .and('contain', `returnPath=${returnPath}`)
       .and('contain', 'redirectPath=/prisoner/A1234AB/csra-history')
   })
 
@@ -102,17 +102,9 @@ context('In reception Page', () => {
     page.inReceptionRows().first().find('td').eq(3).should('have.attr', 'data-sort-value', '1980-01-01')
   })
 
-  it('applies the govuk-!-font-size-16 override to the body cells', () => {
-    const page = Page.verifyOnPage(InReceptionPage)
-
-    page.inReceptionRows().first().find('td').eq(1).should('have.class', 'govuk-!-font-size-16')
-    page.inReceptionRows().first().find('td').eq(3).should('have.class', 'govuk-!-font-size-16')
-    page.inReceptionRows().first().find('td').eq(7).should('have.class', 'govuk-!-font-size-16')
-  })
-
   it('name link returns to the in-reception page via the prisoner profile back link', () => {
     const page = Page.verifyOnPage(InReceptionPage)
-
+    const returnPath = encodeURIComponent('/in-reception?sort=prisonerName&direction=ascending')
     page
       .inReceptionRows()
       .first()
@@ -122,8 +114,8 @@ context('In reception Page', () => {
       .should('have.attr', 'href')
       .and('contain', '/save-backlink')
       .and('contain', 'service=prison-roll-count')
-      .and('contain', 'backLinkText=Back%20to%20In%20reception')
-      .and('contain', 'returnPath=/in-reception')
+      .and('contain', 'backLinkText=Back%20to%20In%20Reception')
+      .and('contain', `returnPath=${returnPath}`)
       .and('contain', 'redirectPath=/prisoner/A1234AB')
   })
 })

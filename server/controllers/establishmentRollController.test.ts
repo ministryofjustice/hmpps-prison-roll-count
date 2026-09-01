@@ -11,6 +11,7 @@ const establishmentRollService = {
 const movementsService = {
   getOffendersCurrentlyOutOfBed: jest.fn(),
   getOffendersCurrentlyOutOfLivingUnit: jest.fn(),
+  getInReceptionPrisoners: jest.fn(),
   getOvernightPrisoners: jest.fn(),
 }
 const locationService = {
@@ -389,6 +390,73 @@ describe('EstablishmentRollController', () => {
         sort: 'timeDateDeparted&direction=descending',
         totalPages: 2,
         totalResults: 30,
+      })
+    })
+  })
+
+  describe('getInReception', () => {
+    it('defaults sort to prisonerName&direction=ascending when no query is provided', async () => {
+      movementsService.getInReceptionPrisoners.mockResolvedValue([])
+
+      const controller = new EstablishmentRollController(
+        establishmentRollService as unknown as EstablishmentRollService,
+        movementsService as unknown as MovementsService,
+        locationService as unknown as LocationService,
+      )
+
+      const req = mockReq()
+      const res = mockRes()
+      const next = mockNext()
+
+      await controller.getInReception()(req, res, next)
+
+      expect(movementsService.getInReceptionPrisoners).toHaveBeenCalledWith(
+        'token',
+        'LEI',
+        'prisonerName&direction=ascending',
+      )
+      expect(res.render).toHaveBeenCalledWith('pages/inReception', {
+        currentPage: 1,
+        pageSize: 25,
+        prisoners: [],
+        prison: 'Leeds',
+        sort: 'prisonerName&direction=ascending',
+        totalPages: 0,
+        totalResults: 0,
+      })
+    })
+
+    it('combines sort and direction query params when provided', async () => {
+      movementsService.getInReceptionPrisoners.mockResolvedValue([])
+
+      const controller = new EstablishmentRollController(
+        establishmentRollService as unknown as EstablishmentRollService,
+        movementsService as unknown as MovementsService,
+        locationService as unknown as LocationService,
+      )
+
+      const req = {
+        ...mockReq(),
+        query: { sort: 'timeArrived', direction: 'descending' },
+      } as unknown as Request
+      const res = mockRes()
+      const next = mockNext()
+
+      await controller.getInReception()(req, res, next)
+
+      expect(movementsService.getInReceptionPrisoners).toHaveBeenCalledWith(
+        'token',
+        'LEI',
+        'timeArrived&direction=descending',
+      )
+      expect(res.render).toHaveBeenCalledWith('pages/inReception', {
+        currentPage: 1,
+        pageSize: 25,
+        prisoners: [],
+        prison: 'Leeds',
+        sort: 'timeArrived&direction=descending',
+        totalPages: 0,
+        totalResults: 0,
       })
     })
   })
