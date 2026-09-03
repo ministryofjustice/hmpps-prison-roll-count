@@ -101,8 +101,12 @@ export default class EstablishmentRollService {
       })
     }
 
-    // Get prisoner details for the wing
-    const prisonersInLocations = await locationsApi.getPrisonersAtLocation(wingId)
+    // Get prisoner details for the wing:
+    // Legacy (non-resi) establishments can use wing IDs that are invalid for /prisoner-locations/id/{locationId}.
+    // Fall back to prison-level lookup in that mode, then map by cell path
+    const prisonersInLocations = prisonIsActiveForResi
+      ? await locationsApi.getPrisonersAtLocation(wingId)
+      : await locationsApi.getPrisonersInPrison(caseLoadId)
     prisonersInLocations.forEach(pl => {
       prisonersByCell[pl.cellLocation] = pl.prisoners.map(prisoner => ({
         ...prisoner,

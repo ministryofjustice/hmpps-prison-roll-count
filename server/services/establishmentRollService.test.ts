@@ -13,6 +13,7 @@ describe('establishmentRollService', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     locationsInsidePrisonApiClientMock.getPrisonersAtLocation = jest.fn().mockResolvedValue([])
+    locationsInsidePrisonApiClientMock.getPrisonersInPrison = jest.fn().mockResolvedValue([])
     establishmentRollService = new EstablishmentRollService(
       () => prisonApiClientMock,
       () => locationsInsidePrisonApiClientMock,
@@ -133,6 +134,8 @@ describe('establishmentRollService', () => {
         await establishmentRollService.getLandingRollCounts('token', 'LEI', '13075', '13076')
         expect(prisonApiClientMock.getPrisonRollCountForLocation).toHaveBeenCalledWith('LEI', '13075')
         expect(locationsInsidePrisonApiClientMock.getPrisonRollCountForLocation).not.toHaveBeenCalled()
+        expect(locationsInsidePrisonApiClientMock.getPrisonersInPrison).toHaveBeenCalledWith('LEI')
+        expect(locationsInsidePrisonApiClientMock.getPrisonersAtLocation).not.toHaveBeenCalled()
       })
 
       it('should return the wing name', async () => {
@@ -213,6 +216,13 @@ describe('establishmentRollService', () => {
       })
 
       it('should sort cells by csra when requested', async () => {
+        locationsInsidePrisonApiClientMock.getPrisonConfiguration = jest
+          .fn()
+          .mockResolvedValue({ prisonId: 'LEI', resiLocationServiceActive: 'ACTIVE' })
+        locationsInsidePrisonApiClientMock.getPrisonRollCountForLocation = jest
+          .fn()
+          .mockResolvedValue(prisonRollCountForWingNoSpurMock)
+
         const landingCells = prisonRollCountForWingNoSpurMock.locations[0].subLocations[0].subLocations
         const makePrisoner = (prisonerNumber: string, csra: string) => ({
           prisonerNumber,
@@ -273,6 +283,8 @@ describe('establishmentRollService', () => {
         )
 
         expect(locationsInsidePrisonApiClientMock.getPrisonRollCountForLocation).toHaveBeenCalledWith('LEI', '13075')
+        expect(locationsInsidePrisonApiClientMock.getPrisonersAtLocation).toHaveBeenCalledWith('13075')
+        expect(locationsInsidePrisonApiClientMock.getPrisonersInPrison).not.toHaveBeenCalled()
         expect(prisonApiClientMock.getPrisonRollCountForLocation).not.toHaveBeenCalled()
         expect(establishmentRollCounts.useWorkingCapacity).toBe(true)
       })
