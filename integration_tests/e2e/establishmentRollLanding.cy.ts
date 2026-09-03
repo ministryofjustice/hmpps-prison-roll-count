@@ -15,7 +15,7 @@ context('Establishment Roll Landing Page', () => {
     cy.task('stubPrisonConfiguration', { prisonId: 'LEI', resiLocationServiceActive: 'INACTIVE' })
     cy.task('stubPrisonRollCount')
     cy.task('stubPrisonRollCountForLanding', { prisonCode: 'LEI', landingId: wingId })
-    cy.task('stubLocationsOutToday', wingId)
+    cy.task('stubLocationsPrisonersInPrison', 'LEI')
     cy.signIn()
     cy.visit(`/wing/${wingId}/spur/${spurId}/landing/${landingId}`, { failOnStatusCode: false })
   })
