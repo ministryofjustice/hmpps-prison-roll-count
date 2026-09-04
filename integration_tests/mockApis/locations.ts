@@ -84,6 +84,22 @@ const stubLocationsOutToday = (locationId = '01922e9a-ffd2-77cb-ba6b-3c9c9b62319
   })
 }
 
+const stubLocationsPrisonersInPrison = (prisonId = 'LEI') => {
+  return stubFor({
+    request: {
+      method: 'GET',
+      urlPattern: `/locations/prisoner-locations/prison/${prisonId}`,
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: prisonerInLocation,
+    },
+  })
+}
+
 const stubInternalLocation = ({
   locationId = '01922e9a-ffd2-77cb-ba6b-3c9c9b623194',
   payload = internalLocationMock,
@@ -125,6 +141,7 @@ export default {
   stubLocationPrisonRollCount,
   stubLocationPrisonRollCountForLanding,
   stubLocationsOutToday,
+  stubLocationsPrisonersInPrison,
   stubInternalLocation,
   stubPrisonConfiguration,
 }

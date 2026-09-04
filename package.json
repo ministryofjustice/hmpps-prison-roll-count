@@ -77,8 +77,8 @@
     ]
   },
   "dependencies": {
-    "@aws-sdk/client-sqs": "3.1120.0",
-    "@ministryofjustice/frontend": "^10.0.1",
+    "@aws-sdk/client-sqs": "3.1121.0",
+    "@ministryofjustice/frontend": "^11.0.0",
     "@ministryofjustice/hmpps-connect-dps-components": "6.3.4",
     "@ministryofjustice/hmpps-connect-dps-shared-items": "5.1.0",
     "@ministryofjustice/hmpps-monitoring": "^2.1.0",
@@ -156,11 +156,11 @@
   },
   "overrides": {
     "cypress": {
-      "systeminformation": "5.33.5"
+      "systeminformation": "5.33.6"
     },
     "cypress-multi-reporters": {
       "mocha": {
-        "serialize-javascript": "7.1.0"
+        "serialize-javascript": "7.1.1"
       }
     },
     "nunjucks": {
