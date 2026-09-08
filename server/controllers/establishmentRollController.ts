@@ -86,7 +86,7 @@ export default class EstablishmentRollController {
 
       const arrivedPrisoners = await this.movementsService.getArrivedTodayPrisoners(clientToken, user.activeCaseLoadId)
 
-      res.render('pages/arrivingToday', { prisoners: arrivedPrisoners })
+      res.render('pages/inToday', { prisoners: arrivedPrisoners })
     }
   }
 

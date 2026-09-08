@@ -1,6 +1,6 @@
 import Page from '../pages/page'
 import Role from '../../server/enums/role'
-import ArrivedTodayPage from '../pages/arrivedToday'
+import ArrivedTodayPage from '../pages/inToday'
 
 context('Arrived Today Page', () => {
   beforeEach(() => {

@@ -149,6 +149,13 @@
     gap: 10px;
     margin: govuk-spacing(2) 0;
   }
+
+  &__stretch {
+    .establishment-roll-card {
+      flex: 1;
+      height: auto;
+    }
+  }
 }
 
 .establishment-roll-card {
