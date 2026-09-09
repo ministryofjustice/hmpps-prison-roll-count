@@ -1,8 +1,10 @@
 {% extends "../partials/layout.njk" %}
 {% from "../macros/establishmentRollStatCard.njk" import establishmentRollStatCard %}
+{% from "../macros/printLink.njk" import printLink %}
 {% from "../macros/alertFlags.njk" import alertFlags %}
 {% from "../macros/categoryFlag.njk" import categoryFlag %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% set todayStats = establishmentRollCounts.todayStats %}
 
 {% set pageTitle = "In today" %}
 {% set mainClasses = "govuk-body govuk-main-wrapper--auto-spacing" %}
@@ -18,6 +20,9 @@
     }
 ] %}
 
+{% set showPrintLink = true %}
+{{ printLink(align = "right") }}
+
 {% block content %}
 <div class="govuk-width-container govuk-!-margin-top-4">
     <div class="govuk-!-margin-bottom-6">
@@ -28,7 +33,7 @@
       {{
       establishmentRollStatCard(
         heading = "New admissions",
-        value = 0,
+        value = todayStats.newAdmissions,
         qaTag = "new-admissions-card"
       )
       }}
@@ -84,7 +89,7 @@
             text: prisoner.prisonerNumber
           },
           {
-            html: 'Arrival type'
+            html: prisoner.arrivalType
           },
           {
             html: prisoner.movementTime | formatTime ~ '<br />' ~ prisoner.movementDate | formatDate('short'), sortValue: prisoner.movementDate | toUnixTimeStamp(prisoner.movementTime)
@@ -93,7 +98,7 @@
             html: prisoner.arrivedFrom
           },
           {
-            html: 'current status'
+            text: prisoner.inOutStatus
           },
           {
             html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Overnights (due to return)', returnPathWithSort, prisoner.prisonerNumber, '/csra-history') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>',

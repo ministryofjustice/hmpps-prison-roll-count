@@ -5,4 +5,5 @@ export interface PrisonerSearchClient {
   getPrisonersById(prisonerNumbers: string[]): Promise<Prisoner[]>
   getCswapPrisonersInEstablishment(prisonId: string): Promise<PagedList<Prisoner>>
   getOvernightPrisonersInEstablishment(prisonId: string): Promise<PagedList<Prisoner>>
+  getNewAdmissionsInEstablishment(prisonId: string): Promise<PagedList<Prisoner>>
 }

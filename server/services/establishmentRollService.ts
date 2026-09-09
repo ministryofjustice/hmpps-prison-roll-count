@@ -27,13 +27,22 @@ export default class EstablishmentRollService {
   ): Promise<EstablishmentRollCount> {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const locationsApi = this.locationsInsidePrisonApiClientBuilder(clientToken)
+    const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
 
     const resiLocationServiceActive = await this.isResiLocationServiceActive(clientToken, caseLoadId)
 
-    const rollCount =
+    const [rollCount, newAdmissionsSearchResult, arrivedTodayMovements] = await Promise.all([
       forceUseLocationsApi || resiLocationServiceActive
-        ? await locationsApi.getPrisonRollCount(caseLoadId)
-        : await prisonApi.getPrisonRollCount(caseLoadId)
+        ? locationsApi.getPrisonRollCount(caseLoadId)
+        : prisonApi.getPrisonRollCount(caseLoadId),
+      prisonerSearchClient.getNewAdmissionsInEstablishment(caseLoadId),
+      prisonApi.getMovementsIn(caseLoadId, new Date().toISOString()),
+    ])
+
+    const arrivedTodayPrisonerNumbers = new Set((arrivedTodayMovements || []).map(movement => movement.offenderNo))
+    const newAdmissions = newAdmissionsSearchResult.content.filter(prisoner =>
+      arrivedTodayPrisonerNumbers.has(prisoner.prisonerNumber),
+    ).length
 
     return {
       todayStats: {
@@ -45,6 +54,7 @@ export default class EstablishmentRollService {
         enroute: rollCount.numStillToArrive,
         noCellAllocated: rollCount.numNoCellAllocated,
         overnights: rollCount.numOvernights,
+        newAdmissions,
       },
       totals: rollCount.totals,
       wings: rollCount.locations,

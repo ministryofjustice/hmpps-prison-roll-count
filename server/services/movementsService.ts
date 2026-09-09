@@ -26,15 +26,24 @@ export default class MovementsService {
     const movements = await prisonApi.getMovementsIn(caseLoadId, new Date().toISOString())
     if (!movements || !movements?.length) return []
 
-    const prisoners = await prisonerSearchClient.getPrisonersById(movements.map(movement => movement.offenderNo))
+    const prisonerNumbers = movements.map(movement => movement.offenderNo)
+
+    const [prisoners, recentMovementsResponse] = await Promise.all([
+      prisonerSearchClient.getPrisonersById(prisonerNumbers),
+      prisonApi.getRecentMovements(prisonerNumbers),
+    ])
+    const recentMovements = recentMovementsResponse || []
 
     return movements.map(prisonerMovement => {
       const prisoner = prisoners.find(prisonerToFind => prisonerToFind.prisonerNumber === prisonerMovement.offenderNo)
+      const recentMovement = recentMovements.find(movement => movement.offenderNo === prisonerMovement.offenderNo)
+
       return {
         ...prisoner,
         movementTime: prisonerMovement?.movementTime,
         arrivedFrom: prisonerMovement?.fromAgencyDescription || prisonerMovement?.fromAddress,
-        alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
+        alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner?.alerts || []),
+        ...(recentMovement?.movementType ? { arrivalType: recentMovement.movementType } : {}),
       }
     })
   }
