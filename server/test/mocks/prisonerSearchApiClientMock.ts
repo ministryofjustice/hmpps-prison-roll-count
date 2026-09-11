@@ -5,6 +5,8 @@ const prisonerSearchApiClientMock: PrisonerSearchClient = {
   getCswapPrisonersInEstablishment: jest.fn(),
   getOvernightPrisonersInEstablishment: jest.fn(),
   getNewAdmissionsInEstablishment: jest.fn(),
+  getTransfersInEstablishment: jest.fn(),
+  getReturnsInEstablishment: jest.fn(),
 }
 
 export default prisonerSearchApiClientMock

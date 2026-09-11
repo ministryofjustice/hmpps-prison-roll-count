@@ -131,4 +131,81 @@ export default class PrisonerSearchRestClient implements PrisonerSearchClient {
       data: attributeRequest,
     })
   }
+
+  async getTransfersInEstablishment(prisonId: string): Promise<PagedList<Prisoner>> {
+    const attributeRequest = {
+      joinType: 'AND',
+      queries: [
+        {
+          joinType: 'AND',
+          matchers: [
+            {
+              type: 'String',
+              attribute: 'prisonId',
+              condition: 'IS',
+              searchTerm: prisonId,
+            },
+            {
+              type: 'String',
+              attribute: 'lastMovementTypeCode',
+              condition: 'IS',
+              searchTerm: 'TRN',
+            },
+          ],
+        },
+      ],
+    }
+
+    return this.restClient.post<PagedList<Prisoner>>({
+      path: '/attribute-search?size=2000',
+      data: attributeRequest,
+    })
+  }
+
+  async getReturnsInEstablishment(prisonId: string): Promise<PagedList<Prisoner>> {
+    const attributeRequest = {
+      joinType: 'OR',
+      queries: [
+        {
+          joinType: 'AND',
+          matchers: [
+            {
+              type: 'String',
+              attribute: 'prisonId',
+              condition: 'IS',
+              searchTerm: prisonId,
+            },
+            {
+              type: 'String',
+              attribute: 'lastMovementTypeCode',
+              condition: 'IS',
+              searchTerm: 'CRT',
+            },
+          ],
+        },
+        {
+          joinType: 'AND',
+          matchers: [
+            {
+              type: 'String',
+              attribute: 'prisonId',
+              condition: 'IS',
+              searchTerm: prisonId,
+            },
+            {
+              type: 'String',
+              attribute: 'lastMovementTypeCode',
+              condition: 'IS',
+              searchTerm: 'TAP',
+            },
+          ],
+        },
+      ],
+    }
+
+    return this.restClient.post<PagedList<Prisoner>>({
+      path: '/attribute-search?size=2000',
+      data: attributeRequest,
+    })
+  }
 }

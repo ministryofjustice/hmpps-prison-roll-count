@@ -11,6 +11,8 @@ export default interface EstablishmentRollCount {
     noCellAllocated: number
     overnights: number
     newAdmissions: number
+    transfersIn: number
+    returns: number
   }
   totals: PrisonRollCount['totals']
   wings: ResidentialLocation[]
