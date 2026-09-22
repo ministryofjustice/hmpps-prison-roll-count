@@ -1,11 +1,11 @@
 import Page, { PageElement } from './page'
 
-export default class ArrivedTodayPage extends Page {
+export default class inTodayPage extends Page {
   constructor() {
     super(`In today`)
   }
 
-  arrivedTodayRows = (): PageElement => cy.get('table.arrived-today-roll__table tbody tr')
+  inTodayRows = (): PageElement => cy.get('table.arrived-today-roll__table tbody tr')
 
-  arrivedTodayHeaders = (): PageElement => cy.get('table.arrived-today-roll__table thead th')
+  inTodayHeaders = (): PageElement => cy.get('table.arrived-today-roll__table thead th')
 }

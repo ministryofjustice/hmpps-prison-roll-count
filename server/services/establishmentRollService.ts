@@ -47,15 +47,15 @@ export default class EstablishmentRollService {
       prisonApi.getMovementsIn(caseLoadId, new Date().toISOString()),
     ])
 
-    const arrivedTodayPrisonerNumbers = new Set((arrivedTodayMovements || []).map(movement => movement.offenderNo))
+    const inTodayPrisonerNumbers = new Set((arrivedTodayMovements || []).map(movement => movement.offenderNo))
     const newAdmissions = newAdmissionsSearchResult.content.filter(prisoner =>
-      arrivedTodayPrisonerNumbers.has(prisoner.prisonerNumber),
+      inTodayPrisonerNumbers.has(prisoner.prisonerNumber),
     ).length
     const transfersIn = transfersInSearchResult.content.filter(prisoner =>
-      arrivedTodayPrisonerNumbers.has(prisoner.prisonerNumber),
+      inTodayPrisonerNumbers.has(prisoner.prisonerNumber),
     ).length
     const returns = returnsInSearchResult.content.filter(prisoner =>
-      arrivedTodayPrisonerNumbers.has(prisoner.prisonerNumber),
+      inTodayPrisonerNumbers.has(prisoner.prisonerNumber),
     ).length
 
     return {

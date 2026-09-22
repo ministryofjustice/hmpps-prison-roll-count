@@ -29,7 +29,7 @@ export default function establishmentRollRouter(services: Services): Router {
 
   get('/wing/:wingId/landing/:landingId', establishmentRollController.getEstablishmentRollForLanding())
   get('/wing/:wingId/spur/:spurId/landing/:landingId', establishmentRollController.getEstablishmentRollForLanding())
-  get('/arrived-today', establishmentRollController.getArrivedToday())
+  get('/in-today', establishmentRollController.getinToday())
   get('/out-today', establishmentRollController.getOutToday())
   get('/en-route', establishmentRollController.getEnRoute())
   get('/in-reception', establishmentRollController.getInReception())

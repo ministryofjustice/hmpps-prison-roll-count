@@ -79,13 +79,13 @@ export default class EstablishmentRollController {
     }
   }
 
-  public getArrivedToday(): RequestHandler {
+  public getinToday(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { user } = res.locals
       const { clientToken } = req.middleware
 
       const [arrivedPrisoners, establishmentRollCounts] = await Promise.all([
-        this.movementsService.getArrivedTodayPrisoners(clientToken, user.activeCaseLoadId),
+        this.movementsService.getinTodayPrisoners(clientToken, user.activeCaseLoadId),
         this.establishmentRollService.getEstablishmentRollCounts(clientToken, user.activeCaseLoadId),
       ])
 

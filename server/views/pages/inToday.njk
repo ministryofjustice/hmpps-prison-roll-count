@@ -60,7 +60,7 @@
   <div class="govuk-grid-row govuk-!-margin-bottom-9">
     <div class="govuk-grid-column-full results-table results-table__results">
       {% set sortParam = sort or 'timeDateDeparted&direction=descending' %}
-      {% set paginationBase = '/arrived-today?sort=' ~ sortParam %}
+      {% set paginationBase = '/in-today?sort=' ~ sortParam %}
       {% set pageParam = '&page=' ~ currentPage if currentPage > 1 else '' %}
       {% set returnPathWithSort = paginationBase ~ pageParam %}
       {% set rows = [] %}
@@ -75,6 +75,18 @@
       {% for prisoner in prisoners %}
         {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
         {% set csraLevel = prisoner.csra or 'None' %}
+
+        {# Set arrival type based on arrivalType #}
+        {% if prisoner.arrivalType === "ADM" %}
+          {% set arrivalType = "New admission" %}
+        {% elseif prisoner.arrivalType === "TRN" %}
+          {% set arrivalType = "Transfers in" %}
+        {% elseif prisoner.arrivalType === "CRT" or prisoner.arrivalType === "TAP" %}
+          {% set arrivalType = "Return" %}
+        {% else %}
+          {% set arrivalType = "" %}
+        {% endif %}
+
         {% set rows = (rows.push([
           {
             html: '<img src="/prisonerImage/' ~ (prisoner.prisonerNumber or 'placeholder') ~ '" alt="Image of ' ~ prisonerName ~ '" class="results-table__results__image" />'
@@ -90,7 +102,7 @@
             text: prisoner.prisonerNumber
           },
           {
-            html: prisoner.arrivalType
+            html: arrivalType
           },
           {
             html: prisoner.movementTime | formatTime ~ '<br />' ~ prisoner.movementDate | formatDate('short'), sortValue: prisoner.movementDate | toUnixTimeStamp(prisoner.movementTime)
