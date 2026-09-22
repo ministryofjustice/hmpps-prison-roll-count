@@ -2,6 +2,7 @@
 {% from "../macros/establishmentRollStatCard.njk" import establishmentRollStatCard %}
 {% from "../macros/printLink.njk" import printLink %}
 {% from "../macros/alertFlags.njk" import alertFlags %}
+{% from "../macros/statusTag.njk" import statusTag %}
 {% from "../macros/categoryFlag.njk" import categoryFlag %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% set todayStats = establishmentRollCounts.todayStats %}
@@ -98,7 +99,7 @@
             html: prisoner.arrivedFrom
           },
           {
-            text: prisoner.inOutStatus
+            html: statusTag(prisoner.inOutStatus)
           },
           {
             html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Overnights (due to return)', returnPathWithSort, prisoner.prisonerNumber, '/csra-history') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>',
