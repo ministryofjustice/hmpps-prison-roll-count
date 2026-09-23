@@ -84,6 +84,38 @@ describe('PrisonerSearchRestClient', () => {
     expect(output).toEqual(pagedListResponse)
   })
 
+  it('should search for transfers in an establishment using TRN as the last movement type', async () => {
+    fakePrisonerSearchApi
+      .post('/attribute-search?size=2000', {
+        joinType: 'AND',
+        queries: [
+          {
+            joinType: 'AND',
+            matchers: [
+              {
+                type: 'String',
+                attribute: 'prisonId',
+                condition: 'IS',
+                searchTerm: 'LEI',
+              },
+              {
+                type: 'String',
+                attribute: 'lastMovementTypeCode',
+                condition: 'IS',
+                searchTerm: 'TRN',
+              },
+            ],
+          },
+        ],
+      })
+      .matchHeader('authorization', `Bearer ${token.access_token}`)
+      .reply(200, pagedListResponse)
+
+    const output = await client.getTransfersInEstablishment('LEI')
+
+    expect(output).toEqual(pagedListResponse)
+  })
+
   it('should search for returns in an establishment using CRT or TAP as the last movement type', async () => {
     fakePrisonerSearchApi
       .post('/attribute-search?size=2000', {
