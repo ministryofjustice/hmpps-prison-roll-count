@@ -16,7 +16,7 @@ export default class MovementsService {
     private readonly locationsInsidePrisonApiClientBuilder: RestClientBuilder<LocationsInsidePrisonApiClient>,
   ) {}
 
-  public async getinTodayPrisoners(
+  public async getInTodayPrisoners(
     clientToken: string,
     caseLoadId: string,
   ): Promise<(PrisonerWithAlerts & { movementTime: string; arrivedFrom: string })[]> {

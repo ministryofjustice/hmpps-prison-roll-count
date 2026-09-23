@@ -9,7 +9,7 @@ const establishmentRollService = {
   isResiLocationServiceActive: jest.fn(),
 }
 const movementsService = {
-  getinTodayPrisoners: jest.fn(),
+  getInTodayPrisoners: jest.fn(),
   getOffendersCurrentlyOutOfBed: jest.fn(),
   getOffendersCurrentlyOutOfLivingUnit: jest.fn(),
   getInReceptionPrisoners: jest.fn(),
@@ -119,7 +119,7 @@ describe('EstablishmentRollController', () => {
     })
   })
 
-  describe('getinToday', () => {
+  describe('getInToday', () => {
     it('renders in today page with prisoners and establishment roll counts', async () => {
       const arrivedPrisoners = [{ prisonerNumber: 'A1234BC' }]
       const establishmentRollCounts = {
@@ -127,7 +127,7 @@ describe('EstablishmentRollController', () => {
         totals: {},
         wings: [] as unknown[],
       }
-      movementsService.getinTodayPrisoners.mockResolvedValue(arrivedPrisoners)
+      movementsService.getInTodayPrisoners.mockResolvedValue(arrivedPrisoners)
       establishmentRollService.getEstablishmentRollCounts.mockResolvedValue(establishmentRollCounts)
 
       const controller = new EstablishmentRollController(
@@ -140,9 +140,9 @@ describe('EstablishmentRollController', () => {
       const res = mockRes()
       const next = mockNext()
 
-      await controller.getinToday()(req, res, next)
+      await controller.getInToday()(req, res, next)
 
-      expect(movementsService.getinTodayPrisoners).toHaveBeenCalledWith('token', 'LEI')
+      expect(movementsService.getInTodayPrisoners).toHaveBeenCalledWith('token', 'LEI')
       expect(establishmentRollService.getEstablishmentRollCounts).toHaveBeenCalledWith('token', 'LEI')
       expect(res.render).toHaveBeenCalledWith('pages/inToday', {
         prisoners: arrivedPrisoners,
