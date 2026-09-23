@@ -24,6 +24,47 @@ describe('establishmentRollService', () => {
   describe('getEstablishmentRollCounts', () => {
     beforeEach(() => {
       prisonApiClientMock.getPrisonRollCount = jest.fn().mockResolvedValueOnce(prisonRollCountMock)
+      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([
+        {
+          offenderNo: 'A1234AA',
+        },
+      ])
+      prisonerSearchApiClientMock.getNewAdmissionsInEstablishment = jest.fn().mockResolvedValue({
+        content: [{ prisonerNumber: 'A1234AA' }, { prisonerNumber: 'A9999ZZ' }],
+        totalPages: 1,
+        last: true,
+        totalElements: 42,
+        size: 2000,
+        number: 0,
+        sort: { empty: true, sorted: false, unsorted: true },
+        first: true,
+        numberOfElements: 2,
+        empty: false,
+      })
+      prisonerSearchApiClientMock.getTransfersInEstablishment = jest.fn().mockResolvedValue({
+        content: [{ prisonerNumber: 'A1234AA' }, { prisonerNumber: 'A8888YY' }],
+        totalPages: 1,
+        last: true,
+        totalElements: 17,
+        size: 2000,
+        number: 0,
+        sort: { empty: true, sorted: false, unsorted: true },
+        first: true,
+        numberOfElements: 2,
+        empty: false,
+      })
+      prisonerSearchApiClientMock.getReturnsInEstablishment = jest.fn().mockResolvedValue({
+        content: [{ prisonerNumber: 'A1234AA' }, { prisonerNumber: 'A7777XX' }],
+        totalPages: 1,
+        last: true,
+        totalElements: 8,
+        size: 2000,
+        number: 0,
+        sort: { empty: true, sorted: false, unsorted: true },
+        first: true,
+        numberOfElements: 2,
+        empty: false,
+      })
       locationsInsidePrisonApiClientMock.getPrisonConfiguration = jest
         .fn()
         .mockResolvedValue({ prisonId: 'LEI', resiLocationServiceActive: 'INACTIVE' })
@@ -41,7 +82,13 @@ describe('establishmentRollService', () => {
         unassignedIn: 400,
         unlockRoll: 100,
         overnights: 800,
+        newAdmissions: 1,
+        transfersIn: 1,
+        returns: 1,
       })
+      expect(prisonerSearchApiClientMock.getNewAdmissionsInEstablishment).toHaveBeenCalledWith('LEI')
+      expect(prisonerSearchApiClientMock.getTransfersInEstablishment).toHaveBeenCalledWith('LEI')
+      expect(prisonerSearchApiClientMock.getReturnsInEstablishment).toHaveBeenCalledWith('LEI')
     })
 
     it('should return data from API for the total stats', async () => {

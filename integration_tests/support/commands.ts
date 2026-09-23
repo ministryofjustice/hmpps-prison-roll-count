@@ -1,6 +1,14 @@
-Cypress.Commands.add('signIn', (options = { failOnStatusCode: true }) => {
-  cy.request('/')
-  return cy.task('getSignInUrl').then(url => cy.visit(url as string, options))
+Cypress.Commands.add('signIn', ({ failOnStatusCode = true, redirectPath = '/' } = {}) => {
+  cy.request({
+    url: redirectPath,
+    failOnStatusCode: false,
+  })
+
+  return cy.task('getSignInUrl').then(url =>
+    cy.visit(url as string, {
+      failOnStatusCode,
+    }),
+  )
 })
 
 Cypress.Commands.add('setupUserAuth', (options = {}) => {

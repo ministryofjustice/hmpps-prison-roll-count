@@ -10,6 +10,8 @@ context('SignIn', () => {
     cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubLocationPrisonRollCount')
     cy.task('stubPrisonConfiguration')
+    cy.task('stubMovementsIn')
+    cy.task('stubPostAttributeSearch')
     cy.setupUserAuth()
     cy.setupUserCaseloads()
   })

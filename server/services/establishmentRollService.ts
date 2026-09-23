@@ -27,13 +27,36 @@ export default class EstablishmentRollService {
   ): Promise<EstablishmentRollCount> {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const locationsApi = this.locationsInsidePrisonApiClientBuilder(clientToken)
+    const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
 
     const resiLocationServiceActive = await this.isResiLocationServiceActive(clientToken, caseLoadId)
 
-    const rollCount =
+    const [
+      rollCount,
+      newAdmissionsSearchResult,
+      transfersInSearchResult,
+      returnsInSearchResult,
+      arrivedTodayMovements,
+    ] = await Promise.all([
       forceUseLocationsApi || resiLocationServiceActive
-        ? await locationsApi.getPrisonRollCount(caseLoadId)
-        : await prisonApi.getPrisonRollCount(caseLoadId)
+        ? locationsApi.getPrisonRollCount(caseLoadId)
+        : prisonApi.getPrisonRollCount(caseLoadId),
+      prisonerSearchClient.getNewAdmissionsInEstablishment(caseLoadId),
+      prisonerSearchClient.getTransfersInEstablishment(caseLoadId),
+      prisonerSearchClient.getReturnsInEstablishment(caseLoadId),
+      prisonApi.getMovementsIn(caseLoadId, new Date().toISOString()),
+    ])
+
+    const inTodayPrisonerNumbers = new Set((arrivedTodayMovements || []).map(movement => movement.offenderNo))
+    const newAdmissions = newAdmissionsSearchResult.content.filter(prisoner =>
+      inTodayPrisonerNumbers.has(prisoner.prisonerNumber),
+    ).length
+    const transfersIn = transfersInSearchResult.content.filter(prisoner =>
+      inTodayPrisonerNumbers.has(prisoner.prisonerNumber),
+    ).length
+    const returns = returnsInSearchResult.content.filter(prisoner =>
+      inTodayPrisonerNumbers.has(prisoner.prisonerNumber),
+    ).length
 
     return {
       todayStats: {
@@ -45,6 +68,9 @@ export default class EstablishmentRollService {
         enroute: rollCount.numStillToArrive,
         noCellAllocated: rollCount.numNoCellAllocated,
         overnights: rollCount.numOvernights,
+        newAdmissions,
+        transfersIn,
+        returns,
       },
       totals: rollCount.totals,
       wings: rollCount.locations,
