@@ -16,7 +16,7 @@ context('Establishment Roll Landing Page', () => {
     cy.task('stubPrisonRollCount')
     cy.task('stubPrisonRollCountForLanding', { prisonCode: 'LEI', landingId: wingId })
     cy.task('stubLocationsPrisonersInPrison', 'LEI')
-    cy.signIn()
+    cy.signIn({ redirectPath: `/wing/${wingId}/spur/${spurId}/landing/${landingId}` })
     cy.visit(`/wing/${wingId}/spur/${spurId}/landing/${landingId}`, { failOnStatusCode: false })
   })
 
