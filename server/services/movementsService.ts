@@ -51,16 +51,31 @@ export default class MovementsService {
     const [sortKey = 'timeArrived', sortDirection = 'descending'] = sort.split('&direction=')
     const isAscending = sortDirection === 'ascending'
     const compareStrings = (left: string, right: string) => left.localeCompare(right, 'en', { ignorePunctuation: true })
+    const getArrivalTypeLabel = (arrivalType?: string) => {
+      switch (arrivalType) {
+        case 'ADM':
+          return 'New admission'
+        case 'TRN':
+          return 'Transfers in'
+        case 'CRT':
+        case 'TAP':
+          return 'Return'
+        default:
+          return ''
+      }
+    }
 
     return mappedPrisoners.sort((left, right) => {
       let comparison: number
 
       switch (sortKey) {
+        case 'arrivalType':
+          comparison = compareStrings(getArrivalTypeLabel(left.arrivalType), getArrivalTypeLabel(right.arrivalType))
+          break
         case 'timeArrived':
           comparison = compareStrings(left.movementTime || '', right.movementTime || '')
           break
         case 'currentStatus':
-        case 'reason':
           comparison = compareStrings(left.inOutStatus || '', right.inOutStatus || '')
           break
         case 'csra':

@@ -91,6 +91,19 @@ describe('movementsService', () => {
       expect(result.map(prisoner => prisoner.prisonerNumber)).toEqual(['A1234AB', 'A1234AA'])
     })
 
+    it('should sort by arrivalType ascending when requested', async () => {
+      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue(movementsInMock)
+      prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
+      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
+        { ...movementsRecentMock[0], movementType: 'TRN' },
+        { ...movementsRecentMock[1], movementType: 'ADM' },
+      ])
+
+      const result = await movementsService.getInTodayPrisoners('token', 'LEI', 'arrivalType&direction=ascending')
+
+      expect(result.map(prisoner => prisoner.prisonerNumber)).toEqual(['A1234AB', 'A1234AA'])
+    })
+
     it('should return empty api if no incoming prisoners', async () => {
       prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([])
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)

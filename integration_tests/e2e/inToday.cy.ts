@@ -42,20 +42,26 @@ context('In Today Page', () => {
     page.inTodayRows().eq(1).find('td').eq(8).should('contain.text', 'CAT A')
   })
 
-  it('makes Name, "Time arrived", "Current status" and "CSRA" sortable but not the other columns', () => {
+  it('makes Name, Arrival type, Time arrived, Current status and CSRA sortable but not the other columns', () => {
     const page = Page.verifyOnPage(inTodayPage)
 
     // Sortable columns expose aria-sort
     page.inTodayHeaders().eq(1).should('have.attr', 'aria-sort') // Name
+    page.inTodayHeaders().eq(3).should('have.attr', 'aria-sort') // Arrival type
     page.inTodayHeaders().eq(4).should('have.attr', 'aria-sort') // Time arrived
     page.inTodayHeaders().eq(6).should('have.attr', 'aria-sort') // Current status
     page.inTodayHeaders().eq(7).should('have.attr', 'aria-sort') // CSRA
 
     // Non-sortable columns do not
     page.inTodayHeaders().eq(2).should('not.have.attr', 'aria-sort') // Prison number
-    page.inTodayHeaders().eq(3).should('not.have.attr', 'aria-sort') // Arrival type
     page.inTodayHeaders().eq(5).should('not.have.attr', 'aria-sort') // Arrived from
     page.inTodayHeaders().eq(8).should('not.have.attr', 'aria-sort') // Alert flags
+  })
+
+  it('uses arrivalType as the sort key for the Arrival type column', () => {
+    const page = Page.verifyOnPage(inTodayPage)
+
+    page.inTodayHeaders().eq(3).find('a').should('have.attr', 'href').and('contain', 'sort=arrivalType')
   })
 
   it('uses currentStatus as the sort key for the Current status column', () => {
