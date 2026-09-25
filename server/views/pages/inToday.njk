@@ -59,7 +59,7 @@
 
   <div class="govuk-grid-row govuk-!-margin-bottom-9">
     <div class="govuk-grid-column-full results-table results-table__results">
-      {% set sortParam = sort or 'timeDateDeparted&direction=descending' %}
+      {% set sortParam = sort or 'timeArrived&direction=descending' %}
       {% set paginationBase = '/in-today?sort=' ~ sortParam %}
       {% set pageParam = '&page=' ~ currentPage if currentPage > 1 else '' %}
       {% set returnPathWithSort = paginationBase ~ pageParam %}
@@ -114,7 +114,7 @@
             html: statusTag(prisoner.inOutStatus)
           },
           {
-            html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Overnights (due to return)', returnPathWithSort, prisoner.prisonerNumber, '/csra-history') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>',
+            html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to In today', returnPathWithSort, prisoner.prisonerNumber, '/csra-history') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>',
             sortValue: csraLevel
           },
           {
@@ -125,10 +125,10 @@
       {% endfor %}
 
       {{ govukTable({
-        caption: 'Overnights due to return (column headers with buttons are sortable)',
+        caption: 'In today (column headers with buttons are sortable)',
         captionClasses: 'govuk-visually-hidden',
         firstCellIsHeader: false,
-        classes: 'govuk-table overnights-roll__table table-vertical-align-middle sortable-table govuk-!-font-size-16',
+        classes: 'govuk-table in-today-roll__table table-vertical-align-middle sortable-table govuk-!-font-size-16',
         head: [
           {
             text: ''
@@ -148,11 +148,11 @@
           },
           {
             text: "Time arrived",
-            key: 'timeDateDeparted',
+            key: 'timeArrived',
             classes: 'govuk-!-font-size-16',
             attributes: {
               "aria-sort": "descending",
-              'data-persistent-id': 'timeDateDeparted'
+              'data-persistent-id': 'timeArrived'
             }
           },
           {
@@ -161,7 +161,7 @@
           },
           {
             text: 'Current status',
-            key: 'reason',
+            key: 'currentStatus',
             classes: 'govuk-!-font-size-16'
           },
           {

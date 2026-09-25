@@ -19,6 +19,7 @@ export default class MovementsService {
   public async getInTodayPrisoners(
     clientToken: string,
     caseLoadId: string,
+    sort: string = 'timeArrived&direction=descending',
   ): Promise<(PrisonerWithAlerts & { movementTime: string; arrivedFrom: string })[]> {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
@@ -34,7 +35,7 @@ export default class MovementsService {
     ])
     const recentMovements = recentMovementsResponse || []
 
-    return movements.map(prisonerMovement => {
+    const mappedPrisoners = movements.map(prisonerMovement => {
       const prisoner = prisoners.find(prisonerToFind => prisonerToFind.prisonerNumber === prisonerMovement.offenderNo)
       const recentMovement = recentMovements.find(movement => movement.offenderNo === prisonerMovement.offenderNo)
 
@@ -45,6 +46,35 @@ export default class MovementsService {
         alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner?.alerts || []),
         ...(recentMovement?.movementType ? { arrivalType: recentMovement.movementType } : {}),
       }
+    })
+
+    const [sortKey = 'timeArrived', sortDirection = 'descending'] = sort.split('&direction=')
+    const isAscending = sortDirection === 'ascending'
+    const compareStrings = (left: string, right: string) => left.localeCompare(right, 'en', { ignorePunctuation: true })
+
+    return mappedPrisoners.sort((left, right) => {
+      let comparison: number
+
+      switch (sortKey) {
+        case 'timeArrived':
+          comparison = compareStrings(left.movementTime || '', right.movementTime || '')
+          break
+        case 'currentStatus':
+        case 'reason':
+          comparison = compareStrings(left.inOutStatus || '', right.inOutStatus || '')
+          break
+        case 'csra':
+          comparison = compareStrings(left.csra || 'None', right.csra || 'None')
+          break
+        case 'lastName':
+        default:
+          comparison = compareStrings(left.lastName || '', right.lastName || '')
+          if (comparison === 0) {
+            comparison = compareStrings(left.firstName || '', right.firstName || '')
+          }
+      }
+
+      return isAscending ? comparison : -comparison
     })
   }
 
@@ -145,8 +175,8 @@ export default class MovementsService {
       return compareStrings(leftDateTime, rightDateTime)
     }
 
-    const sortedPrisoners = mappedPrisoners.sort((left, right) => {
-      let comparison = 0
+    return mappedPrisoners.sort((left, right) => {
+      let comparison: number
 
       switch (sortKey) {
         case 'timeDateDeparted':
@@ -165,8 +195,6 @@ export default class MovementsService {
 
       return isAscending ? comparison : -comparison
     })
-
-    return sortedPrisoners
   }
 
   public async getInReceptionPrisoners(
@@ -201,8 +229,8 @@ export default class MovementsService {
     const isAscending = sortDirection === 'ascending'
     const compareStrings = (left: string, right: string) => left.localeCompare(right, 'en', { ignorePunctuation: true })
 
-    const sortedPrisoners = mappedPrisoners.sort((left, right) => {
-      let comparison = 0
+    return mappedPrisoners.sort((left, right) => {
+      let comparison: number
 
       switch (sortKey) {
         case 'timeArrived':
@@ -226,8 +254,6 @@ export default class MovementsService {
 
       return isAscending ? comparison : -comparison
     })
-
-    return sortedPrisoners
   }
 
   public async getNoCellAllocatedPrisoners(

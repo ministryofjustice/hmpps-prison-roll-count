@@ -27,19 +27,19 @@ context('In Today Page', () => {
     const page = Page.verifyOnPage(inTodayPage)
     page.inTodayRows().should('have.length', 2)
 
-    page.inTodayRows().first().find('td').eq(1).should('contain.text', 'Smith, John')
-    page.inTodayRows().first().find('td').eq(2).should('contain.text', 'A1234AA')
+    page.inTodayRows().first().find('td').eq(1).should('contain.text', 'Shannon, Eddie')
+    page.inTodayRows().first().find('td').eq(2).should('contain.text', 'A1234AB')
     page.inTodayRows().first().find('td').eq(3).should('contain.text', 'Transfers in')
-    page.inTodayRows().first().find('td').eq(4).should('contain.text', '10:00')
-    page.inTodayRows().first().find('td').eq(5).should('contain.text', 'Leeds')
+    page.inTodayRows().first().find('td').eq(4).should('contain.text', '10:30')
+    page.inTodayRows().first().find('td').eq(5).should('contain.text', 'York Train Station, York, YO24 1AB')
     // Column index 8 checked in the alerts and category test
   })
 
   it('should display alerts and category if cat A', () => {
     const page = Page.verifyOnPage(inTodayPage)
 
-    page.inTodayRows().first().find('td').eq(8).should('contain.text', 'Hidden disability')
-    page.inTodayRows().first().find('td').eq(8).should('contain.text', 'CAT A')
+    page.inTodayRows().eq(1).find('td').eq(8).should('contain.text', 'Hidden disability')
+    page.inTodayRows().eq(1).find('td').eq(8).should('contain.text', 'CAT A')
   })
 
   it('makes Name, "Time arrived", "Current status" and "CSRA" sortable but not the other columns', () => {
@@ -58,6 +58,24 @@ context('In Today Page', () => {
     page.inTodayHeaders().eq(8).should('not.have.attr', 'aria-sort') // Alert flags
   })
 
+  it('uses currentStatus as the sort key for the Current status column', () => {
+    const page = Page.verifyOnPage(inTodayPage)
+
+    page.inTodayHeaders().eq(6).find('a').should('have.attr', 'href').and('contain', 'sort=currentStatus')
+  })
+
+  it('toggles the time arrived sort and reorders the table', () => {
+    const page = Page.verifyOnPage(inTodayPage)
+
+    page.inTodayHeaders().eq(4).should('have.attr', 'aria-sort', 'descending')
+    page.inTodayRows().first().find('td').eq(1).should('contain.text', 'Shannon, Eddie')
+
+    page.inTodayHeaders().eq(4).find('a').click()
+
+    page.inTodayHeaders().eq(4).should('have.attr', 'aria-sort', 'ascending')
+    page.inTodayRows().first().find('td').eq(1).should('contain.text', 'Smith, John')
+  })
+
   it('name link returns to the in-today page via the prisoner profile back link', () => {
     const page = Page.verifyOnPage(inTodayPage)
 
@@ -71,8 +89,8 @@ context('In Today Page', () => {
       .and('contain', '/save-backlink')
       .and('contain', 'service=prison-roll-count')
       .and('contain', 'backLinkText=Back%20to%20In%20today')
-      .and('contain', 'returnPath=%2Fin-today%3Fsort%3DtimeDateDeparted%26direction%3Ddescending')
-      .and('contain', 'redirectPath=/prisoner/A1234AA')
+      .and('contain', 'returnPath=%2Fin-today%3Fsort%3DtimeArrived%26direction%3Ddescending')
+      .and('contain', 'redirectPath=/prisoner/A1234AB')
   })
 })
 
