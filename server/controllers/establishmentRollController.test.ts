@@ -120,7 +120,7 @@ describe('EstablishmentRollController', () => {
   })
 
   describe('getInToday', () => {
-    it('renders in today page with prisoners and establishment roll counts', async () => {
+    it('defaults sort to timeArrived&direction=descending when no query is provided', async () => {
       const arrivedPrisoners = [{ prisonerNumber: 'A1234BC' }]
       const establishmentRollCounts = {
         todayStats: { newAdmissions: 3 },
@@ -142,11 +142,51 @@ describe('EstablishmentRollController', () => {
 
       await controller.getInToday()(req, res, next)
 
-      expect(movementsService.getInTodayPrisoners).toHaveBeenCalledWith('token', 'LEI')
+      expect(movementsService.getInTodayPrisoners).toHaveBeenCalledWith(
+        'token',
+        'LEI',
+        'timeArrived&direction=descending',
+      )
       expect(establishmentRollService.getEstablishmentRollCounts).toHaveBeenCalledWith('token', 'LEI')
       expect(res.render).toHaveBeenCalledWith('pages/inToday', {
         prisoners: arrivedPrisoners,
         establishmentRollCounts,
+        sort: 'timeArrived&direction=descending',
+      })
+    })
+
+    it('combines sort and direction query params when provided', async () => {
+      movementsService.getInTodayPrisoners.mockResolvedValue([])
+      establishmentRollService.getEstablishmentRollCounts.mockResolvedValue({
+        todayStats: {},
+        totals: {},
+        wings: [] as unknown[],
+      })
+
+      const controller = new EstablishmentRollController(
+        establishmentRollService as unknown as EstablishmentRollService,
+        movementsService as unknown as MovementsService,
+        locationService as unknown as LocationService,
+      )
+
+      const req = {
+        ...mockReq(),
+        query: { sort: 'lastName', direction: 'ascending' },
+      } as unknown as Request
+      const res = mockRes()
+      const next = mockNext()
+
+      await controller.getInToday()(req, res, next)
+
+      expect(movementsService.getInTodayPrisoners).toHaveBeenCalledWith('token', 'LEI', 'lastName&direction=ascending')
+      expect(res.render).toHaveBeenCalledWith('pages/inToday', {
+        prisoners: [],
+        establishmentRollCounts: {
+          todayStats: {},
+          totals: {},
+          wings: [] as unknown[],
+        },
+        sort: 'lastName&direction=ascending',
       })
     })
   })

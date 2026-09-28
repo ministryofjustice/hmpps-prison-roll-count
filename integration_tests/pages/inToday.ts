@@ -5,7 +5,7 @@ export default class inTodayPage extends Page {
     super(`In today`)
   }
 
-  inTodayRows = (): PageElement => cy.get('table.overnights-roll__table tbody tr')
+  inTodayRows = (): PageElement => cy.get('table.in-today-roll__table tbody tr')
 
-  inTodayHeaders = (): PageElement => cy.get('table.overnights-roll__table thead th')
+  inTodayHeaders = (): PageElement => cy.get('table.in-today-roll__table thead th')
 }
