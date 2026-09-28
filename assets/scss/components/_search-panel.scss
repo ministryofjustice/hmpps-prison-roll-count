@@ -21,6 +21,23 @@
     flex-wrap: wrap;
     align-items: flex-end;
     gap: govuk-spacing(3);
+
+    &--inline {
+      .govuk-form-group {
+        width: 100%;
+
+        .govuk-fieldset__legend {
+          float: left;
+        }
+
+        .govuk-fieldset {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: flex-end;
+          gap: govuk-spacing(3);
+        }
+      }
+    }
   }
 
   &__input,
