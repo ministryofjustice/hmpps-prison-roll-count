@@ -1,0 +1,70 @@
+// Grey "Search for property" panel on the establishment list. A full-bleed light-grey band that
+// holds the search box, an inline Search + Clear search, and the collapsible filters, matching the
+// alpha design.
+.app-search-panel {
+  background-color: govuk-colour('light-grey');
+  @include govuk-responsive-margin(6, 'bottom');
+  @include govuk-responsive-padding(6);
+
+  // Bleed the grey band to the edges of the page-width container.
+  margin-left: govuk-spacing(-3);
+  margin-right: govuk-spacing(-3);
+
+  @include govuk-media-query($from: tablet) {
+    margin-left: govuk-spacing(-6);
+    margin-right: govuk-spacing(-6);
+  }
+
+  // Input, Search button and Clear-search link on a single baseline-aligned row.
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: govuk-spacing(3);
+  }
+
+  &__input,
+  &__button {
+    margin-bottom: 0;
+  }
+
+  &__clear {
+    // Sit the link on the button's baseline rather than the row's bottom edge.
+    margin-bottom: govuk-spacing(2);
+  }
+
+  // What the list is currently filtered on, above the collapsed filters. The tags themselves are the MoJ
+  // Design System's (.moj-filter-tags / .moj-filter__tag) - only the surrounding layout is ours.
+  &__selected {
+    @include govuk-responsive-margin(4, 'top');
+
+    // Heading on the left, "Clear filters" opposite it, sharing a baseline.
+    &-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: govuk-spacing(3);
+    }
+
+    .moj-filter-tags {
+      margin-bottom: 0;
+    }
+  }
+
+  &__filters {
+    @include govuk-responsive-margin(4, 'top');
+    margin-bottom: 0;
+  }
+}
+
+// Lay a checkbox group's items out horizontally (the filter groups in the design), wrapping on
+// narrow viewports. inline-flex keeps each item's checkbox and label side-by-side on one line —
+// inline-block would override GOV.UK's flex layout and drop the label below the checkbox.
+.app-checkboxes--inline {
+  .govuk-checkboxes__item {
+    display: inline-flex;
+    margin-right: govuk-spacing(4);
+    vertical-align: top;
+  }
+}
