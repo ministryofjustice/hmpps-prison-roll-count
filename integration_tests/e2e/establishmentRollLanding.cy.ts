@@ -14,6 +14,7 @@ context('Establishment Roll Landing Page', () => {
     cy.task('stubActivePrisons', { activeAgencies: ['BXI'] })
     cy.task('stubPrisonConfiguration', { prisonId: 'LEI', resiLocationServiceActive: 'INACTIVE' })
     cy.task('stubPrisonRollCount')
+    cy.task('stubRecentMovements')
     cy.task('stubPrisonRollCountForLanding', { prisonCode: 'LEI', landingId: wingId })
     cy.task('stubLocationsPrisonersInPrison', 'LEI')
     cy.signIn({ redirectPath: `/wing/${wingId}/spur/${spurId}/landing/${landingId}` })

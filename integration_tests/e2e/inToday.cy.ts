@@ -98,6 +98,105 @@ context('In Today Page', () => {
       .and('contain', 'returnPath=%2Fin-today%3Fsort%3DtimeArrived%26direction%3Ddescending')
       .and('contain', 'redirectPath=/prisoner/A1234AB')
   })
+
+  it('should display the correct statistics cards', () => {
+    // Verify cards exist with correct QA tags
+    cy.get('[data-qa="new-admissions-card"]').should('exist')
+    cy.get('[data-qa="transfers-in-card"]').should('exist')
+    cy.get('[data-qa="returns-card"]').should('exist')
+  })
+
+  it('should display the correct counts for new admissions, transfers in, and returns', () => {
+    // Based on the default stubRecentMovements, verify the correct counts are displayed
+    // The default mock has 2 prisoners both with movementType 'TRN'
+    cy.get('[data-qa="new-admissions-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
+
+    cy.get('[data-qa="transfers-in-card"]').find('.establishment-roll-card__count').should('contain.text', '2')
+
+    cy.get('[data-qa="returns-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
+  })
+})
+
+context('In Today Page - Arrival Type Statistics', () => {
+  it('should display correct counts when all prisoners are new admissions', () => {
+    cy.task('reset')
+    cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
+    cy.setupComponentsData()
+    cy.task('stubMovementsIn')
+    cy.task('stubNewAdmissionsMovements') // Custom stub with all ADM
+    cy.task('stubPostSearchPrisonersById')
+    cy.task('stubPostAttributeSearch')
+    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
+    cy.task('stubPrisonRollCount')
+    cy.task('stubLocationPrisonRollCount')
+    cy.task('stubPrisonConfiguration')
+    cy.signIn({ redirectPath: '/in-today' })
+    cy.visit('/in-today')
+
+    cy.get('[data-qa="new-admissions-card"]').find('.establishment-roll-card__count').should('contain.text', '2')
+    cy.get('[data-qa="transfers-in-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
+    cy.get('[data-qa="returns-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
+  })
+
+  it('should display correct counts when all prisoners are transfers in', () => {
+    cy.task('reset')
+    cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
+    cy.setupComponentsData()
+    cy.task('stubMovementsIn')
+    cy.task('stubTransfersInMovements') // Custom stub with all TRN
+    cy.task('stubPostSearchPrisonersById')
+    cy.task('stubPostAttributeSearch')
+    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
+    cy.task('stubPrisonRollCount')
+    cy.task('stubLocationPrisonRollCount')
+    cy.task('stubPrisonConfiguration')
+    cy.signIn({ redirectPath: '/in-today' })
+    cy.visit('/in-today')
+
+    cy.get('[data-qa="new-admissions-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
+    cy.get('[data-qa="transfers-in-card"]').find('.establishment-roll-card__count').should('contain.text', '2')
+    cy.get('[data-qa="returns-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
+  })
+
+  it('should display correct counts when all prisoners are returns', () => {
+    cy.task('reset')
+    cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
+    cy.setupComponentsData()
+    cy.task('stubMovementsIn')
+    cy.task('stubReturnsMovements') // Custom stub with CRT/TAP
+    cy.task('stubPostSearchPrisonersById')
+    cy.task('stubPostAttributeSearch')
+    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
+    cy.task('stubPrisonRollCount')
+    cy.task('stubLocationPrisonRollCount')
+    cy.task('stubPrisonConfiguration')
+    cy.signIn({ redirectPath: '/in-today' })
+    cy.visit('/in-today')
+
+    cy.get('[data-qa="new-admissions-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
+    cy.get('[data-qa="transfers-in-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
+    cy.get('[data-qa="returns-card"]').find('.establishment-roll-card__count').should('contain.text', '2')
+  })
+
+  it('should display correct counts with mixed arrival types', () => {
+    cy.task('reset')
+    cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
+    cy.setupComponentsData()
+    cy.task('stubMovementsIn')
+    cy.task('stubMixedMovementTypes') // Custom stub with ADM, TRN, and CRT/TAP
+    cy.task('stubPostSearchPrisonersById')
+    cy.task('stubPostAttributeSearch')
+    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
+    cy.task('stubPrisonRollCount')
+    cy.task('stubLocationPrisonRollCount')
+    cy.task('stubPrisonConfiguration')
+    cy.signIn({ redirectPath: '/in-today' })
+    cy.visit('/in-today')
+
+    cy.get('[data-qa="new-admissions-card"]').find('.establishment-roll-card__count').should('contain.text', '1')
+    cy.get('[data-qa="transfers-in-card"]').find('.establishment-roll-card__count').should('contain.text', '1')
+    cy.get('[data-qa="returns-card"]').find('.establishment-roll-card__count').should('contain.text', '1')
+  })
 })
 
 context('Arrived Today page without prisoner data', () => {
