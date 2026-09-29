@@ -26,7 +26,6 @@ export default {
         status: 200,
       },
     }),
-
   stubUserCaseLoads: (caseLoads: CaseLoad[] = []) => {
     return stubFor({
       request: {
@@ -161,22 +160,6 @@ export default {
     })
   },
 
-  stubMovementsOvernight: () => {
-    return stubFor({
-      request: {
-        method: 'POST',
-        urlPattern: `/prison/api/movements/offenders`,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: movementsOvernightMock,
-      },
-    })
-  },
-
   stubOutToday: (livingUnitId = 'abc') => {
     return stubFor({
       request: {
@@ -237,6 +220,22 @@ export default {
           'Content-Type': 'application/json;charset=UTF-8',
         },
         jsonBody: movementsRecentMock,
+      },
+    })
+  },
+
+  stubRecentOvernightMovements: () => {
+    return stubFor({
+      request: {
+        method: 'POST',
+        urlPattern: `/prison/api/movements/offenders`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: movementsOvernightMock,
       },
     })
   },
