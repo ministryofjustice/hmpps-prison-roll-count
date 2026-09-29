@@ -304,4 +304,108 @@ export default {
       },
     })
   },
+
+  stubNewAdmissionsMovements: () => {
+    return stubFor({
+      request: {
+        method: 'POST',
+        urlPattern: `/prison/api/movements/offenders`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: [
+          {
+            offenderNo: 'A1234AB',
+            movementType: 'ADM',
+          },
+          {
+            offenderNo: 'A1234AC',
+            movementType: 'ADM',
+          },
+        ],
+      },
+    })
+  },
+
+  stubTransfersInMovements: () => {
+    return stubFor({
+      request: {
+        method: 'POST',
+        urlPattern: `/prison/api/movements/offenders`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: [
+          {
+            offenderNo: 'A1234AB',
+            movementType: 'TRN',
+          },
+          {
+            offenderNo: 'A1234AC',
+            movementType: 'TRN',
+          },
+        ],
+      },
+    })
+  },
+
+  stubReturnsMovements: () => {
+    return stubFor({
+      request: {
+        method: 'POST',
+        urlPattern: `/prison/api/movements/offenders`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: [
+          {
+            offenderNo: 'A1234AB',
+            movementType: 'CRT',
+          },
+          {
+            offenderNo: 'A1234AC',
+            movementType: 'TAP',
+          },
+        ],
+      },
+    })
+  },
+
+  stubMixedMovementTypes: () => {
+    return stubFor({
+      request: {
+        method: 'POST',
+        urlPattern: `/prison/api/movements/offenders`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: [
+          {
+            offenderNo: 'A1234AB',
+            movementType: 'ADM',
+          },
+          {
+            offenderNo: 'A1234AC',
+            movementType: 'TRN',
+          },
+          {
+            offenderNo: 'A1234AD',
+            movementType: 'CRT',
+          },
+        ],
+      },
+    })
+  },
 }

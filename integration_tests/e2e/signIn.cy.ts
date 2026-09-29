@@ -11,6 +11,7 @@ context('SignIn', () => {
     cy.task('stubLocationPrisonRollCount')
     cy.task('stubPrisonConfiguration')
     cy.task('stubMovementsIn')
+    cy.task('stubRecentMovements')
     cy.task('stubPostAttributeSearch')
     cy.setupUserAuth()
     cy.setupUserCaseloads()

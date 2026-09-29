@@ -10,6 +10,7 @@ context('Currently Out Page', () => {
 
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubRecentMovements')
+    cy.task('stubMovementsIn')
   })
 
   function dataSourceSetup(residentialLocationActive: boolean, locationId: string) {
