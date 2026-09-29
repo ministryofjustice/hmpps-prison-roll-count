@@ -4,14 +4,12 @@ import EstablishmentRollCount from './interfaces/EstablishmentRollCount'
 import EstablishmentRollSummary from './interfaces/EstablishmentRollSummary'
 import { PrisonApiClient } from '../data/interfaces/prisonApiClient'
 import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
-import { PrisonerSearchClient } from '../data/interfaces/prisonerSearchClient'
 import { ResidentialLocation } from '../data/interfaces/prisonRollCount'
 
 export default class EstablishmentRollService {
   constructor(
     private readonly prisonApiClientBuilder: RestClientBuilder<PrisonApiClient>,
     private readonly locationsInsidePrisonApiClientBuilder: RestClientBuilder<LocationsInsidePrisonApiClient>,
-    private readonly prisonerSearchClientBuilder: RestClientBuilder<PrisonerSearchClient>,
   ) {}
 
   public async isResiLocationServiceActive(clientToken: string, caseLoadId: string): Promise<boolean> {
@@ -27,36 +25,45 @@ export default class EstablishmentRollService {
   ): Promise<EstablishmentRollCount> {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const locationsApi = this.locationsInsidePrisonApiClientBuilder(clientToken)
-    const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
 
     const resiLocationServiceActive = await this.isResiLocationServiceActive(clientToken, caseLoadId)
 
-    const [
-      rollCount,
-      newAdmissionsSearchResult,
-      transfersInSearchResult,
-      returnsInSearchResult,
-      arrivedTodayMovements,
-    ] = await Promise.all([
+    const [rollCount, arrivedTodayMovements] = await Promise.all([
       forceUseLocationsApi || resiLocationServiceActive
         ? locationsApi.getPrisonRollCount(caseLoadId)
         : prisonApi.getPrisonRollCount(caseLoadId),
-      prisonerSearchClient.getNewAdmissionsInEstablishment(caseLoadId),
-      prisonerSearchClient.getTransfersInEstablishment(caseLoadId),
-      prisonerSearchClient.getReturnsInEstablishment(caseLoadId),
       prisonApi.getMovementsIn(caseLoadId, new Date().toISOString()),
     ])
 
     const inTodayPrisonerNumbers = new Set((arrivedTodayMovements || []).map(movement => movement.offenderNo))
-    const newAdmissions = newAdmissionsSearchResult.content.filter(prisoner =>
-      inTodayPrisonerNumbers.has(prisoner.prisonerNumber),
-    ).length
-    const transfersIn = transfersInSearchResult.content.filter(prisoner =>
-      inTodayPrisonerNumbers.has(prisoner.prisonerNumber),
-    ).length
-    const returns = returnsInSearchResult.content.filter(prisoner =>
-      inTodayPrisonerNumbers.has(prisoner.prisonerNumber),
-    ).length
+
+    // Get recent movements for prisoners who arrived today to determine arrival types
+    const recentMovements =
+      (arrivedTodayMovements || []).length > 0
+        ? await prisonApi.getRecentMovements(Array.from(inTodayPrisonerNumbers))
+        : []
+
+    // Count arrival types based on actual recent movement types
+    let newAdmissions = 0
+    let transfersIn = 0
+    let returnsIn = 0
+
+    ;(recentMovements || []).forEach((movement: { offenderNo: string; movementType?: string }) => {
+      switch (movement.movementType) {
+        case 'ADM':
+          newAdmissions += 1
+          break
+        case 'TRN':
+          transfersIn += 1
+          break
+        case 'CRT':
+        case 'TAP':
+          returnsIn += 1
+          break
+        default:
+          break
+      }
+    })
 
     return {
       todayStats: {
@@ -70,7 +77,7 @@ export default class EstablishmentRollService {
         overnights: rollCount.numOvernights,
         newAdmissions,
         transfersIn,
-        returns,
+        returns: returnsIn,
       },
       totals: rollCount.totals,
       wings: rollCount.locations,

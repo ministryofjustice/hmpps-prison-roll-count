@@ -5,7 +5,6 @@ import prisonRollCountForWingNoSpurMock from '../mocks/prisonRollCountForWingNoS
 import prisonRollCountForWingWithSpurMock from '../mocks/prisonRollCountForWingWithSpurMock'
 import prisonEstablishmentRollSummaryMock from '../mocks/prisonRollCountSummaryMock'
 import locationsInsidePrisonApiClientMock from '../test/mocks/locationsInsidePrisonApiClientMock'
-import prisonerSearchApiClientMock from '../test/mocks/prisonerSearchApiClientMock'
 
 describe('establishmentRollService', () => {
   let establishmentRollService: EstablishmentRollService
@@ -17,7 +16,6 @@ describe('establishmentRollService', () => {
     establishmentRollService = new EstablishmentRollService(
       () => prisonApiClientMock,
       () => locationsInsidePrisonApiClientMock,
-      () => prisonerSearchApiClientMock,
     )
   })
 
@@ -29,42 +27,12 @@ describe('establishmentRollService', () => {
           offenderNo: 'A1234AA',
         },
       ])
-      prisonerSearchApiClientMock.getNewAdmissionsInEstablishment = jest.fn().mockResolvedValue({
-        content: [{ prisonerNumber: 'A1234AA' }, { prisonerNumber: 'A9999ZZ' }],
-        totalPages: 1,
-        last: true,
-        totalElements: 42,
-        size: 2000,
-        number: 0,
-        sort: { empty: true, sorted: false, unsorted: true },
-        first: true,
-        numberOfElements: 2,
-        empty: false,
-      })
-      prisonerSearchApiClientMock.getTransfersInEstablishment = jest.fn().mockResolvedValue({
-        content: [{ prisonerNumber: 'A1234AA' }, { prisonerNumber: 'A8888YY' }],
-        totalPages: 1,
-        last: true,
-        totalElements: 17,
-        size: 2000,
-        number: 0,
-        sort: { empty: true, sorted: false, unsorted: true },
-        first: true,
-        numberOfElements: 2,
-        empty: false,
-      })
-      prisonerSearchApiClientMock.getReturnsInEstablishment = jest.fn().mockResolvedValue({
-        content: [{ prisonerNumber: 'A1234AA' }, { prisonerNumber: 'A7777XX' }],
-        totalPages: 1,
-        last: true,
-        totalElements: 8,
-        size: 2000,
-        number: 0,
-        sort: { empty: true, sorted: false, unsorted: true },
-        first: true,
-        numberOfElements: 2,
-        empty: false,
-      })
+      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
+        {
+          offenderNo: 'A1234AA',
+          movementType: 'TRN',
+        },
+      ])
       locationsInsidePrisonApiClientMock.getPrisonConfiguration = jest
         .fn()
         .mockResolvedValue({ prisonId: 'LEI', resiLocationServiceActive: 'INACTIVE' })
@@ -82,13 +50,11 @@ describe('establishmentRollService', () => {
         unassignedIn: 400,
         unlockRoll: 100,
         overnights: 800,
-        newAdmissions: 1,
+        newAdmissions: 0,
         transfersIn: 1,
-        returns: 1,
+        returns: 0,
       })
-      expect(prisonerSearchApiClientMock.getNewAdmissionsInEstablishment).toHaveBeenCalledWith('LEI')
-      expect(prisonerSearchApiClientMock.getTransfersInEstablishment).toHaveBeenCalledWith('LEI')
-      expect(prisonerSearchApiClientMock.getReturnsInEstablishment).toHaveBeenCalledWith('LEI')
+      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(['A1234AA'])
     })
 
     it('should return data from API for the total stats', async () => {

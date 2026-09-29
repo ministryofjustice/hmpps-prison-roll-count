@@ -10,6 +10,7 @@ context('Currently Out Page', () => {
     cy.task('stubOutTotal')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubRecentMovements')
+    cy.task('stubMovementsIn')
     cy.task('stubGetLocation')
     cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubLocationPrisonRollCount')
