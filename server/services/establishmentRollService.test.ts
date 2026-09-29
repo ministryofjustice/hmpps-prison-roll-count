@@ -5,7 +5,6 @@ import prisonRollCountForWingNoSpurMock from '../mocks/prisonRollCountForWingNoS
 import prisonRollCountForWingWithSpurMock from '../mocks/prisonRollCountForWingWithSpurMock'
 import prisonEstablishmentRollSummaryMock from '../mocks/prisonRollCountSummaryMock'
 import locationsInsidePrisonApiClientMock from '../test/mocks/locationsInsidePrisonApiClientMock'
-import prisonerSearchApiClientMock from '../test/mocks/prisonerSearchApiClientMock'
 
 describe('establishmentRollService', () => {
   let establishmentRollService: EstablishmentRollService
