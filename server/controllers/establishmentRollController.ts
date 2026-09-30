@@ -17,6 +17,61 @@ const getSortParam = (
   return `${sortKey}&direction=${direction}`
 }
 
+const arrivalTypeFilterLabels = {
+  newAdmissions: 'New admissions',
+  transfersIn: 'Transfers in',
+  returns: 'Returns',
+} as const
+
+type ArrivalTypeFilter = keyof typeof arrivalTypeFilterLabels
+
+const normaliseArrivalTypeFilters = (queryValue: Request['query']['arrivalType']): ArrivalTypeFilter[] => {
+  let values: string[] = []
+
+  if (Array.isArray(queryValue)) {
+    values = queryValue.filter((value): value is string => typeof value === 'string')
+  } else if (typeof queryValue === 'string') {
+    values = [queryValue]
+  }
+
+  return values.filter(
+    (value): value is ArrivalTypeFilter => value === 'newAdmissions' || value === 'transfersIn' || value === 'returns',
+  )
+}
+
+const hasArrivalType = (prisoner: unknown): prisoner is { arrivalType?: string } =>
+  typeof prisoner === 'object' && prisoner !== null && 'arrivalType' in prisoner
+
+const filterPrisonersByArrivalType = <T>(prisoners: T[], selectedFilters: ArrivalTypeFilter[]): T[] => {
+  if (!selectedFilters.length) return prisoners
+
+  return prisoners.filter(prisoner => {
+    if (!hasArrivalType(prisoner) || !prisoner.arrivalType) return false
+
+    return (
+      (selectedFilters.includes('newAdmissions') && prisoner.arrivalType === 'ADM') ||
+      (selectedFilters.includes('transfersIn') && prisoner.arrivalType === 'TRN') ||
+      (selectedFilters.includes('returns') && (prisoner.arrivalType === 'CRT' || prisoner.arrivalType === 'TAP'))
+    )
+  })
+}
+
+const buildArrivalTypeFilterHref = (sort: string, selectedFilters: ArrivalTypeFilter[]) => {
+  const baseHref = `/in-today?sort=${sort}`
+  if (!selectedFilters.length) return baseHref
+
+  return `${baseHref}&${selectedFilters.map(filter => `arrivalType=${filter}`).join('&')}`
+}
+
+const getAppliedArrivalTypeFilters = (sort: string, selectedFilters: ArrivalTypeFilter[]) =>
+  selectedFilters.map(selectedFilter => ({
+    text: arrivalTypeFilterLabels[selectedFilter],
+    href: buildArrivalTypeFilterHref(
+      sort,
+      selectedFilters.filter(filter => filter !== selectedFilter),
+    ),
+  }))
+
 const pageSize = config.envPageSize
 
 const getCurrentPage = (query: Request['query'], totalPages: number) => {
@@ -90,7 +145,24 @@ export default class EstablishmentRollController {
         this.establishmentRollService.getEstablishmentRollCounts(clientToken, user.activeCaseLoadId),
       ])
 
-      res.render('pages/inToday', { prisoners: arrivedPrisoners, establishmentRollCounts, sort })
+      const selectedFilters = normaliseArrivalTypeFilters(req.query?.arrivalType)
+      const filterableArrivedPrisoners = arrivedPrisoners.map(prisoner => ({
+        ...prisoner,
+        arrivalType:
+          'arrivalType' in prisoner && typeof prisoner.arrivalType === 'string' ? prisoner.arrivalType : undefined,
+      }))
+      const filteredPrisoners = filterPrisonersByArrivalType(filterableArrivedPrisoners, selectedFilters)
+      const appliedFilters = getAppliedArrivalTypeFilters(sort, selectedFilters)
+      const clearFiltersHref = buildArrivalTypeFilterHref(sort, [])
+
+      res.render('pages/inToday', {
+        prisoners: filteredPrisoners,
+        establishmentRollCounts,
+        sort,
+        selectedFilters,
+        appliedFilters,
+        clearFiltersHref,
+      })
     }
   }
 

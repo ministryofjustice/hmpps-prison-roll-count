@@ -59,7 +59,7 @@
     </div>
 
   <div class="app-search-panel app-checkboxes--inline">
-    <form method="get" action="/" novalidate data-qa="property-search">
+    <form method="get" action="/in-today" novalidate data-qa="property-search">
       <div class="app-search-panel__row app-search-panel__row--inline">
         {{ govukCheckboxes({
           name: "arrivalType",
@@ -74,22 +74,25 @@
           items: [
             {
               value: "newAdmissions",
-              text: "New admissions"
+              text: "New admissions",
+              checked: selectedFilters and 'newAdmissions' in selectedFilters
             },
             {
               value: "transfersIn",
-              text: "Transfers in"
+              text: "Transfers in",
+              checked: selectedFilters and 'transfersIn' in selectedFilters
             },
             {
               value: "returns",
-              text: "Returns"
+              text: "Returns",
+              checked: selectedFilters and 'returns' in selectedFilters
             }
           ]
         }) }}
       </div>
       <div class="app-search-panel__row">
         {{ govukButton({ text: "Apply", classes: "app-search-panel__button" }) }}
-        <a class="govuk-link app-search-panel__clear" href="/?clear=1" data-qa="clear-search">Clear</a>
+        <a class="govuk-link app-search-panel__clear" href="{{ clearFiltersHref or '/in-today?sort=' ~ sort }}" data-qa="clear-search">Clear</a>
       </div>
 
       {% if appliedFilters | length %}
@@ -98,7 +101,7 @@
         <div class="app-search-panel__selected" data-qa="selected-filters">
           <div class="app-search-panel__selected-header">
             <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Selected filters</h3>
-            <a class="govuk-link" href="{{ clearFiltersHref }}" data-qa="clear-all-filters">Clear filters</a>
+            <a class="govuk-link" href="{{ clearFiltersHref or '/in-today?sort=' ~ sort }}" data-qa="clear-all-filters">Clear filters</a>
           </div>
           <ul class="moj-filter-tags">
             {% for filter in appliedFilters %}
