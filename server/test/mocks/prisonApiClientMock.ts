@@ -4,6 +4,7 @@ const prisonApiClientMock: PrisonApiClient = {
   getUserCaseLoads: jest.fn(),
   getUserLocations: jest.fn(),
   getMovements: jest.fn(),
+  getOffenderMovements: jest.fn(),
   setActiveCaseload: jest.fn(),
   getLocation: jest.fn(),
   getMovementsIn: jest.fn(),

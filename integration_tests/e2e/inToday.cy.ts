@@ -8,7 +8,7 @@ context('In Today Page', () => {
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
     cy.task('stubMovementsIn')
-    cy.task('stubRecentMovements')
+    cy.task('stubInTodayMovementHistoryDefault')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
     cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
@@ -118,6 +118,27 @@ context('In Today Page', () => {
 })
 
 context('In Today Page - Arrival Type Statistics', () => {
+  it('should display Transfers in when one of the last two movements is TRN', () => {
+    cy.task('reset')
+    cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
+    cy.setupComponentsData()
+    cy.task('stubMovementsIn')
+    cy.task('stubInTodayTwoRecentMovements')
+    cy.task('stubPostSearchPrisonersById')
+    cy.task('stubPostAttributeSearch')
+    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
+    cy.task('stubPrisonRollCount')
+    cy.task('stubLocationPrisonRollCount')
+    cy.task('stubPrisonConfiguration')
+    cy.signIn({ redirectPath: '/in-today' })
+    cy.visit('/in-today')
+
+    const page = Page.verifyOnPage(inTodayPage)
+
+    page.inTodayRows().eq(1).find('td').eq(3).should('contain.text', 'Transfers in')
+    cy.get('[data-qa="transfers-in-card"]').find('.establishment-roll-card__count').should('contain.text', '2')
+  })
+
   it('should display correct counts when all prisoners are new admissions', () => {
     cy.task('reset')
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
@@ -195,7 +216,7 @@ context('In Today Page - Arrival Type Statistics', () => {
 
     cy.get('[data-qa="new-admissions-card"]').find('.establishment-roll-card__count').should('contain.text', '1')
     cy.get('[data-qa="transfers-in-card"]').find('.establishment-roll-card__count').should('contain.text', '1')
-    cy.get('[data-qa="returns-card"]').find('.establishment-roll-card__count').should('contain.text', '1')
+    cy.get('[data-qa="returns-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
   })
 })
 
@@ -205,7 +226,6 @@ context('Arrived Today page without prisoner data', () => {
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
     cy.task('stubMovementsInEmpty')
-    cy.task('stubRecentMovements')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch', { payload: [] })
     cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
