@@ -36,9 +36,9 @@ export default function auditPageView(auditService: AuditService): RequestHandle
       },
       ...subjectOfRequest(req),
     }
-    res.locals.auditEvent = event
 
     let audited = false
+
     const audit = () => {
       if (audited) return
       audited = true
@@ -71,7 +71,7 @@ export default function auditPageView(auditService: AuditService): RequestHandle
 function getWhatFromResponse(res: Response): string {
   const { auditPage } = res.locals
 
-  const what = (auditPage) ? `VIEW_${auditPage}` : 'VIEW_ATTEMPT'
+  const what = auditPage ? `VIEW_${auditPage}` : 'VIEW_ATTEMPT'
 
   return `${what}_${res.statusCode >= 400 ? 'FAILURE' : 'SUCCESS'}`
 }
