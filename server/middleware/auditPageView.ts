@@ -1,5 +1,5 @@
 import type { AuditService, PageViewEventDetails, SubjectType } from '@ministryofjustice/hmpps-audit-client'
-import type { Request, RequestHandler } from 'express'
+import type { Request, RequestHandler, Response } from 'express'
 
 import logger from '../logger'
 
@@ -16,13 +16,6 @@ type Subject = { subjectType: SubjectType; subjectId?: string }
 export function setAuditPage(page: string): RequestHandler {
   return (_req, res, next) => {
     res.locals.auditPage = page
-    next()
-  }
-}
-
-export function setAuditAction(what: string): RequestHandler {
-  return (_req, res, next) => {
-    res.locals.auditAction = what
     next()
   }
 }
@@ -46,18 +39,15 @@ export default function auditPageView(auditService: AuditService): RequestHandle
     res.locals.auditEvent = event
 
     let audited = false
-    const audit = (what: string) => {
+    const audit = () => {
       if (audited) return
       audited = true
       auditService
-        .logAuditEvent({ ...event, what }, { throwOnError: false, logOnError: true })
+        .logAuditEvent({ ...event, what: getWhatFromResponse(res) }, { throwOnError: false, logOnError: true })
         .catch(error => logger.error(error, 'Failed to audit page view'))
     }
 
-    res.prependOnceListener('close', () => {
-      const succeeded = res.locals.auditAction && res.statusCode < 400
-      audit(succeeded ? res.locals.auditAction : 'PAGE_VIEW_ACCESS_ATTEMPT')
-    })
+    res.prependOnceListener('close', audit)
 
     type ResRender = (view: string, options?: object, callback?: (err: Error, html: string) => void) => void
     const resRender = res.render as ResRender
@@ -70,12 +60,20 @@ export default function auditPageView(auditService: AuditService): RequestHandle
 
         // send the page first: auditing must never delay or break rendering
         res.send(html)
-        audit(res.locals.auditPage ? `PAGE_VIEW_${res.locals.auditPage}` : 'PAGE_VIEW')
+        audit()
       })
     }
 
     next()
   }
+}
+
+function getWhatFromResponse(res: Response): string {
+  const { auditPage } = res.locals
+
+  const what = (auditPage) ? `VIEW_${auditPage}` : 'VIEW_ATTEMPT'
+
+  return `${what}_${res.statusCode >= 400 ? 'FAILURE' : 'SUCCESS'}`
 }
 
 function subjectOfRequest(req: Request): Subject {

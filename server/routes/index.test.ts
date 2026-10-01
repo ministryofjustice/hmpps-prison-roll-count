@@ -30,12 +30,24 @@ describe('GET /', () => {
     return request(app).get('/').expect('Content-Type', /html/)
   })
 
-  it('should audit the page view against the page name', async () => {
+  it('should audit a failed page view against the page name', async () => {
     await request(app).get('/')
 
     expect(auditService.logAuditEvent).toHaveBeenCalledTimes(1)
     expect(auditService.logAuditEvent).toHaveBeenCalledWith(
-      expect.objectContaining({ what: 'PAGE_VIEW_HOME', who: user.username, details: { pageUrl: '/' } }),
+      expect.objectContaining({ what: 'VIEW_HOME_FAILURE', who: user.username, details: { pageUrl: '/' } }),
+      expect.anything(),
+    )
+  })
+})
+
+describe('GET an unknown url', () => {
+  it('should audit a page view access attempt', async () => {
+    await request(app).get('/invalid-url')
+
+    expect(auditService.logAuditEvent).toHaveBeenCalledTimes(1)
+    expect(auditService.logAuditEvent).toHaveBeenCalledWith(
+      expect.objectContaining({ what: 'VIEW_ATTEMPT_FAILURE', details: { pageUrl: '/invalid-url' } }),
       expect.anything(),
     )
   })

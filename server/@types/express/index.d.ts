@@ -32,7 +32,6 @@ export declare global {
       user: HmppsUser
       auditEvent?: PageViewEventDetails
       auditPage?: string
-      auditAction?: string
     }
   }
 }

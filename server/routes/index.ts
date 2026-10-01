@@ -1,7 +1,7 @@
 import { RequestHandler, Router } from 'express'
 import { Services } from '../services'
 import asyncMiddleware from '../middleware/asyncMiddleware'
-import { setAuditAction, setAuditPage } from '../middleware/auditPageView'
+import { setAuditPage } from '../middleware/auditPageView'
 import EstablishmentRollController from '../controllers/establishmentRollController'
 import ImageController from '../controllers/imageController'
 import { dataAccess } from '../data'
@@ -44,11 +44,7 @@ export default function establishmentRollRouter(services: Services): Router {
   get('/:livingUnitId/currently-out', 'CURRENTLY_OUT', establishmentRollController.getCurrentlyOut())
   get('/overnights', 'OVERNIGHTS', establishmentRollController.getOvernights())
 
-  router.get(
-    '/prisonerImage/:prisonerNumber',
-    setAuditAction('VIEW_PRISONER_IMAGE'),
-    asyncMiddleware(imageController.prisonerImage),
-  )
+  get('/prisonerImage/:prisonerNumber', 'PRISONER_IMAGE', asyncMiddleware(imageController.prisonerImage))
 
   return router
 }
