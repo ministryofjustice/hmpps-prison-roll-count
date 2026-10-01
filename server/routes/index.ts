@@ -1,6 +1,7 @@
 import { RequestHandler, Router } from 'express'
 import { Services } from '../services'
 import asyncMiddleware from '../middleware/asyncMiddleware'
+import { setAuditAction, setAuditPage } from '../middleware/auditPageView'
 import EstablishmentRollController from '../controllers/establishmentRollController'
 import ImageController from '../controllers/imageController'
 import { dataAccess } from '../data'
@@ -8,10 +9,11 @@ import { dataAccess } from '../data'
 export default function establishmentRollRouter(services: Services): Router {
   const router = Router()
 
-  const get = (path: string | string[], ...handlers: RequestHandler[]) =>
+  const get = (path: string | string[], auditPage: string | null, ...handlers: RequestHandler[]) =>
     router.get(
       path,
-      handlers.map(handler => asyncMiddleware(handler)),
+      ...(auditPage ? [setAuditPage(auditPage)] : []),
+      ...handlers.map(handler => asyncMiddleware(handler)),
     )
 
   const { prisonApiClientBuilder } = dataAccess()
@@ -24,21 +26,29 @@ export default function establishmentRollRouter(services: Services): Router {
 
   const imageController = new ImageController(prisonApiClientBuilder)
 
-  get('/', establishmentRollController.getEstablishmentRoll())
-  get('/locations/', establishmentRollController.getEstablishmentRoll(true))
+  get('/', 'HOME', establishmentRollController.getEstablishmentRoll())
+  get('/locations/', 'LOCATIONS', establishmentRollController.getEstablishmentRoll(true))
 
-  get('/wing/:wingId/landing/:landingId', establishmentRollController.getEstablishmentRollForLanding())
-  get('/wing/:wingId/spur/:spurId/landing/:landingId', establishmentRollController.getEstablishmentRollForLanding())
-  get('/in-today', establishmentRollController.getInToday())
-  get('/out-today', establishmentRollController.getOutToday())
-  get('/en-route', establishmentRollController.getEnRoute())
-  get('/in-reception', establishmentRollController.getInReception())
-  get('/no-cell-allocated', establishmentRollController.getUnallocated())
-  get('/total-currently-out', establishmentRollController.getTotalCurrentlyOut())
-  get('/:livingUnitId/currently-out', establishmentRollController.getCurrentlyOut())
-  get('/overnights', establishmentRollController.getOvernights())
+  get('/wing/:wingId/landing/:landingId', 'LANDING', establishmentRollController.getEstablishmentRollForLanding())
+  get(
+    '/wing/:wingId/spur/:spurId/landing/:landingId',
+    'LANDING',
+    establishmentRollController.getEstablishmentRollForLanding(),
+  )
+  get('/in-today', 'IN_TODAY', establishmentRollController.getInToday())
+  get('/out-today', 'OUT_TODAY', establishmentRollController.getOutToday())
+  get('/en-route', 'EN_ROUTE', establishmentRollController.getEnRoute())
+  get('/in-reception', 'IN_RECEPTION', establishmentRollController.getInReception())
+  get('/no-cell-allocated', 'NO_CELL_ALLOCATED', establishmentRollController.getUnallocated())
+  get('/total-currently-out', 'TOTAL_CURRENTLY_OUT', establishmentRollController.getTotalCurrentlyOut())
+  get('/:livingUnitId/currently-out', 'CURRENTLY_OUT', establishmentRollController.getCurrentlyOut())
+  get('/overnights', 'OVERNIGHTS', establishmentRollController.getOvernights())
 
-  get('/prisonerImage/:prisonerNumber', imageController.prisonerImage)
+  router.get(
+    '/prisonerImage/:prisonerNumber',
+    setAuditAction('VIEW_PRISONER_IMAGE'),
+    asyncMiddleware(imageController.prisonerImage),
+  )
 
   return router
 }

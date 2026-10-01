@@ -15,7 +15,6 @@ import { createRedisClient } from './redisClient'
 import RedisTokenStore from './tokenStore/redisTokenStore'
 import InMemoryTokenStore from './tokenStore/inMemoryTokenStore'
 import config, { ApiConfig } from '../config'
-import HmppsAuditClient from './hmppsAuditClient'
 import LocationsInsidePrisonApiRestClient from './locationsInsidePrisonApiClient'
 import PrisonApiRestClient from './prisonApiRestClient'
 import FeComponentsClient from './feComponentsClient'
@@ -40,10 +39,8 @@ export const dataAccess = () => {
 
   return {
     applicationInfo,
-    hmppsAuthClient,
     systemToken: (username?: string) => hmppsAuthClient.getSystemClientToken(username),
     feComponentsClient: new FeComponentsClient(),
-    hmppsAuditClient: new HmppsAuditClient(config.sqs.audit),
     locationsInsidePrisonApiClientBuilder: restClientBuilder<LocationsInsidePrisonApiRestClient>(
       'Locations Inside Prison API',
       config.apis.locationsInsidePrisonApi,
@@ -62,5 +59,5 @@ export const dataAccess = () => {
   }
 }
 
-export { HmppsAuthClient, HmppsAuditClient, PrisonApiRestClient, restClientBuilder }
+export { HmppsAuthClient, PrisonApiRestClient, restClientBuilder }
 export type { RestClientBuilder }

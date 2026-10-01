@@ -1,3 +1,4 @@
+import { PageViewEventDetails } from '@ministryofjustice/hmpps-audit-client'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import { Services } from '../../services'
 import config from '../../config'
@@ -29,6 +30,9 @@ export declare global {
 
     interface Locals {
       user: HmppsUser
+      auditEvent?: PageViewEventDetails
+      auditPage?: string
+      auditAction?: string
     }
   }
 }

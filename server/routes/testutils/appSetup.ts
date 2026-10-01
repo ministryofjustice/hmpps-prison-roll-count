@@ -2,15 +2,14 @@ import express, { Express } from 'express'
 import { NotFound } from 'http-errors'
 
 import { randomUUID } from 'crypto'
+import { type AuditService } from '@ministryofjustice/hmpps-audit-client'
 import routes from '../index'
 import nunjucksSetup from '../../utils/nunjucksSetup'
 import errorHandler from '../../errorHandler'
 import type { Services } from '../../services'
-import AuditService from '../../services/auditService'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import setUpWebSession from '../../middleware/setUpWebSession'
-
-jest.mock('../../services/auditService')
+import auditPageView from '../../middleware/auditPageView'
 
 const Caseload = {
   caseLoadId: 'LEI',
@@ -59,6 +58,7 @@ function appSetup(services: Services, production: boolean, userSupplier: () => H
   })
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
+  app.get('*any', auditPageView(services.auditService))
   app.use(routes(services))
   app.use((req, res, next) => next(new NotFound()))
   app.use(errorHandler(production))
@@ -69,7 +69,10 @@ function appSetup(services: Services, production: boolean, userSupplier: () => H
 export function appWithAllRoutes({
   production = false,
   services = {
-    auditService: new AuditService(null) as jest.Mocked<AuditService>,
+    auditService: {
+      logAuditEvent: jest.fn().mockResolvedValue(undefined),
+      logPageView: jest.fn().mockResolvedValue(undefined),
+    } as unknown as jest.Mocked<AuditService>,
   },
   userSupplier = () => user,
 }: {
