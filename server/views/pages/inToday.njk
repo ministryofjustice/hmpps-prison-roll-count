@@ -74,17 +74,17 @@
           items: [
             {
               value: "newAdmissions",
-              text: "New admissions",
+              html: "New admissions (" ~ todayStats.newAdmissions ~ ")",
               checked: selectedFilters and 'newAdmissions' in selectedFilters
             },
             {
               value: "transfersIn",
-              text: "Transfers in",
+              html: "Transfers in (" ~ todayStats.transfersIn ~ ")",
               checked: selectedFilters and 'transfersIn' in selectedFilters
             },
             {
               value: "returns",
-              text: "Returns",
+              html: "Returns (" ~ todayStats.returns ~ ")",
               checked: selectedFilters and 'returns' in selectedFilters
             }
           ]
