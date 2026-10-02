@@ -5,6 +5,7 @@ import EstablishmentRollSummary from './interfaces/EstablishmentRollSummary'
 import { PrisonApiClient } from '../data/interfaces/prisonApiClient'
 import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
 import { ResidentialLocation } from '../data/interfaces/prisonRollCount'
+import { getEffectiveArrivalType, getMovementHistoryStartDate } from '../utils/arrivalType'
 
 export default class EstablishmentRollService {
   constructor(
@@ -35,21 +36,32 @@ export default class EstablishmentRollService {
       prisonApi.getMovementsIn(caseLoadId, new Date().toISOString()),
     ])
 
-    const inTodayPrisonerNumbers = new Set((arrivedTodayMovements || []).map(movement => movement.offenderNo))
-
-    // Get recent movements for prisoners who arrived today to determine arrival types
-    const recentMovements =
-      (arrivedTodayMovements || []).length > 0
-        ? await prisonApi.getRecentMovements(Array.from(inTodayPrisonerNumbers))
-        : []
+    const offenderMovementHistoryByOffender = new Map(
+      await Promise.all(
+        (arrivedTodayMovements || []).map(
+          async movement =>
+            [
+              movement.offenderNo,
+              (
+                await prisonApi.getOffenderMovements(
+                  movement.offenderNo,
+                  getMovementHistoryStartDate(movement.movementDateTime),
+                )
+              ).slice(-2),
+            ] as const,
+        ),
+      ),
+    )
 
     // Count arrival types based on actual recent movement types
     let newAdmissions = 0
     let transfersIn = 0
     let returnsIn = 0
 
-    ;(recentMovements || []).forEach((movement: { offenderNo: string; movementType?: string }) => {
-      switch (movement.movementType) {
+    offenderMovementHistoryByOffender.forEach(movements => {
+      const arrivalType = getEffectiveArrivalType(movements)
+
+      switch (arrivalType) {
         case 'ADM':
           newAdmissions += 1
           break

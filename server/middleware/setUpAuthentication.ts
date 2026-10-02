@@ -49,12 +49,16 @@ export default function setupAuthentication() {
 
   router.get('/sign-in', passport.authenticate('oauth2'))
 
-  router.get('/sign-in/callback', (req, res, next) =>
-    passport.authenticate('oauth2', {
-      successReturnToOrRedirect: req.session.returnTo || '/',
-      failureRedirect: '/autherror',
-    })(req, res, next),
-  )
+  router.get('/sign-in/callback', (req, res, next) => {
+    passport.authenticate('oauth2', (err: Error | null, user: Express.User | false) => {
+      if (err) return next(err)
+      if (!user) return res.redirect('/autherror')
+      return req.logIn(user, (loginError: Error | null) => {
+        if (loginError) return next(loginError)
+        return res.redirect(req.session.returnTo || '/')
+      })
+    })(req, res, next)
+  })
 
   const authUrl = config.apis.hmppsAuth.externalUrl
   const authParameters = `client_id=${config.apis.hmppsAuth.authClientId}&redirect_uri=${config.ingressUrl}`
