@@ -21,7 +21,7 @@ export default class MovementsService {
     clientToken: string,
     caseLoadId: string,
     sort: string = 'timeArrived&direction=descending',
-  ): Promise<(PrisonerWithAlerts & { movementTime: string; arrivedFrom: string })[]> {
+  ): Promise<(PrisonerWithAlerts & { movementTime: string; arrivedFrom: string; arrivalType?: string })[]> {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
 
