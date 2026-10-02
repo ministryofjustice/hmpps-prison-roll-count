@@ -5,16 +5,14 @@ import Page from '../pages/page'
 context('SignIn', () => {
   beforeEach(() => {
     cy.task('reset')
-    cy.task('stubUserCaseLoads')
-    cy.task('stubUserLocations')
+    cy.setupUserAuth()
+    cy.setupComponentsData()
+    cy.task('stubMovementsIn')
+    cy.task('stubInTodayMovementHistoryDefault')
+    cy.task('stubPostAttributeSearch')
     cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubLocationPrisonRollCount')
     cy.task('stubPrisonConfiguration')
-    cy.task('stubMovementsIn')
-    cy.task('stubRecentMovements')
-    cy.task('stubPostAttributeSearch')
-    cy.setupUserAuth()
-    cy.setupUserCaseloads()
   })
 
   it('Unauthenticated user directed to auth', () => {

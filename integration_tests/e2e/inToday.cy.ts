@@ -107,7 +107,7 @@ context('In Today Page', () => {
   })
 
   it('should display the correct counts for new admissions, transfers in, and returns', () => {
-    // Based on the default stubRecentMovements, verify the correct counts are displayed
+    // Based on the stubInTodayMovementHistoryDefault, verify the correct counts are displayed
     // The default mock has 2 prisoners both with movementType 'TRN'
     cy.get('[data-qa="new-admissions-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
 
