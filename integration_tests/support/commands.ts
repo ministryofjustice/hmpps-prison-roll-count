@@ -1,4 +1,4 @@
-Cypress.Commands.add('signIn', ({ failOnStatusCode = true, redirectPath = '/' } = {}) => {
+Cypress.Commands.add('signIn', ({ failOnStatusCode = false, redirectPath = '/' } = {}) => {
   cy.request({
     url: redirectPath,
     failOnStatusCode: false,

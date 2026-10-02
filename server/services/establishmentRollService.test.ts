@@ -25,9 +25,10 @@ describe('establishmentRollService', () => {
       prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([
         {
           offenderNo: 'A1234AA',
+          movementDateTime: '2024-05-10',
         },
       ])
-      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
+      prisonApiClientMock.getOffenderMovements = jest.fn().mockResolvedValue([
         {
           offenderNo: 'A1234AA',
           movementType: 'TRN',
@@ -54,7 +55,117 @@ describe('establishmentRollService', () => {
         transfersIn: 1,
         returns: 0,
       })
-      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(['A1234AA'])
+      expect(prisonApiClientMock.getOffenderMovements).toHaveBeenCalledWith('A1234AA', '2024-04-10')
+    })
+
+    it('should count a prisoner as a transfer when one of their last two movementTypes is TRN', async () => {
+      prisonApiClientMock.getOffenderMovements = jest.fn().mockResolvedValue([
+        {
+          offenderNo: 'A1234AA',
+          movementType: 'ADM',
+          movementDate: '2024-05-10',
+          movementTime: '12:00',
+        },
+        {
+          offenderNo: 'A1234AA',
+          movementType: 'TRN',
+          movementDate: '2024-05-10',
+          movementTime: '10:00',
+        },
+      ])
+
+      const establishmentRollCounts = await establishmentRollService.getEstablishmentRollCounts('token', 'LEI')
+
+      expect(establishmentRollCounts.todayStats).toEqual(
+        expect.objectContaining({
+          newAdmissions: 0,
+          transfersIn: 1,
+          returns: 0,
+        }),
+      )
+    })
+
+    it('should count a prisoner as a transfer when recent movements are returned as TRN then ADM', async () => {
+      prisonApiClientMock.getOffenderMovements = jest.fn().mockResolvedValue([
+        {
+          offenderNo: 'A1234AA',
+          movementType: 'TRN',
+        },
+        {
+          offenderNo: 'A1234AA',
+          movementType: 'ADM',
+        },
+      ])
+
+      const establishmentRollCounts = await establishmentRollService.getEstablishmentRollCounts('token', 'LEI')
+
+      expect(establishmentRollCounts.todayStats).toEqual(
+        expect.objectContaining({
+          newAdmissions: 0,
+          transfersIn: 1,
+          returns: 0,
+        }),
+      )
+    })
+
+    it('should count a prisoner as a transfer when history is returned oldest-first', async () => {
+      prisonApiClientMock.getOffenderMovements = jest.fn().mockResolvedValue([
+        {
+          offenderNo: 'A1234AA',
+          movementType: 'ADM',
+          movementDate: '2024-05-08',
+          movementTime: '08:00',
+        },
+        {
+          offenderNo: 'A1234AA',
+          movementType: 'ADM',
+          movementDate: '2024-05-09',
+          movementTime: '09:00',
+        },
+        {
+          offenderNo: 'A1234AA',
+          movementType: 'TRN',
+          movementDate: '2024-05-10',
+          movementTime: '10:00',
+        },
+        {
+          offenderNo: 'A1234AA',
+          movementType: 'ADM',
+          movementDate: '2024-05-10',
+          movementTime: '12:00',
+        },
+      ])
+
+      const establishmentRollCounts = await establishmentRollService.getEstablishmentRollCounts('token', 'LEI')
+
+      expect(establishmentRollCounts.todayStats).toEqual(
+        expect.objectContaining({
+          newAdmissions: 0,
+          transfersIn: 1,
+          returns: 0,
+        }),
+      )
+    })
+
+    it('should count a prisoner as a transfer when Prison API returns ADM with a transfer-related reason', async () => {
+      prisonApiClientMock.getOffenderMovements = jest.fn().mockResolvedValue([
+        {
+          offenderNo: 'A1234AA',
+          movementType: 'ADM',
+          movementReason: 'Transfer In from Other Establishment',
+          movementReasonDescription: 'Transfer In from Other Establishment',
+        },
+      ])
+
+      const establishmentRollCounts = await establishmentRollService.getEstablishmentRollCounts('token', 'LEI')
+
+      expect(establishmentRollCounts.todayStats).toEqual(
+        expect.objectContaining({
+          newAdmissions: 0,
+          transfersIn: 1,
+          returns: 0,
+        }),
+      )
     })
 
     it('should return data from API for the total stats', async () => {
