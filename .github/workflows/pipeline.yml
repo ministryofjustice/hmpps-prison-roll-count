@@ -28,7 +28,7 @@ jobs:
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/node_build.yml@v2 # WORKFLOW_VERSION
     secrets: inherit
     with:
-      install_command: 'npm run setup'
+      install_command: 'npm install -g npm@12 && npm run setup'
   # generic node unit tests - feel free to override with local tests if required
   node_unit_tests:
     name: node unit tests
