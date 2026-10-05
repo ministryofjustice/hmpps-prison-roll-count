@@ -1,5 +1,5 @@
 # Stage: base image
-FROM ghcr.io/ministryofjustice/hmpps-node:24-alpine as base
+FROM ghcr.io/ministryofjustice/hmpps-node:24-alpine AS base
 
 ARG BUILD_NUMBER
 ARG GIT_REF
@@ -18,12 +18,13 @@ ENV GIT_REF=${GIT_REF}
 ENV GIT_BRANCH=${GIT_BRANCH}
 
 # Stage: build assets
-FROM base as build
+FROM base AS build
 
 ARG BUILD_NUMBER
 ARG GIT_REF
 ARG GIT_BRANCH
 
+RUN npm install -g npm@12
 COPY package*.json .allowed-scripts.mjs .npmrc ./
 RUN NPM_CONFIG_AUDIT=false NPM_CONFIG_FUND=false npm run setup
 ENV NODE_ENV='production'
