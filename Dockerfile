@@ -25,7 +25,7 @@ ARG GIT_REF
 ARG GIT_BRANCH
 
 RUN npm install -g npm@12
-COPY package*.json .npmrc ./
+COPY package*.json .allowed-scripts.mjs .npmrc ./
 RUN NPM_CONFIG_AUDIT=false NPM_CONFIG_FUND=false npm run setup
 ENV NODE_ENV='production'
 
