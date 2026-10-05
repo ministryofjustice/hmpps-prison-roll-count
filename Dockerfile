@@ -25,7 +25,8 @@ ARG GIT_REF
 ARG GIT_BRANCH
 
 COPY package*.json .allowed-scripts.mjs .npmrc ./
-RUN NPM_CONFIG_AUDIT=false NPM_CONFIG_FUND=false npm run setup
+RUN npm install --global npm@12 \
+    && NPM_CONFIG_AUDIT=false NPM_CONFIG_FUND=false npm run setup
 ENV NODE_ENV='production'
 
 COPY . .
