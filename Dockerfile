@@ -15,7 +15,7 @@ ARG GIT_BRANCH
 # Cache breaking and ensure required build / git args defined
 RUN test -n "$BUILD_NUMBER" || (echo "BUILD_NUMBER not set" && false)
 RUN test -n "$GIT_REF" || (echo "GIT_REF not set" && false)
-RUN test -n "$GIT_BRANCH" || (echo "GIT_BRANCH not set" && false
+RUN test -n "$GIT_BRANCH" || (echo "GIT_BRANCH not set" && false)
 
 WORKDIR /app
 COPY package*.json .npmrc ./
