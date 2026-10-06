@@ -18,7 +18,7 @@ RUN test -n "$GIT_REF" || (echo "GIT_REF not set" && false)
 RUN test -n "$GIT_BRANCH" || (echo "GIT_BRANCH not set" && false)
 
 WORKDIR /app
-COPY package*.json .npmrc ./
+COPY package*.json .npmrc .allowed-scripts.mjs ./
 RUN NPM_CONFIG_AUDIT=false NPM_CONFIG_FUND=false npm run setup
 
 COPY . .
