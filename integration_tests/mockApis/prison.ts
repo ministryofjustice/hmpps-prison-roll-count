@@ -15,6 +15,34 @@ import prisonRollCountMock from '../../server/mocks/prisonRollCountMock'
 import prisonRollCountForWingWithSpurMock from '../../server/mocks/prisonRollCountForWingWithSpurMock'
 import prisonEstablishmentRollSummaryMock from '../../server/mocks/prisonRollCountSummaryMock'
 
+const stubOffenderMovementHistory = (offenderNo: string, payload: unknown[]) =>
+  stubFor({
+    request: {
+      method: 'GET',
+      urlPattern: `/prison/api/movements/offender/${offenderNo}\\?movementsAfter=.*`,
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: payload,
+    },
+  })
+
+const stubInTodayOffenderMovements = (payloadByOffender: Record<string, unknown[]>) =>
+  Promise.all(
+    Object.entries(payloadByOffender).map(([offenderNo, payload]) => stubOffenderMovementHistory(offenderNo, payload)),
+  )
+
+const asAdmissionMovement = (movement: (typeof movementsRecentMock)[number]) => ({
+  ...movement,
+  movementType: 'ADM',
+  movementTypeDescription: 'Admission',
+  movementReason: 'NEW',
+  movementReasonDescription: 'New admission',
+})
+
 export default {
   stubPrisonApiPing: () =>
     stubFor({
@@ -224,6 +252,51 @@ export default {
     })
   },
 
+  stubInTodayMovementHistoryDefault: () => {
+    return stubInTodayOffenderMovements({
+      A1234AA: [{ ...movementsRecentMock[0], movementType: 'TRN' }],
+      A1234AB: [{ ...movementsRecentMock[1], movementType: 'TRN' }],
+    })
+  },
+
+  stubInTodayTwoRecentMovements: () => {
+    return stubInTodayOffenderMovements({
+      A1234AA: [
+        { ...movementsRecentMock[0], movementType: 'TRN', movementDate: '2024-05-10', movementTime: '10:00' },
+        { ...movementsRecentMock[0], movementType: 'ADM', movementDate: '2024-05-10', movementTime: '12:00' },
+      ],
+      A1234AB: [{ ...movementsRecentMock[1], movementType: 'TRN' }],
+    })
+  },
+
+  stubInTodayNewAdmissionsMovements: () => {
+    return stubInTodayOffenderMovements({
+      A1234AA: [asAdmissionMovement(movementsRecentMock[0])],
+      A1234AB: [asAdmissionMovement(movementsRecentMock[1])],
+    })
+  },
+
+  stubInTodayTransfersInMovements: () => {
+    return stubInTodayOffenderMovements({
+      A1234AA: [{ ...movementsRecentMock[0], movementType: 'TRN' }],
+      A1234AB: [{ ...movementsRecentMock[1], movementType: 'TRN' }],
+    })
+  },
+
+  stubInTodayReturnsMovements: () => {
+    return stubInTodayOffenderMovements({
+      A1234AA: [{ ...movementsRecentMock[0], movementType: 'CRT' }],
+      A1234AB: [{ ...movementsRecentMock[1], movementType: 'TAP' }],
+    })
+  },
+
+  stubInTodayMixedMovementTypes: () => {
+    return stubInTodayOffenderMovements({
+      A1234AA: [asAdmissionMovement(movementsRecentMock[0])],
+      A1234AB: [{ ...movementsRecentMock[1], movementType: 'TRN' }],
+    })
+  },
+
   stubRecentOvernightMovements: () => {
     return stubFor({
       request: {
@@ -305,106 +378,30 @@ export default {
   },
 
   stubNewAdmissionsMovements: () => {
-    return stubFor({
-      request: {
-        method: 'POST',
-        urlPattern: `/prison/api/movements/offenders`,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: [
-          {
-            offenderNo: 'A1234AB',
-            movementType: 'ADM',
-          },
-          {
-            offenderNo: 'A1234AC',
-            movementType: 'ADM',
-          },
-        ],
-      },
+    return stubInTodayOffenderMovements({
+      A1234AA: [asAdmissionMovement(movementsRecentMock[0])],
+      A1234AB: [asAdmissionMovement(movementsRecentMock[1])],
     })
   },
 
   stubTransfersInMovements: () => {
-    return stubFor({
-      request: {
-        method: 'POST',
-        urlPattern: `/prison/api/movements/offenders`,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: [
-          {
-            offenderNo: 'A1234AB',
-            movementType: 'TRN',
-          },
-          {
-            offenderNo: 'A1234AC',
-            movementType: 'TRN',
-          },
-        ],
-      },
+    return stubInTodayOffenderMovements({
+      A1234AA: [{ ...movementsRecentMock[0], movementType: 'TRN' }],
+      A1234AB: [{ ...movementsRecentMock[1], movementType: 'TRN' }],
     })
   },
 
   stubReturnsMovements: () => {
-    return stubFor({
-      request: {
-        method: 'POST',
-        urlPattern: `/prison/api/movements/offenders`,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: [
-          {
-            offenderNo: 'A1234AB',
-            movementType: 'CRT',
-          },
-          {
-            offenderNo: 'A1234AC',
-            movementType: 'TAP',
-          },
-        ],
-      },
+    return stubInTodayOffenderMovements({
+      A1234AA: [{ ...movementsRecentMock[0], movementType: 'CRT' }],
+      A1234AB: [{ ...movementsRecentMock[1], movementType: 'TAP' }],
     })
   },
 
   stubMixedMovementTypes: () => {
-    return stubFor({
-      request: {
-        method: 'POST',
-        urlPattern: `/prison/api/movements/offenders`,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: [
-          {
-            offenderNo: 'A1234AB',
-            movementType: 'ADM',
-          },
-          {
-            offenderNo: 'A1234AC',
-            movementType: 'TRN',
-          },
-          {
-            offenderNo: 'A1234AD',
-            movementType: 'CRT',
-          },
-        ],
-      },
+    return stubInTodayOffenderMovements({
+      A1234AA: [asAdmissionMovement(movementsRecentMock[0])],
+      A1234AB: [{ ...movementsRecentMock[1], movementType: 'TRN' }],
     })
   },
 }

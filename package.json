@@ -81,7 +81,7 @@
     "@ministryofjustice/frontend": "^11.0.1",
     "@ministryofjustice/hmpps-audit-client": "2.0.0",
     "@ministryofjustice/hmpps-connect-dps-components": "6.3.4",
-    "@ministryofjustice/hmpps-connect-dps-shared-items": "5.2.1",
+    "@ministryofjustice/hmpps-connect-dps-shared-items": "5.3.0",
     "@ministryofjustice/hmpps-monitoring": "^2.1.0",
     "agentkeepalive": "^4.6.0",
     "applicationinsights": "^3.16.0",
@@ -162,7 +162,7 @@
     },
     "cypress-multi-reporters": {
       "mocha": {
-        "serialize-javascript": "7.1.1"
+        "serialize-javascript": "7.1.2"
       }
     },
     "nunjucks": {

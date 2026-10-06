@@ -152,6 +152,9 @@ describe('EstablishmentRollController', () => {
         prisoners: arrivedPrisoners,
         establishmentRollCounts,
         sort: 'timeArrived&direction=descending',
+        selectedFilters: [],
+        appliedFilters: [],
+        clearFiltersHref: '/in-today?sort=timeArrived&direction=descending',
       })
     })
 
@@ -187,7 +190,102 @@ describe('EstablishmentRollController', () => {
           wings: [] as unknown[],
         },
         sort: 'lastName&direction=ascending',
+        selectedFilters: [],
+        appliedFilters: [],
+        clearFiltersHref: '/in-today?sort=lastName&direction=ascending',
       })
+    })
+
+    it('filters prisoners by selected arrival types and builds applied filters', async () => {
+      const arrivedPrisoners = [
+        { prisonerNumber: 'A1234BC', arrivalType: 'ADM' },
+        { prisonerNumber: 'A1234BD', arrivalType: 'TRN' },
+        { prisonerNumber: 'A1234BE', arrivalType: 'CRT' },
+      ]
+
+      movementsService.getInTodayPrisoners.mockResolvedValue(arrivedPrisoners)
+      establishmentRollService.getEstablishmentRollCounts.mockResolvedValue({
+        todayStats: {},
+        totals: {},
+        wings: [] as unknown[],
+      })
+
+      const controller = new EstablishmentRollController(
+        establishmentRollService as unknown as EstablishmentRollService,
+        movementsService as unknown as MovementsService,
+        locationService as unknown as LocationService,
+      )
+
+      const req = {
+        ...mockReq(),
+        query: { arrivalType: ['newAdmissions', 'returns'] },
+      } as unknown as Request
+      const res = mockRes()
+      const next = mockNext()
+
+      await controller.getInToday()(req, res, next)
+
+      expect(res.render).toHaveBeenCalledWith('pages/inToday', {
+        prisoners: [arrivedPrisoners[0], arrivedPrisoners[2]],
+        establishmentRollCounts: {
+          todayStats: {},
+          totals: {},
+          wings: [] as unknown[],
+        },
+        sort: 'timeArrived&direction=descending',
+        selectedFilters: ['newAdmissions', 'returns'],
+        appliedFilters: [
+          {
+            text: 'New admissions',
+            href: '/in-today?sort=timeArrived&direction=descending&arrivalType=returns',
+          },
+          {
+            text: 'Returns',
+            href: '/in-today?sort=timeArrived&direction=descending&arrivalType=newAdmissions',
+          },
+        ],
+        clearFiltersHref: '/in-today?sort=timeArrived&direction=descending',
+      })
+    })
+
+    it('ignores non-string arrival type query values', async () => {
+      const arrivedPrisoners = [{ prisonerNumber: 'A1234BC', arrivalType: 'ADM' }]
+
+      movementsService.getInTodayPrisoners.mockResolvedValue(arrivedPrisoners)
+      establishmentRollService.getEstablishmentRollCounts.mockResolvedValue({
+        todayStats: {},
+        totals: {},
+        wings: [] as unknown[],
+      })
+
+      const controller = new EstablishmentRollController(
+        establishmentRollService as unknown as EstablishmentRollService,
+        movementsService as unknown as MovementsService,
+        locationService as unknown as LocationService,
+      )
+
+      const req = {
+        ...mockReq(),
+        query: { arrivalType: ['newAdmissions', { unexpected: 'value' }] },
+      } as unknown as Request
+      const res = mockRes()
+      const next = mockNext()
+
+      await controller.getInToday()(req, res, next)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/inToday',
+        expect.objectContaining({
+          prisoners: arrivedPrisoners,
+          selectedFilters: ['newAdmissions'],
+          appliedFilters: [
+            {
+              text: 'New admissions',
+              href: '/in-today?sort=timeArrived&direction=descending',
+            },
+          ],
+        }),
+      )
     })
   })
 

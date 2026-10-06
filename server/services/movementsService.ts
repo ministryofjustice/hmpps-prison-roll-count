@@ -8,6 +8,7 @@ import { Prisoner } from '../data/interfaces/prisoner'
 import { BedAssignment } from '../data/interfaces/bedAssignment'
 import { OffenderMovement } from '../data/interfaces/offenderMovement'
 import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
+import { getEffectiveArrivalType, getMovementHistoryStartDate } from '../utils/arrivalType'
 
 export default class MovementsService {
   constructor(
@@ -20,7 +21,7 @@ export default class MovementsService {
     clientToken: string,
     caseLoadId: string,
     sort: string = 'timeArrived&direction=descending',
-  ): Promise<(PrisonerWithAlerts & { movementTime: string; arrivedFrom: string })[]> {
+  ): Promise<(PrisonerWithAlerts & { movementTime: string; arrivedFrom: string; arrivalType?: string })[]> {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
 
@@ -29,22 +30,36 @@ export default class MovementsService {
 
     const prisonerNumbers = movements.map(movement => movement.offenderNo)
 
-    const [prisoners, recentMovementsResponse] = await Promise.all([
+    const [prisoners, offenderMovements] = await Promise.all([
       prisonerSearchClient.getPrisonersById(prisonerNumbers),
-      prisonApi.getRecentMovements(prisonerNumbers),
+      Promise.all(
+        movements.map(
+          async prisonerMovement =>
+            [
+              prisonerMovement.offenderNo,
+              (
+                await prisonApi.getOffenderMovements(
+                  prisonerMovement.offenderNo,
+                  getMovementHistoryStartDate(prisonerMovement.movementDateTime),
+                )
+              ).slice(-2),
+            ] as const,
+        ),
+      ),
     ])
-    const recentMovements = recentMovementsResponse || []
+    const offenderMovementsByOffender = new Map(offenderMovements)
 
     const mappedPrisoners = movements.map(prisonerMovement => {
       const prisoner = prisoners.find(prisonerToFind => prisonerToFind.prisonerNumber === prisonerMovement.offenderNo)
-      const recentMovement = recentMovements.find(movement => movement.offenderNo === prisonerMovement.offenderNo)
+      const movementHistory = offenderMovementsByOffender.get(prisonerMovement.offenderNo) || []
+      const arrivalType = getEffectiveArrivalType(movementHistory)
 
       return {
         ...prisoner,
         movementTime: prisonerMovement?.movementTime,
         arrivedFrom: prisonerMovement?.fromAgencyDescription || prisonerMovement?.fromAddress,
         alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner?.alerts || []),
-        ...(recentMovement?.movementType ? { arrivalType: recentMovement.movementType } : {}),
+        ...(arrivalType ? { arrivalType } : {}),
       }
     })
 

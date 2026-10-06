@@ -4,7 +4,9 @@
 {% from "../macros/alertFlags.njk" import alertFlags %}
 {% from "../macros/statusTag.njk" import statusTag %}
 {% from "../macros/categoryFlag.njk" import categoryFlag %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% set todayStats = establishmentRollCounts.todayStats %}
 
 {% set pageTitle = "In today" %}
@@ -56,6 +58,64 @@
       }}
     </div>
 
+  <div class="app-search-panel app-checkboxes--inline">
+    <form method="get" action="/in-today" novalidate data-qa="property-search">
+      <div class="app-search-panel__row app-search-panel__row--inline">
+        {{ govukCheckboxes({
+          name: "arrivalType",
+          classes: "govuk-checkboxes--small",
+          fieldset: {
+            legend: {
+              text: "Filter by arrival type:",
+              isPageHeading: true,
+              classes: "govuk-fieldset__legend govuk-fieldset__legend--s"
+            }
+          },
+          items: [
+            {
+              value: "newAdmissions",
+              html: "New admissions (" ~ todayStats.newAdmissions ~ ")",
+              checked: selectedFilters and 'newAdmissions' in selectedFilters
+            },
+            {
+              value: "transfersIn",
+              html: "Transfers in (" ~ todayStats.transfersIn ~ ")",
+              checked: selectedFilters and 'transfersIn' in selectedFilters
+            },
+            {
+              value: "returns",
+              html: "Returns (" ~ todayStats.returns ~ ")",
+              checked: selectedFilters and 'returns' in selectedFilters
+            }
+          ]
+        }) }}
+      </div>
+      <div class="app-search-panel__row">
+        {{ govukButton({ text: "Apply", classes: "app-search-panel__button" }) }}
+        <a class="govuk-link app-search-panel__clear" href="{{ clearFiltersHref or '/in-today?sort=' ~ sort }}" data-qa="clear-search">Clear</a>
+      </div>
+
+      {% if appliedFilters | length %}
+        {# The filters below are collapsed by default and persist between visits, so without this nothing on
+           screen says the list is filtered - or what it is filtered on. #}
+        <div class="app-search-panel__selected" data-qa="selected-filters">
+          <div class="app-search-panel__selected-header">
+            <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Selected filters</h3>
+            <a class="govuk-link" href="{{ clearFiltersHref or '/in-today?sort=' ~ sort }}" data-qa="clear-all-filters">Clear filters</a>
+          </div>
+          <ul class="moj-filter-tags">
+            {% for filter in appliedFilters %}
+              <li>
+                <a class="moj-filter__tag" href="{{ filter.href }}" data-qa="selected-filter">
+                  <span class="govuk-visually-hidden">Remove this filter:</span> {{ filter.text }}
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+    </form>
+  </div>
 
   <div class="govuk-grid-row govuk-!-margin-bottom-9">
     <div class="govuk-grid-column-full results-table results-table__results">
