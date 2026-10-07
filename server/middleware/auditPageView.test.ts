@@ -10,8 +10,6 @@ const auditService = {
   logAuditEvent: jest.fn().mockResolvedValue(undefined),
 } as unknown as jest.Mocked<AuditService>
 
-const userUuid = randomUUID()
-
 function appWithStatus(statusCode: number, userUuid: string) {
   const app = express()
   app.use((req, res, next) => {
