@@ -1,6 +1,6 @@
+import { UUID } from 'crypto'
 import { CaseLoad } from '../data/interfaces/caseLoad'
 import { Location } from '../data/interfaces/location'
-import { UUID } from 'crypto'
 
 export type AuthSource = 'nomis' | 'delius' | 'external' | 'azuread'
 
