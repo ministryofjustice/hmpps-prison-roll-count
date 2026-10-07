@@ -2,6 +2,8 @@ import passport from 'passport'
 import flash from 'connect-flash'
 import { Router } from 'express'
 import { Strategy } from 'passport-oauth2'
+import { jwtDecode } from 'jwt-decode'
+import type { UUID } from 'crypto'
 import config from '../config'
 import tokenVerifier from '../data/tokenVerification'
 import { HmppsUser } from '../interfaces/hmppsUser'
@@ -30,7 +32,8 @@ passport.use(
       customHeaders: { Authorization: generateOauthClientToken() },
     },
     (token, refreshToken, params, profile, done) => {
-      return done(null, { token, username: params.user_name, authSource: params.auth_source })
+      const { user_uuid: userUuid } = jwtDecode(token) as { user_uuid?: UUID }
+      return done(null, { token, username: params.user_name, authSource: params.auth_source, userUuid })
     },
   ),
 )

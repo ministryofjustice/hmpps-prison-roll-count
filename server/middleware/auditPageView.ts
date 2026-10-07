@@ -32,6 +32,7 @@ export default function auditPageView(auditService: AuditService): RequestHandle
       who,
       correlationId: req.id,
       details: {
+        userUuid: res.locals.user?.userUuid,
         pageUrl: req.originalUrl,
       },
       ...subjectOfRequest(req),

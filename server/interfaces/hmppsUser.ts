@@ -1,5 +1,6 @@
 import { CaseLoad } from '../data/interfaces/caseLoad'
 import { Location } from '../data/interfaces/location'
+import { UUID } from 'crypto'
 
 export type AuthSource = 'nomis' | 'delius' | 'external' | 'azuread'
 
@@ -9,8 +10,9 @@ export type AuthSource = 'nomis' | 'delius' | 'external' | 'azuread'
 export interface BaseUser {
   authSource: AuthSource
   username: string
-  userId: string
-  name: string
+  userId: string | undefined
+  userUuid: UUID | undefined
+  name: string | undefined
   displayName: string
   userRoles: string[]
   token: string

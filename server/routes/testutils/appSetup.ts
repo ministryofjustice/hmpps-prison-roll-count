@@ -22,6 +22,7 @@ const Caseload = {
 export const user: HmppsUser = {
   name: 'FIRST LAST',
   userId: 'id',
+  userUuid: randomUUID(),
   token: 'token',
   username: 'user1',
   displayName: 'First Last',
