@@ -35,7 +35,11 @@ describe('GET /', () => {
 
     expect(auditService.logAuditEvent).toHaveBeenCalledTimes(1)
     expect(auditService.logAuditEvent).toHaveBeenCalledWith(
-      expect.objectContaining({ what: 'VIEW_HOME_FAILURE', who: user.username, details: { pageUrl: '/', userUuid: user.userUuid } }),
+      expect.objectContaining({
+        what: 'VIEW_HOME_FAILURE',
+        who: user.username,
+        details: { pageUrl: '/', userUuid: user.userUuid },
+      }),
       expect.anything(),
     )
   })
@@ -47,7 +51,10 @@ describe('GET an unknown url', () => {
 
     expect(auditService.logAuditEvent).toHaveBeenCalledTimes(1)
     expect(auditService.logAuditEvent).toHaveBeenCalledWith(
-      expect.objectContaining({ what: 'VIEW_ATTEMPT_FAILURE', details: { pageUrl: '/invalid-url', userUuid: user.userUuid } }),
+      expect.objectContaining({
+        what: 'VIEW_ATTEMPT_FAILURE',
+        details: { pageUrl: '/invalid-url', userUuid: user.userUuid },
+      }),
       expect.anything(),
     )
   })
