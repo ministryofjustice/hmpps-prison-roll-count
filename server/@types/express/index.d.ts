@@ -1,3 +1,4 @@
+import type { UUID } from 'crypto'
 import { HmppsUser } from '../../interfaces/hmppsUser'
 import { Services } from '../../services'
 import config from '../../config'
@@ -16,6 +17,7 @@ export declare global {
       username: string
       token: string
       authSource: string
+      userUuid?: UUID
     }
 
     interface Request {
@@ -29,6 +31,7 @@ export declare global {
 
     interface Locals {
       user: HmppsUser
+      auditPage?: string
     }
   }
 }

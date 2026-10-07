@@ -1,15 +1,18 @@
 import type { Express } from 'express'
 import request from 'supertest'
+import { type AuditService } from '@ministryofjustice/hmpps-audit-client'
 import { appWithAllRoutes, user } from './testutils/appSetup'
-import AuditService from '../services/auditService'
 
-jest.mock('../services/auditService')
-
-const auditService = new AuditService(null) as jest.Mocked<AuditService>
+const auditService = {
+  logAuditEvent: jest.fn(),
+  logPageView: jest.fn(),
+} as unknown as jest.Mocked<AuditService>
 
 let app: Express
 
 beforeEach(() => {
+  auditService.logAuditEvent.mockResolvedValue(undefined)
+  auditService.logPageView.mockResolvedValue(undefined)
   app = appWithAllRoutes({
     services: {
       auditService,
@@ -24,8 +27,35 @@ afterEach(() => {
 
 describe('GET /', () => {
   it('should render index page', () => {
-    auditService.logPageView.mockResolvedValue(null)
-
     return request(app).get('/').expect('Content-Type', /html/)
+  })
+
+  it('should audit a failed page view against the page name', async () => {
+    await request(app).get('/')
+
+    expect(auditService.logAuditEvent).toHaveBeenCalledTimes(1)
+    expect(auditService.logAuditEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        what: 'VIEW_HOME_FAILURE',
+        who: user.username,
+        details: { pageUrl: '/', userUuid: user.userUuid },
+      }),
+      expect.anything(),
+    )
+  })
+})
+
+describe('GET an unknown url', () => {
+  it('should audit a page view access attempt', async () => {
+    await request(app).get('/invalid-url')
+
+    expect(auditService.logAuditEvent).toHaveBeenCalledTimes(1)
+    expect(auditService.logAuditEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        what: 'VIEW_ATTEMPT_FAILURE',
+        details: { pageUrl: '/invalid-url', userUuid: user.userUuid },
+      }),
+      expect.anything(),
+    )
   })
 })

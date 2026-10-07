@@ -9,6 +9,7 @@ import { appInsightsMiddleware } from './utils/azureAppInsights'
 import authorisationMiddleware from './middleware/authorisationMiddleware'
 
 import setUpAuthentication from './middleware/setUpAuthentication'
+import auditPageView from './middleware/auditPageView'
 import setUpCsrf from './middleware/setUpCsrf'
 import setUpCurrentUser from './middleware/setUpCurrentUser'
 import setUpHealthChecks from './middleware/setUpHealthChecks'
@@ -44,6 +45,8 @@ export default function createApp(services: Services): express.Application {
   nunjucksSetup(app)
   app.use(setUpFeatureFlags())
   app.use(setUpAuthentication())
+  // before authorisation, so that refused requests are still audited as access attempts
+  app.get('*any', auditPageView(services.auditService))
   app.use(authorisationMiddleware(['ROLE_PRISON']))
   app.use(setUpCsrf())
   app.use(setUpCurrentUser(services))

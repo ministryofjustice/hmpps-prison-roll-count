@@ -1,5 +1,6 @@
+import { AuditServiceFactory } from '@ministryofjustice/hmpps-audit-client'
 import { dataAccess } from '../data'
-import AuditService from './auditService'
+import logger from '../logger'
 import EstablishmentRollService from './establishmentRollService'
 import FeComponentsService from './feComponentsService'
 import LocationService from './locationsService'
@@ -10,13 +11,12 @@ export const services = () => {
   const {
     applicationInfo,
     feComponentsClient,
-    hmppsAuditClient,
     locationsInsidePrisonApiClientBuilder,
     prisonApiClientBuilder,
     prisonerSearchApiClientBuilder,
   } = dataAccess()
 
-  const auditService = new AuditService(hmppsAuditClient)
+  const auditService = AuditServiceFactory.configureFromEnv(logger)
   const establishmentRollService = new EstablishmentRollService(
     prisonApiClientBuilder,
     locationsInsidePrisonApiClientBuilder,
