@@ -5,6 +5,7 @@ import prisonRollCountForWingNoSpurMock from '../mocks/prisonRollCountForWingNoS
 import prisonRollCountForWingWithSpurMock from '../mocks/prisonRollCountForWingWithSpurMock'
 import prisonEstablishmentRollSummaryMock from '../mocks/prisonRollCountSummaryMock'
 import locationsInsidePrisonApiClientMock from '../test/mocks/locationsInsidePrisonApiClientMock'
+import { ResidentialLocation } from '../data/interfaces/prisonRollCount'
 
 describe('establishmentRollService', () => {
   let establishmentRollService: EstablishmentRollService
@@ -306,8 +307,8 @@ describe('establishmentRollService', () => {
           (a, b) => a.locationCode.localeCompare(b.locationCode, 'en', { ignorePunctuation: true }),
         )
 
-        expect(establishmentRollCounts1.cellRollCounts).toEqual(expectedLandingOne)
-        expect(establishmentRollCounts2.cellRollCounts).toEqual(expectedLandingTwo)
+        expect(establishmentRollCounts1.cellRollCounts).toMatchObject(expectedLandingOne)
+        expect(establishmentRollCounts2.cellRollCounts).toMatchObject(expectedLandingTwo)
       })
 
       it('should sort cells by location code when requested', async () => {
@@ -414,6 +415,96 @@ describe('establishmentRollService', () => {
       })
     })
 
+    describe('Beds available', () => {
+      const cell = (
+        locationCode: string,
+        workingCapacity: number,
+        maxCapacity: number | undefined,
+        bedsInUse: number,
+      ) => ({
+        locationId: `cell-${locationCode}`,
+        locationType: 'CELL',
+        locationCode,
+        fullLocationPath: `R-0-${locationCode}`,
+        certified: true,
+        rollCount: {
+          bedsInUse,
+          currentlyInCell: bedsInUse,
+          currentlyOut: 0,
+          workingCapacity,
+          maxCapacity,
+          netVacancies: workingCapacity - bedsInUse,
+          outOfOrder: 0,
+        },
+        subLocations: [] as ResidentialLocation[],
+      })
+
+      const givenWingWithCells = (resiLocationServiceActive: string, cells: ReturnType<typeof cell>[]) => {
+        const rollCountForWing = {
+          locations: [
+            {
+              locationId: 'wing',
+              locationType: 'WING',
+              locationCode: 'R',
+              fullLocationPath: 'R',
+              certified: true,
+              subLocations: [
+                {
+                  locationId: 'landing',
+                  locationType: 'LAND',
+                  locationCode: '0',
+                  fullLocationPath: 'R-0',
+                  certified: true,
+                  subLocations: cells,
+                },
+              ],
+            },
+          ],
+        }
+        locationsInsidePrisonApiClientMock.getPrisonConfiguration = jest
+          .fn()
+          .mockResolvedValue({ prisonId: 'ESI', resiLocationServiceActive })
+        prisonApiClientMock.getPrisonRollCountForLocation = jest.fn().mockResolvedValue(rollCountForWing)
+        locationsInsidePrisonApiClientMock.getPrisonRollCountForLocation = jest.fn().mockResolvedValue(rollCountForWing)
+      }
+
+      const bedsAvailableByCell = async () => {
+        const { cellRollCounts } = await establishmentRollService.getLandingRollCounts(
+          'token',
+          'ESI',
+          'wing',
+          'landing',
+        )
+        return Object.fromEntries(
+          cellRollCounts.map(cellRollCount => [cellRollCount.locationCode, cellRollCount.bedsAvailable]),
+        )
+      }
+
+      it('should use maximum capacity when a prison not using the residential locations service has no working capacity', async () => {
+        givenWingWithCells('INACTIVE', [cell('002', 0, 4, 3)])
+
+        expect(await bedsAvailableByCell()).toEqual({ '002': 1 })
+      })
+
+      it('should use working capacity when a prison not using the residential locations service has one', async () => {
+        givenWingWithCells('INACTIVE', [cell('003', 2, 4, 1)])
+
+        expect(await bedsAvailableByCell()).toEqual({ '003': 1 })
+      })
+
+      it('should treat a missing maximum capacity as 0', async () => {
+        givenWingWithCells('INACTIVE', [cell('004', 0, undefined, 2)])
+
+        expect(await bedsAvailableByCell()).toEqual({ '004': -2 })
+      })
+
+      it('should always use working capacity for a prison using the residential locations service', async () => {
+        givenWingWithCells('ACTIVE', [cell('002', 0, 4, 3), cell('003', 2, 4, 1)])
+
+        expect(await bedsAvailableByCell()).toEqual({ '002': -3, '003': 1 })
+      })
+    })
+
     describe('Three levels of hierarchy', () => {
       beforeEach(() => {
         locationsInsidePrisonApiClientMock.getPrisonConfiguration = jest
@@ -473,7 +564,7 @@ describe('establishmentRollService', () => {
           ...prisonRollCountForWingWithSpurMock.locations[0].subLocations[0].subLocations[1].subLocations,
         ].sort((a, b) => a.locationCode.localeCompare(b.locationCode, 'en', { ignorePunctuation: true }))
 
-        expect(establishmentRollCounts1.cellRollCounts).toEqual(expectedCells)
+        expect(establishmentRollCounts1.cellRollCounts).toMatchObject(expectedCells)
       })
     })
   })

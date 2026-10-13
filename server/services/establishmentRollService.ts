@@ -120,6 +120,17 @@ export default class EstablishmentRollService {
     const compareStrings = (left: string, right: string) => left.localeCompare(right, 'en', { ignorePunctuation: true })
     const compareNumbers = (left: number, right: number) => left - right
 
+    // Prisons not yet using the residential locations service take capacity from NOMIS, where cell level
+    // operational capacity is often 0, so fall back to maximum capacity until working capacity is set
+    const getBedsAvailable = (cell: ResidentialLocation) => {
+      const { workingCapacity = 0, maxCapacity = 0, bedsInUse = 0 } = cell.rollCount || {}
+      const capacity = prisonIsActiveForResi || workingCapacity > 0 ? workingCapacity : maxCapacity
+      return capacity - bedsInUse
+    }
+
+    const withBedsAvailable = (cells: ResidentialLocation[]) =>
+      cells.map(cell => ({ ...cell, bedsAvailable: getBedsAvailable(cell) }))
+
     const getCellCsraSortValue = (cell: ResidentialLocation) => {
       const prisonerCsraValues = (prisonersByCell[cell.fullLocationPath] || []).map(prisoner => prisoner.csra || 'None')
       return prisonerCsraValues.sort(compareStrings)[0] || 'None'
@@ -166,7 +177,7 @@ export default class EstablishmentRollService {
       return {
         wingName: wing.localName || wing.locationCode,
         landingName: landingOnWing.localName || landingOnWing.locationCode,
-        cellRollCounts: sortCellRollCounts(landingOnWing.subLocations),
+        cellRollCounts: withBedsAvailable(sortCellRollCounts(landingOnWing.subLocations)),
         useWorkingCapacity: prisonIsActiveForResi,
         prisonersByCell,
         landingId,
@@ -184,7 +195,7 @@ export default class EstablishmentRollService {
       wingName: wing.localName || wing.locationCode,
       spurName: spur?.localName || spur?.locationCode,
       landingName: landing?.localName || landing?.locationCode,
-      cellRollCounts: sortCellRollCounts(landing.subLocations),
+      cellRollCounts: withBedsAvailable(sortCellRollCounts(landing.subLocations)),
       useWorkingCapacity: prisonIsActiveForResi,
       prisonersByCell,
       landingId,
