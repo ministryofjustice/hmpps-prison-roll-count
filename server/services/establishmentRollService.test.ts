@@ -327,17 +327,17 @@ describe('establishmentRollService', () => {
         expect(locationCodes).toEqual(sortedLocationCodes)
       })
 
-      it('should sort cells by beds in use when requested', async () => {
+      it('should sort cells by beds available when requested', async () => {
         const establishmentRollCounts = await establishmentRollService.getLandingRollCounts(
           'token',
           'LEI',
           '13075',
           '13076',
-          'bedsInUse&direction=ascending',
+          'bedsAvailable&direction=ascending',
         )
 
-        const bedsInUse = establishmentRollCounts.cellRollCounts.map(cell => cell.rollCount.bedsInUse)
-        expect(bedsInUse).toEqual([...bedsInUse].sort((left, right) => left - right))
+        const bedsAvailable = establishmentRollCounts.cellRollCounts.map(cell => cell.bedsAvailable)
+        expect(bedsAvailable).toEqual([...bedsAvailable].sort((left, right) => left - right))
       })
 
       it('should sort cells by csra when requested', async () => {

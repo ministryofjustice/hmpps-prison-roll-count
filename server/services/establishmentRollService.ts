@@ -136,13 +136,13 @@ export default class EstablishmentRollService {
       return prisonerCsraValues.sort(compareStrings)[0] || 'None'
     }
 
-    const sortCellRollCounts = (cellRollCounts: ResidentialLocation[]) => {
+    const sortCellRollCounts = (cellRollCounts: ReturnType<typeof withBedsAvailable>) => {
       return [...cellRollCounts].sort((left, right) => {
         let comparison = 0
 
         switch (sortKey) {
-          case 'bedsInUse':
-            comparison = compareNumbers(left.rollCount?.bedsInUse || 0, right.rollCount?.bedsInUse || 0)
+          case 'bedsAvailable':
+            comparison = compareNumbers(left.bedsAvailable, right.bedsAvailable)
             break
           case 'csra':
             comparison = compareStrings(getCellCsraSortValue(left), getCellCsraSortValue(right))
@@ -177,7 +177,7 @@ export default class EstablishmentRollService {
       return {
         wingName: wing.localName || wing.locationCode,
         landingName: landingOnWing.localName || landingOnWing.locationCode,
-        cellRollCounts: withBedsAvailable(sortCellRollCounts(landingOnWing.subLocations)),
+        cellRollCounts: sortCellRollCounts(withBedsAvailable(landingOnWing.subLocations)),
         useWorkingCapacity: prisonIsActiveForResi,
         prisonersByCell,
         landingId,
@@ -195,7 +195,7 @@ export default class EstablishmentRollService {
       wingName: wing.localName || wing.locationCode,
       spurName: spur?.localName || spur?.locationCode,
       landingName: landing?.localName || landing?.locationCode,
-      cellRollCounts: withBedsAvailable(sortCellRollCounts(landing.subLocations)),
+      cellRollCounts: sortCellRollCounts(withBedsAvailable(landing.subLocations)),
       useWorkingCapacity: prisonIsActiveForResi,
       prisonersByCell,
       landingId,
