@@ -60,6 +60,7 @@ interface LocationRollCount {
   currentlyInCell: number
   currentlyOut: number
   workingCapacity: number
+  maxCapacity?: number
   netVacancies: number
   outOfOrder: number
 }
