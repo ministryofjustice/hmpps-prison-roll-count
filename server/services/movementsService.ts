@@ -26,7 +26,6 @@ export default class MovementsService {
     const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
 
     const movements = await prisonApi.getMovementsIn(caseLoadId, new Date().toISOString())
-    console.log(movements)
     if (!movements || !movements?.length) return []
 
     const prisonerNumbers = movements.map(movement => movement.offenderNo)
