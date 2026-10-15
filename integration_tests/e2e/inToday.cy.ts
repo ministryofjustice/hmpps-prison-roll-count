@@ -218,6 +218,29 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.get('[data-qa="transfers-in-card"]').find('.establishment-roll-card__count').should('contain.text', '1')
     cy.get('[data-qa="returns-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
   })
+
+  it('should count duplicate arrivals separately when the same offender appears more than once in movements', () => {
+    cy.task('reset')
+    cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
+    cy.setupComponentsData()
+    cy.task('stubMovementsInWithDuplicateOffender')
+    cy.task('stubInTodayMovementHistoryDefault')
+    cy.task('stubPostSearchPrisonersById')
+    cy.task('stubPostAttributeSearch')
+    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
+    cy.task('stubPrisonRollCount')
+    cy.task('stubLocationPrisonRollCount')
+    cy.task('stubPrisonConfiguration')
+    cy.signIn({ redirectPath: '/in-today' })
+    cy.visit('/in-today')
+
+    const page = Page.verifyOnPage(inTodayPage)
+    page.inTodayRows().should('have.length', 3)
+
+    cy.get('[data-qa="new-admissions-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
+    cy.get('[data-qa="transfers-in-card"]').find('.establishment-roll-card__count').should('contain.text', '3')
+    cy.get('[data-qa="returns-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
+  })
 })
 
 context('Arrived Today page without prisoner data', () => {
