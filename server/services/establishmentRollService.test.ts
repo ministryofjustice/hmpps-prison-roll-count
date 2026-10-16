@@ -44,6 +44,10 @@ describe('establishmentRollService', () => {
       const establishmentRollCounts = await establishmentRollService.getEstablishmentRollCounts('token', 'LEI')
 
       expect(establishmentRollCounts.todayStats).toEqual({
+        atCourt: 0,
+        released: 0,
+        temporaryAbsence: 0,
+        transferredOut: 0,
         currentRoll: 200,
         enroute: 500,
         inToday: 300,

@@ -5,7 +5,7 @@ import EstablishmentRollSummary from './interfaces/EstablishmentRollSummary'
 import { PrisonApiClient } from '../data/interfaces/prisonApiClient'
 import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
 import { ResidentialLocation } from '../data/interfaces/prisonRollCount'
-import { getEffectiveArrivalType, getMovementHistoryStartDate } from '../utils/arrivalType'
+import { getEffectiveArrivalType, getMovementHistoryStartDate } from '../utils/movementType'
 
 export default class EstablishmentRollService {
   constructor(
@@ -29,14 +29,16 @@ export default class EstablishmentRollService {
 
     const resiLocationServiceActive = await this.isResiLocationServiceActive(clientToken, caseLoadId)
 
-    const [rollCount, arrivedTodayMovements] = await Promise.all([
+    const [rollCount, arrivedTodayMovements, outTodayMovements] = await Promise.all([
       forceUseLocationsApi || resiLocationServiceActive
         ? locationsApi.getPrisonRollCount(caseLoadId)
         : prisonApi.getPrisonRollCount(caseLoadId),
       prisonApi.getMovementsIn(caseLoadId, new Date().toISOString()),
+      prisonApi.getMovementsOut(caseLoadId, new Date().toISOString()),
     ])
 
-    const offenderMovementHistoryByOffender = new Map(
+    // Calculcate how many new admissions, transfers in and returns there are based on the recent movement history for offenders that arrived today
+    const offenderArrivalsHistoryByOffender = new Map(
       await Promise.all(
         (arrivedTodayMovements || []).map(
           async movement =>
@@ -53,12 +55,12 @@ export default class EstablishmentRollService {
       ),
     )
 
-    // Count arrival types based on actual recent movement types
+    // Count arrival types based on recent movement types
     let newAdmissions = 0
     let transfersIn = 0
-    let returnsIn = 0
+    let returns = 0
 
-    offenderMovementHistoryByOffender.forEach(movements => {
+    offenderArrivalsHistoryByOffender.forEach(movements => {
       const arrivalType = getEffectiveArrivalType(movements)
 
       switch (arrivalType) {
@@ -70,7 +72,47 @@ export default class EstablishmentRollService {
           break
         case 'CRT':
         case 'TAP':
-          returnsIn += 1
+          returns += 1
+          break
+        default:
+          break
+      }
+    })
+
+    // Calculate how many temporary absences, court appearances, releases and transfers out there are based on the recent movement history for offenders that departed today
+    const offenderDeparturesHistoryByOffender = new Map(
+      await Promise.all(
+        (outTodayMovements || []).map(
+          async movement =>
+            [
+              movement.offenderNo,
+              (await prisonApi.getOffenderMovements(movement.offenderNo, getMovementHistoryStartDate())).slice(-2),
+            ] as const,
+        ),
+      ),
+    )
+
+    // Count departure types based on recent movement types
+    let temporaryAbsence = 0
+    let atCourt = 0
+    let released = 0
+    let transferredOut = 0
+
+    offenderDeparturesHistoryByOffender.forEach(movements => {
+      const departureType = movements[movements.length - 1]?.movementType
+
+      switch (departureType) {
+        case 'TAP':
+          temporaryAbsence += 1
+          break
+        case 'CRT':
+          atCourt += 1
+          break
+        case 'REL':
+          released += 1
+          break
+        case 'TRN':
+          transferredOut += 1
           break
         default:
           break
@@ -89,7 +131,11 @@ export default class EstablishmentRollService {
         overnights: rollCount.numOvernights,
         newAdmissions,
         transfersIn,
-        returns: returnsIn,
+        returns,
+        temporaryAbsence,
+        atCourt,
+        released,
+        transferredOut,
       },
       totals: rollCount.totals,
       wings: rollCount.locations,

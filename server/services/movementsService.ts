@@ -8,7 +8,7 @@ import { Prisoner } from '../data/interfaces/prisoner'
 import { BedAssignment } from '../data/interfaces/bedAssignment'
 import { OffenderMovement } from '../data/interfaces/offenderMovement'
 import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
-import { getEffectiveArrivalType, getMovementHistoryStartDate } from '../utils/arrivalType'
+import { getEffectiveArrivalType, getMovementHistoryStartDate } from '../utils/movementType'
 
 export default class MovementsService {
   constructor(
