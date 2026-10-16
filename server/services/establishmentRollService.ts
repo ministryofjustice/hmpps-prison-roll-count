@@ -36,21 +36,16 @@ export default class EstablishmentRollService {
       prisonApi.getMovementsIn(caseLoadId, new Date().toISOString()),
     ])
 
-    const offenderMovementHistoryByOffender = new Map(
-      await Promise.all(
-        (arrivedTodayMovements || []).map(
-          async movement =>
-            [
-              movement.offenderNo,
-              (
-                await prisonApi.getOffenderMovements(
-                  movement.offenderNo,
-                  getMovementHistoryStartDate(movement.movementDateTime),
-                )
-              ).slice(-2),
-            ] as const,
-        ),
-      ),
+    const offenderMovementHistories = await Promise.all(
+      (arrivedTodayMovements || []).map(async movement => ({
+        offenderNo: movement.offenderNo,
+        history: (
+          await prisonApi.getOffenderMovements(
+            movement.offenderNo,
+            getMovementHistoryStartDate(movement.movementDateTime),
+          )
+        ).slice(-2),
+      })),
     )
 
     // Count arrival types based on actual recent movement types
@@ -58,8 +53,8 @@ export default class EstablishmentRollService {
     let transfersIn = 0
     let returnsIn = 0
 
-    offenderMovementHistoryByOffender.forEach(movements => {
-      const arrivalType = getEffectiveArrivalType(movements)
+    offenderMovementHistories.forEach(({ history }) => {
+      const arrivalType = getEffectiveArrivalType(history)
 
       switch (arrivalType) {
         case 'ADM':
@@ -138,7 +133,7 @@ export default class EstablishmentRollService {
 
     const sortCellRollCounts = (cellRollCounts: ReturnType<typeof withBedsAvailable>) => {
       return [...cellRollCounts].sort((left, right) => {
-        let comparison = 0
+        let comparison: number
 
         switch (sortKey) {
           case 'bedsAvailable':
