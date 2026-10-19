@@ -77,11 +77,26 @@
                 {% if prisoners.length > 0 %}
                     {% for prisoner in prisoners %}
                         {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
+
+                      {# Set departure type based on lastMovementTypeCode #}
+                      {% if prisoner.lastMovementTypeCode === "TAP" %}
+                        {% set departureType = "Temporary absence" %}
+                      {% elseif prisoner.lastMovementTypeCode === "CRT" %}
+                        {% set departureType = "At court" %}
+                      {% elseif prisoner.lastMovementTypeCode === "REL" %}
+                        {% set departureType = "Release" %}
+                      {% elseif prisoner.lastMovementTypeCode === "TRN" %}
+                        {% set departureType = "Transfer" %}
+                      {% else %}
+                        {% set departureType = "" %}
+                      {% endif %}
+
+
                         <tr class="govuk-table__row govuk-!-font-size-16">
                             <td class="govuk-table__cell"><img src="/prisonerImage/{{ prisoner.prisonerNumber or 'placeholder' }}" alt="Image of {{ prisonerName }}" class="results-table__results__image" /></td>
                             <td class="govuk-table__cell" data-sort-value="{{ prisonerName }}"><a href="{{ prisonerProfileBackLinkUrl('Back to Out today', '/out-today', prisoner.prisonerNumber) }}" class="govuk-link">{{ prisonerName }}</a></td>
                             <td class="govuk-table__cell">{{ prisoner.prisonerNumber }}</td>
-                          <td class="govuk-table__cell">{{ prisoner.reasonDescription}}</td>
+                          <td class="govuk-table__cell">{{ departureType }} - {{ prisoner.reasonDescription }}</td>
                             <td class="govuk-table__cell">{{ prisoner.timeOut | formatTime }}</td>
                             <td class="govuk-table__cell">{{ prisoner.toLocation}}</td>
                             <td class="govuk-table__cell">{{ prisoner.currentStatus}}</td>
