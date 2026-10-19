@@ -47,10 +47,16 @@ export default class MovementsService {
         ),
       ),
     ])
-    const offenderMovementsByOffender = new Map(offenderMovements)
+    const prisonerByNumber = new Map(prisoners.map(prisoner => [prisoner.prisonerNumber, prisoner]))
+    const offenderMovementsByOffender = new Map<string, OffenderMovement[]>()
+
+    offenderMovements.forEach(([offenderNo, history]) => {
+      const existingHistory = offenderMovementsByOffender.get(offenderNo) || []
+      offenderMovementsByOffender.set(offenderNo, [...existingHistory, ...history])
+    })
 
     const mappedPrisoners = movements.map(prisonerMovement => {
-      const prisoner = prisoners.find(prisonerToFind => prisonerToFind.prisonerNumber === prisonerMovement.offenderNo)
+      const prisoner = prisonerByNumber.get(prisonerMovement.offenderNo)
       const movementHistory = offenderMovementsByOffender.get(prisonerMovement.offenderNo) || []
       const arrivalType = getEffectiveArrivalType(movementHistory)
 

@@ -155,6 +155,27 @@ export default {
     })
   },
 
+  stubMovementsInWithDuplicateOffender: (prisonCode = 'LEI') => {
+    const today = new Date().toISOString().split('T')[0]
+    return stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: `/prison/api/movements/${prisonCode}/in/${today}`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: [
+          { ...movementsInMock[0], movementTime: '10:00:00', movementDateTime: '2024-05-10T10:00:00' },
+          { ...movementsInMock[0], movementTime: '10:05:00', movementDateTime: '2024-05-10T10:05:00' },
+          movementsInMock[1],
+        ],
+      },
+    })
+  },
+
   stubMovementsOut: (prisonCode = 'LEI') => {
     const today = new Date().toISOString().split('T')[0]
     return stubFor({

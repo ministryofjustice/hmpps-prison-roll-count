@@ -258,6 +258,26 @@ describe('movementsService', () => {
       expect(result.map(prisoner => prisoner.prisonerNumber)).toEqual(['A1234AB', 'A1234AA'])
     })
 
+    it('should count duplicate offender numbers as two separate arrivals', async () => {
+      const duplicateMovements = [
+        { ...movementsInMock[0], movementTime: '09:00:00', movementDateTime: '2024-05-10T09:00:00' },
+        { ...movementsInMock[0], movementTime: '10:00:00', movementDateTime: '2024-05-10T10:00:00' },
+      ]
+
+      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue(duplicateMovements)
+      prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue([prisonerSearchMock[0]])
+      prisonApiClientMock.getOffenderMovements = jest
+        .fn()
+        .mockImplementation(offenderNo =>
+          Promise.resolve(offenderNo === 'A1234AA' ? [movementsRecentMock[0], movementsRecentMock[1]] : []),
+        )
+
+      const result = await movementsService.getInTodayPrisoners('token', 'LEI')
+
+      expect(result).toHaveLength(2)
+      expect(result.map(prisoner => prisoner.prisonerNumber)).toEqual(['A1234AA', 'A1234AA'])
+    })
+
     it('should return empty api if no incoming prisoners', async () => {
       prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([])
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
