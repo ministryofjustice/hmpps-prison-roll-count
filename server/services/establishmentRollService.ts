@@ -38,7 +38,7 @@ export default class EstablishmentRollService {
     ])
 
     // Calculcate how many new admissions, transfers in and returns there are based on the recent movement history for offenders that arrived today
-    const offenderArrivalHistories = await Promise.all(
+    const offenderMovementHistories = await Promise.all(
       (arrivedTodayMovements || []).map(async movement => ({
         offenderNo: movement.offenderNo,
         history: (
@@ -55,7 +55,7 @@ export default class EstablishmentRollService {
     let transfersIn = 0
     let returns = 0
 
-    offenderArrivalHistories.forEach(({ history }) => {
+    offenderMovementHistories.forEach(({ history }) => {
       const arrivalType = getEffectiveArrivalType(history)
 
       switch (arrivalType) {
@@ -75,16 +75,16 @@ export default class EstablishmentRollService {
     })
 
     // Calculate how many temporary absences, court appearances, releases and transfers out there are based on the recent movement history for offenders that departed today
-    const uniqueDepartureOffenderNos = [...new Set((outTodayMovements || []).map(movement => movement.offenderNo))]
-    const offenderDepartureHistories = await Promise.all(
-      uniqueDepartureOffenderNos.map(async offenderNo => ({
-        offenderNo,
-        history: (await prisonApi.getOffenderMovements(offenderNo, getMovementHistoryStartDate())).slice(-2),
-      })),
-    )
-
-    const departureHistoryByOffender = new Map(
-      offenderDepartureHistories.map(({ offenderNo, history }) => [offenderNo, history]),
+    const offenderDeparturesHistoryByOffender = new Map(
+      await Promise.all(
+        (outTodayMovements || []).map(
+          async movement =>
+            [
+              movement.offenderNo,
+              (await prisonApi.getOffenderMovements(movement.offenderNo, getMovementHistoryStartDate())).slice(-2),
+            ] as const,
+        ),
+      ),
     )
 
     // Count departure types based on recent movement types
@@ -93,9 +93,8 @@ export default class EstablishmentRollService {
     let released = 0
     let transferredOut = 0
 
-    ;(outTodayMovements || []).forEach(movement => {
-      const history = departureHistoryByOffender.get(movement.offenderNo) || []
-      const departureType = history[history.length - 1]?.movementType
+    offenderDeparturesHistoryByOffender.forEach(movements => {
+      const departureType = movements[movements.length - 1]?.movementType
 
       switch (departureType) {
         case 'TAP':

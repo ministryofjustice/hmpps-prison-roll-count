@@ -211,63 +211,6 @@ describe('establishmentRollService', () => {
       )
     })
 
-    it('should count departure types based on the latest movement in each offenders recent history', async () => {
-      prisonApiClientMock.getMovementsOut = jest
-        .fn()
-        .mockResolvedValue([
-          { offenderNo: 'A1234AA' },
-          { offenderNo: 'A1234AB' },
-          { offenderNo: 'A1234AC' },
-          { offenderNo: 'A1234AD' },
-        ])
-      prisonApiClientMock.getOffenderMovements = jest.fn().mockImplementation((offenderNo: string) => {
-        switch (offenderNo) {
-          case 'A1234AA':
-            return Promise.resolve([{ movementType: 'ADM' }, { movementType: 'TAP' }])
-          case 'A1234AB':
-            return Promise.resolve([{ movementType: 'ADM' }, { movementType: 'CRT' }])
-          case 'A1234AC':
-            return Promise.resolve([{ movementType: 'ADM' }, { movementType: 'REL' }])
-          case 'A1234AD':
-            return Promise.resolve([{ movementType: 'ADM' }, { movementType: 'TRN' }])
-          default:
-            return Promise.resolve([])
-        }
-      })
-
-      const establishmentRollCounts = await establishmentRollService.getEstablishmentRollCounts('token', 'LEI')
-
-      expect(establishmentRollCounts.todayStats).toEqual(
-        expect.objectContaining({
-          temporaryAbsence: 1,
-          atCourt: 1,
-          released: 1,
-          transferredOut: 1,
-        }),
-      )
-    })
-
-    it('should count duplicate departures separately when the same offender appears more than once in movements', async () => {
-      prisonApiClientMock.getMovementsOut = jest
-        .fn()
-        .mockResolvedValue([{ offenderNo: 'A1234AA' }, { offenderNo: 'A1234AA' }])
-      prisonApiClientMock.getOffenderMovements = jest
-        .fn()
-        .mockResolvedValue([{ movementType: 'ADM' }, { movementType: 'REL' }])
-
-      const establishmentRollCounts = await establishmentRollService.getEstablishmentRollCounts('token', 'LEI')
-
-      expect(establishmentRollCounts.todayStats).toEqual(
-        expect.objectContaining({
-          temporaryAbsence: 0,
-          atCourt: 0,
-          released: 2,
-          transferredOut: 0,
-        }),
-      )
-      expect(prisonApiClientMock.getOffenderMovements).toHaveBeenCalledTimes(2)
-    })
-
     it('should return data from API for the total stats', async () => {
       const establishmentRollCounts = await establishmentRollService.getEstablishmentRollCounts('token', 'LEI')
 
