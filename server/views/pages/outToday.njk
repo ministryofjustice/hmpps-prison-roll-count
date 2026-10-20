@@ -78,14 +78,15 @@
                     {% for prisoner in prisoners %}
                         {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
 
-                      {# Set departure type based on lastMovementTypeCode #}
-                      {% if prisoner.lastMovementTypeCode === "TAP" %}
+                      {# Set departure type based on the latest movement type for this out-today row #}
+                      {% set departureTypeCode = prisoner.departureTypeCode or prisoner.lastMovementTypeCode %}
+                      {% if departureTypeCode === "TAP" %}
                         {% set departureType = "Temporary absence" %}
-                      {% elseif prisoner.lastMovementTypeCode === "CRT" %}
+                      {% elseif departureTypeCode === "CRT" %}
                         {% set departureType = "At court" %}
-                      {% elseif prisoner.lastMovementTypeCode === "REL" %}
+                      {% elseif departureTypeCode === "REL" %}
                         {% set departureType = "Release" %}
-                      {% elseif prisoner.lastMovementTypeCode === "TRN" %}
+                      {% elseif departureTypeCode === "TRN" %}
                         {% set departureType = "Transfer" %}
                       {% else %}
                         {% set departureType = "" %}
@@ -99,7 +100,7 @@
                           <td class="govuk-table__cell">{{ departureType }} - {{ prisoner.reasonDescription }}</td>
                             <td class="govuk-table__cell">{{ prisoner.timeOut | formatTime }}</td>
                             <td class="govuk-table__cell">{{ prisoner.toLocation}}</td>
-                            <td class="govuk-table__cell">{{ prisoner.currentStatus}}</td>
+                            <td class="govuk-table__cell">{{ prisoner.status}}</td>
                             <td class="govuk-table__cell">{{ alertFlags(prisoner.alertFlags) }}{{categoryFlag("", prisoner.category) | safe}}</td>
                         </tr>
                     {% endfor %}

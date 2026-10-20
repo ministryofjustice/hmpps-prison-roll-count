@@ -313,6 +313,7 @@ describe('movementsService', () => {
           reasonDescription: 'Transfer',
           timeOut: '10:00:00',
           goingTo: 'HMP Leeds',
+          departureTypeCode: 'TRN',
         },
         {
           ...prisonerSearchMock[1],
@@ -320,6 +321,7 @@ describe('movementsService', () => {
           reasonDescription: 'Another transfer',
           goingTo: 'HMP Moorland',
           timeOut: '11:00:00',
+          departureTypeCode: 'TRN',
         },
       ])
     })
@@ -684,5 +686,42 @@ describe('movementsService', () => {
 
       expect(result).toEqual([])
     })
+  })
+
+  it('should prefer the actual out-today movement type over the last historical movement type', async () => {
+    prisonApiClientMock.getMovementsOut = jest.fn().mockResolvedValue([
+      {
+        offenderNo: 'A1234AA',
+        dateOfBirth: '1980-01-01',
+        firstName: 'John',
+        lastName: 'Smith',
+        timeOut: '10:00:00',
+        movementType: 'CRT',
+        reasonDescription: 'Court',
+        toAddress: 'Leeds Magistrates Court',
+      },
+    ])
+    prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock.slice(0, 1))
+    prisonApiClientMock.getOffenderMovements = jest.fn().mockResolvedValue([
+      {
+        ...movementsRecentMock[0],
+        offenderNo: 'A1234AA',
+        movementType: 'TAP',
+        movementTypeDescription: 'Temporary absence',
+        movementReason: 'TEMP',
+        movementReasonDescription: 'Temporary absence',
+        directionCode: 'OUT',
+      },
+    ])
+
+    const result = await movementsService.getOutTodayPrisoners('token', 'LEI')
+
+    expect(result).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          departureTypeCode: 'CRT',
+        }),
+      ]),
+    )
   })
 })

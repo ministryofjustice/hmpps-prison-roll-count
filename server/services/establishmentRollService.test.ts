@@ -29,6 +29,7 @@ describe('establishmentRollService', () => {
           movementDateTime: '2024-05-10',
         },
       ])
+      prisonApiClientMock.getMovementsOut = jest.fn().mockResolvedValue([])
       prisonApiClientMock.getOffenderMovements = jest.fn().mockResolvedValue([
         {
           offenderNo: 'A1234AA',

@@ -29,7 +29,7 @@ export default class EstablishmentRollService {
 
     const resiLocationServiceActive = await this.isResiLocationServiceActive(clientToken, caseLoadId)
 
-    const [rollCount, arrivedTodayMovements, outTodayMovements] = await Promise.all([
+    const [rollCount, arrivedTodayMovements = [], outTodayMovements = []] = await Promise.all([
       forceUseLocationsApi || resiLocationServiceActive
         ? locationsApi.getPrisonRollCount(caseLoadId)
         : prisonApi.getPrisonRollCount(caseLoadId),
@@ -37,7 +37,7 @@ export default class EstablishmentRollService {
       prisonApi.getMovementsOut(caseLoadId, new Date().toISOString()),
     ])
 
-    // Calculcate how many new admissions, transfers in and returns there are based on the recent movement history for offenders that arrived today
+    // Calculate how many new admissions, transfers in and returns there are based on the recent movement history for offenders that arrived today
     const offenderMovementHistories = await Promise.all(
       (arrivedTodayMovements || []).map(async movement => ({
         offenderNo: movement.offenderNo,
@@ -75,17 +75,6 @@ export default class EstablishmentRollService {
     })
 
     // Calculate how many temporary absences, court appearances, releases and transfers out there are based on the recent movement history for offenders that departed today
-    const offenderDeparturesHistoryByOffender = new Map(
-      await Promise.all(
-        (outTodayMovements || []).map(
-          async movement =>
-            [
-              movement.offenderNo,
-              (await prisonApi.getOffenderMovements(movement.offenderNo, getMovementHistoryStartDate())).slice(-2),
-            ] as const,
-        ),
-      ),
-    )
 
     // Count departure types based on recent movement types
     let temporaryAbsence = 0
@@ -93,8 +82,8 @@ export default class EstablishmentRollService {
     let released = 0
     let transferredOut = 0
 
-    offenderDeparturesHistoryByOffender.forEach(movements => {
-      const departureType = movements[movements.length - 1]?.movementType
+    outTodayMovements.forEach(movements => {
+      const departureType = movements.movementType
 
       switch (departureType) {
         case 'TAP':
