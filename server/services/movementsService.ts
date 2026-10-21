@@ -7,6 +7,7 @@ import { stripAgencyPrefix } from '../utils/utils'
 import { Prisoner } from '../data/interfaces/prisoner'
 import { BedAssignment } from '../data/interfaces/bedAssignment'
 import { OffenderMovement } from '../data/interfaces/offenderMovement'
+import { OffenderOut } from '../data/interfaces/offenderOut'
 import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
 import { getEffectiveArrivalType, getMovementHistoryStartDate } from '../utils/movementType'
 
@@ -132,6 +133,11 @@ export default class MovementsService {
     const movements = await prisonApi.getMovementsOut(caseLoadId, new Date().toISOString())
     if (!movements || !movements?.length) return []
 
+    const temporaryAbsences: OffenderOut[] = await prisonApi.getTemporaryAbsences(caseLoadId)
+    const temporaryAbsenceByOffender = new Map<string, OffenderOut>(
+      (temporaryAbsences || []).map(absence => [absence.offenderNo, absence]),
+    )
+
     const prisonerNumbers = movements.map(movement => movement.offenderNo)
 
     const [prisoners, offenderMovements] = await Promise.all([
@@ -162,14 +168,21 @@ export default class MovementsService {
     return movements.map((prisonerMovement, index) => {
       const prisoner = prisonerByNumber.get(prisonerMovement.offenderNo)
       const historyForThisMovement = offenderMovements[index]?.[1] || []
-      const departureTypeCode =
-        prisonerMovement.movementType || historyForThisMovement[historyForThisMovement.length - 1]?.movementType
+      const latestMovementHistory = historyForThisMovement[historyForThisMovement.length - 1]
+      const departureTypeCode = prisonerMovement.movementType || latestMovementHistory?.movementType
+      const fallbackTemporaryAbsence = temporaryAbsenceByOffender.get(prisonerMovement.offenderNo)
+      const nextLocation =
+        prisonerMovement?.toAddress ||
+        (prisonerMovement.movementType === 'TAP' ? fallbackTemporaryAbsence?.toAddress || '' : '') ||
+        latestMovementHistory?.toAgencyDescription ||
+        latestMovementHistory?.toCity ||
+        ''
 
       return {
         ...prisoner,
         timeOut: prisonerMovement?.timeOut,
         reasonDescription: prisonerMovement.reasonDescription,
-        goingTo: prisonerMovement?.toAddress,
+        goingTo: nextLocation,
         alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner?.alerts || []),
         ...(departureTypeCode ? { departureTypeCode } : {}),
       }

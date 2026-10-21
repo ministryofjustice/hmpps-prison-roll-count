@@ -61,6 +61,10 @@ export default class PrisonApiRestClient implements PrisonApiClient {
     return this.get<OffenderOut[]>({ path: `/api/movements/${prisonId}/out/${movementDate.split('T')[0]}` })
   }
 
+  getTemporaryAbsences(prisonId: string): Promise<OffenderOut[]> {
+    return this.get<OffenderOut[]>({ path: `/api/movements/agency/${prisonId}/temporary-absences` })
+  }
+
   getMovementsEnRoute(prisonId: string): Promise<OffenderMovement[]> {
     return this.get<OffenderMovement[]>({ path: `/api/movements/${prisonId}/enroute` })
   }
