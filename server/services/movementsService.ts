@@ -8,7 +8,7 @@ import { Prisoner } from '../data/interfaces/prisoner'
 import { BedAssignment } from '../data/interfaces/bedAssignment'
 import { OffenderMovement } from '../data/interfaces/offenderMovement'
 import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
-import { getEffectiveArrivalType, getMovementHistoryStartDate } from '../utils/arrivalType'
+import { getEffectiveArrivalType, getMovementHistoryStartDate } from '../utils/movementType'
 
 export default class MovementsService {
   constructor(
@@ -16,6 +16,14 @@ export default class MovementsService {
     private readonly prisonerSearchClientBuilder: RestClientBuilder<PrisonerSearchClient>,
     private readonly locationsInsidePrisonApiClientBuilder: RestClientBuilder<LocationsInsidePrisonApiClient>,
   ) {}
+
+  private getMovementHistoryStartDateFromMovement(
+    movement?: { movementDateTime?: string; movementDate?: string } | string,
+  ): string {
+    if (typeof movement === 'string') return getMovementHistoryStartDate(movement)
+
+    return getMovementHistoryStartDate(movement?.movementDateTime || movement?.movementDate)
+  }
 
   public async getInTodayPrisoners(
     clientToken: string,
@@ -40,9 +48,9 @@ export default class MovementsService {
               (
                 await prisonApi.getOffenderMovements(
                   prisonerMovement.offenderNo,
-                  getMovementHistoryStartDate(prisonerMovement.movementDateTime),
+                  this.getMovementHistoryStartDateFromMovement(prisonerMovement),
                 )
-              ).slice(-2),
+              )?.slice(-2) || [],
             ] as const,
         ),
       ),
@@ -124,16 +132,46 @@ export default class MovementsService {
     const movements = await prisonApi.getMovementsOut(caseLoadId, new Date().toISOString())
     if (!movements || !movements?.length) return []
 
-    const prisoners = await prisonerSearchClient.getPrisonersById(movements.map(movement => movement.offenderNo))
+    const prisonerNumbers = movements.map(movement => movement.offenderNo)
 
-    return movements.map(prisonerMovement => {
-      const prisoner = prisoners.find(prisonerToFind => prisonerToFind.prisonerNumber === prisonerMovement.offenderNo)
+    const [prisoners, offenderMovements] = await Promise.all([
+      prisonerSearchClient.getPrisonersById(prisonerNumbers),
+      Promise.all(
+        movements.map(
+          async prisonerMovement =>
+            [
+              prisonerMovement.offenderNo,
+              (
+                await prisonApi.getOffenderMovements(
+                  prisonerMovement.offenderNo,
+                  this.getMovementHistoryStartDateFromMovement(prisonerMovement),
+                )
+              )?.slice(-2) || [],
+            ] as const,
+        ),
+      ),
+    ])
+    const prisonerByNumber = new Map(prisoners.map(prisoner => [prisoner.prisonerNumber, prisoner]))
+    const offenderMovementsByOffender = new Map<string, OffenderMovement[]>()
+
+    offenderMovements.forEach(([offenderNo, history]) => {
+      const existingHistory = offenderMovementsByOffender.get(offenderNo) || []
+      offenderMovementsByOffender.set(offenderNo, [...existingHistory, ...history])
+    })
+
+    return movements.map((prisonerMovement, index) => {
+      const prisoner = prisonerByNumber.get(prisonerMovement.offenderNo)
+      const historyForThisMovement = offenderMovements[index]?.[1] || []
+      const departureTypeCode =
+        prisonerMovement.movementType || historyForThisMovement[historyForThisMovement.length - 1]?.movementType
+
       return {
         ...prisoner,
         timeOut: prisonerMovement?.timeOut,
         reasonDescription: prisonerMovement.reasonDescription,
         goingTo: prisonerMovement?.toAddress,
-        alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
+        alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner?.alerts || []),
+        ...(departureTypeCode ? { departureTypeCode } : {}),
       }
     })
   }

@@ -25,6 +25,7 @@ context('No Cell Allocated Page', () => {
     cy.task('stubLocationPrisonRollCount', { prisonCode: 'MDI' })
     cy.task('stubPrisonConfiguration', { prisonId: 'MDI', resiLocationServiceActive: 'ACTIVE' })
     cy.task('stubMovementsIn', 'MDI')
+    cy.task('stubMovementsOut', 'MDI')
   })
 
   it('Page is visible', () => {
@@ -105,6 +106,7 @@ context('No Cell Allocated Page without prisoner data', () => {
     cy.task('stubLocationPrisonRollCount', { prisonCode: 'MDI' })
     cy.task('stubPrisonConfiguration', { prisonId: 'MDI', resiLocationServiceActive: 'ACTIVE' })
     cy.task('stubMovementsIn', 'MDI')
+    cy.task('stubMovementsOut', 'MDI')
   })
 
   it('Page is visible', () => {

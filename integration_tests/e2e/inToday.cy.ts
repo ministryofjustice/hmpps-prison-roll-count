@@ -8,6 +8,7 @@ context('In Today Page', () => {
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
     cy.task('stubMovementsIn')
+    cy.task('stubMovementsOut')
     cy.task('stubInTodayMovementHistoryDefault')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
@@ -123,6 +124,7 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
     cy.task('stubMovementsIn')
+    cy.task('stubMovementsOut')
     cy.task('stubInTodayTwoRecentMovements')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
@@ -144,6 +146,7 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
     cy.task('stubMovementsIn')
+    cy.task('stubMovementsOut')
     cy.task('stubNewAdmissionsMovements') // Custom stub with all ADM
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
@@ -164,6 +167,7 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
     cy.task('stubMovementsIn')
+    cy.task('stubMovementsOut')
     cy.task('stubTransfersInMovements') // Custom stub with all TRN
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
@@ -184,6 +188,7 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
     cy.task('stubMovementsIn')
+    cy.task('stubMovementsOut')
     cy.task('stubReturnsMovements') // Custom stub with CRT/TAP
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
@@ -204,6 +209,7 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
     cy.task('stubMovementsIn')
+    cy.task('stubMovementsOut')
     cy.task('stubMixedMovementTypes') // Custom stub with ADM, TRN, and CRT/TAP
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
@@ -224,6 +230,7 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
     cy.task('stubMovementsInWithDuplicateOffender')
+    cy.task('stubMovementsOut')
     cy.task('stubInTodayMovementHistoryDefault')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
@@ -249,6 +256,7 @@ context('Arrived Today page without prisoner data', () => {
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
     cy.task('stubMovementsInEmpty')
+    cy.task('stubMovementsOutEmpty')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch', { payload: [] })
     cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })

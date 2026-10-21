@@ -13,6 +13,10 @@ export default interface EstablishmentRollCount {
     newAdmissions: number
     transfersIn: number
     returns: number
+    temporaryAbsence: number
+    atCourt: number
+    released: number
+    transferredOut: number
   }
   totals: PrisonRollCount['totals']
   wings: ResidentialLocation[]

@@ -5,6 +5,13 @@
   .govuk-pagination {
     margin-bottom: 10px; // override of govuk component for our layout
   }
+
+  .govuk-table__body {
+    // Last row results table doesn't need border bottom
+    .govuk-table__row:last-child, .govuk-table__row:last-child .govuk-table__cell {
+      border-bottom: none;
+    }
+  }
 }
 
 // Image column sizing

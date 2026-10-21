@@ -1,6 +1,8 @@
 {% extends "../partials/layout.njk" %}
+{% from "../macros/establishmentRollStatCard.njk" import establishmentRollStatCard %}
 {% from "../macros/alertFlags.njk" import alertFlags %}
 {% from "../macros/categoryFlag.njk" import categoryFlag %}
+{% set todayStats = establishmentRollCounts.todayStats %}
 
 {% set pageTitle = "Out today" %}
 {% set mainClasses = "govuk-body govuk-main-wrapper--auto-spacing" %}
@@ -17,12 +19,46 @@
 ] %}
 
 {% block content %}
-<div class="govuk-width-container govuk-!-margin-top-8">
+  <div class="govuk-width-container govuk-!-margin-top-4">
     <div class="govuk-!-margin-bottom-6">
-        <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ pageTitle }}</h1>
+      <h1 class="govuk-heading-l govuk-!-margin-bottom-0">{{ pageTitle }}</h1>
     </div>
 
-    <div class="govuk-grid-row govuk-!-margin-bottom-9">
+    <div class="establishment-roll-cards-container establishment-roll-cards-container__stretch">
+      {{
+      establishmentRollStatCard(
+        heading = "Temporary absence",
+        value = todayStats.temporaryAbsence,
+        qaTag = "temporary-absence-card"
+      )
+      }}
+
+      {{
+      establishmentRollStatCard(
+        heading = "At court",
+        value = todayStats.atCourt,
+        qaTag = "at-court-card"
+      )
+      }}
+
+      {{
+      establishmentRollStatCard(
+        heading = "Released",
+        value = todayStats.released,
+        qaTag = "released-card"
+      )
+      }}
+
+      {{
+      establishmentRollStatCard(
+        heading = "Transferred out",
+        value = todayStats.transferredOut,
+        qaTag = "transferred-out-card"
+      )
+      }}
+    </div>
+
+  <div class="govuk-grid-row govuk-!-margin-bottom-9">
         <div class="govuk-grid-column-full results-table results-table__results">
             <table class="govuk-table out-today-roll__table" data-module="moj-sortable-table">
                 <thead class="govuk-table__head">
@@ -30,29 +66,47 @@
                         <th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Picture</span></th>
                         <th scope="col" class="govuk-table__header govuk-!-font-size-16" aria-sort="none">Name</th>
                         <th scope="col" class="govuk-table__header govuk-!-font-size-16">Prison number</th>
-                        <th scope="col" class="govuk-table__header govuk-!-font-size-16">Date of birth</th>
+                        <th scope="col" class="govuk-table__header govuk-!-font-size-16">Reason for absence</th>
                         <th scope="col" class="govuk-table__header govuk-!-font-size-16" aria-sort="descending">Time out</th>
-                        <th scope="col" class="govuk-table__header govuk-!-font-size-16">Reason</th>
-                        <th scope="col" class="govuk-table__header govuk-!-font-size-16">Alert flags</th>
+                        <th scope="col" class="govuk-table__header govuk-!-font-size-16">To location</th>
+                      <th scope="col" class="govuk-table__header govuk-!-font-size-16">Current status</th>
+                        <th scope="col" class="govuk-table__header govuk-!-font-size-16">Relevant alerts</th>
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
                 {% if prisoners.length > 0 %}
                     {% for prisoner in prisoners %}
                         {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
-                        <tr class="govuk-table__row">
+
+                      {# Set departure type based on the latest movement type for this out-today row #}
+                      {% set departureTypeCode = prisoner.departureTypeCode or prisoner.lastMovementTypeCode %}
+                      {% if departureTypeCode === "TAP" %}
+                        {% set departureType = "Temporary absence" %}
+                      {% elseif departureTypeCode === "CRT" %}
+                        {% set departureType = "At court" %}
+                      {% elseif departureTypeCode === "REL" %}
+                        {% set departureType = "Release" %}
+                      {% elseif departureTypeCode === "TRN" %}
+                        {% set departureType = "Transfer" %}
+                      {% else %}
+                        {% set departureType = "" %}
+                      {% endif %}
+
+
+                        <tr class="govuk-table__row govuk-!-font-size-16">
                             <td class="govuk-table__cell"><img src="/prisonerImage/{{ prisoner.prisonerNumber or 'placeholder' }}" alt="Image of {{ prisonerName }}" class="results-table__results__image" /></td>
                             <td class="govuk-table__cell" data-sort-value="{{ prisonerName }}"><a href="{{ prisonerProfileBackLinkUrl('Back to Out today', '/out-today', prisoner.prisonerNumber) }}" class="govuk-link">{{ prisonerName }}</a></td>
                             <td class="govuk-table__cell">{{ prisoner.prisonerNumber }}</td>
-                            <td class="govuk-table__cell">{{ prisoner.dateOfBirth | formatDate('short')}}</td>
+                            <td class="govuk-table__cell">{{ departureType }} - {{ prisoner.reasonDescription }}</td>
                             <td class="govuk-table__cell">{{ prisoner.timeOut | formatTime }}</td>
-                            <td class="govuk-table__cell">{{ prisoner.reasonDescription}}</td>
-                            <td class="govuk-table__cell">{{ alertFlags(prisoner.alertFlags) }}{{categoryFlag("", prisoner.category) | safe}}</td>
+                            <td class="govuk-table__cell">{{ prisoner.goingTo or prisoner.toAddress or '' }}</td>
+                            <td class="govuk-table__cell">{{ prisoner.status }}</td>
+                            <td class="govuk-table__cell">{{ alertFlags(prisoner.alertFlags) }}{{ categoryFlag('', prisoner.category) | safe }}</td>
                         </tr>
                     {% endfor %}
                 {% else %}
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell--tall" colspan="7">No people to display</td>
+                        <td class="govuk-table__cell--tall" colspan="8">No people to display</td>
                     </tr>
                 {% endif %}
                 </tbody>
