@@ -171,9 +171,15 @@ export default class EstablishmentRollController {
       const { user } = res.locals
       const { clientToken } = req.middleware
 
-      const prisonersOutToday = await this.movementsService.getOutTodayPrisoners(clientToken, user.activeCaseLoadId)
+      const [prisonersOutToday, establishmentRollCounts] = await Promise.all([
+        this.movementsService.getOutTodayPrisoners(clientToken, user.activeCaseLoadId),
+        this.establishmentRollService.getEstablishmentRollCounts(clientToken, user.activeCaseLoadId),
+      ])
 
-      res.render('pages/outToday', { prisoners: prisonersOutToday })
+      res.render('pages/outToday', {
+        prisoners: prisonersOutToday,
+        establishmentRollCounts,
+      })
     }
   }
 

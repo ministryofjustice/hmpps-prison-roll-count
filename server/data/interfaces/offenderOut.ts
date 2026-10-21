@@ -7,4 +7,5 @@ export interface OffenderOut {
   movementType: string
   reasonDescription: string
   toAddress: string
+  movementDate?: string
 }
