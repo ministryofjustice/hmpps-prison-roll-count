@@ -86,6 +86,44 @@ describe('establishmentRollService', () => {
       )
     })
 
+    it('should count duplicate arrivals separately when the same offender appears more than once in movements', async () => {
+      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([
+        {
+          offenderNo: 'A1234AA',
+          movementDateTime: '2024-05-10T12:00:00',
+        },
+        {
+          offenderNo: 'A1234AA',
+          movementDateTime: '2024-05-10T13:00:00',
+        },
+      ])
+      prisonApiClientMock.getOffenderMovements = jest.fn().mockResolvedValue([
+        {
+          offenderNo: 'A1234AA',
+          movementType: 'ADM',
+          movementDate: '2024-05-10',
+          movementTime: '13:00',
+        },
+        {
+          offenderNo: 'A1234AA',
+          movementType: 'ADM',
+          movementDate: '2024-05-10',
+          movementTime: '12:00',
+        },
+      ])
+
+      const establishmentRollCounts = await establishmentRollService.getEstablishmentRollCounts('token', 'LEI')
+
+      expect(establishmentRollCounts.todayStats).toEqual(
+        expect.objectContaining({
+          newAdmissions: 2,
+          transfersIn: 0,
+          returns: 0,
+        }),
+      )
+      expect(prisonApiClientMock.getOffenderMovements).toHaveBeenCalledTimes(2)
+    })
+
     it('should count a prisoner as a transfer when recent movements are returned as TRN then ADM', async () => {
       prisonApiClientMock.getOffenderMovements = jest.fn().mockResolvedValue([
         {
