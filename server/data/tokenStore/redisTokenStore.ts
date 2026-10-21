@@ -23,12 +23,12 @@ export default class RedisTokenStore implements TokenStore {
     await this.client.set(`${this.prefix}${key}`, token, { EX: durationSeconds })
   }
 
-  public async getToken(key: string): Promise<string | null> {
+  public async getToken(key: string): Promise<string> {
     await this.ensureConnected()
     const result = await this.client.get(`${this.prefix}${key}`)
     if (Buffer.isBuffer(result)) {
       return result.toString()
     }
-    return typeof result === 'string' ? result : null
+    return result as string
   }
 }
