@@ -61,6 +61,7 @@
 
   <div class="govuk-grid-row govuk-!-margin-bottom-9">
         <div class="govuk-grid-column-full results-table results-table__results">
+            {% set sortParam = sort or 'timeOut&direction=descending' %}
             {% set rows = [] %}
             {% set blankRows = [
               [
@@ -92,7 +93,8 @@
                   html: '<img src="/prisonerImage/' ~ (prisoner.prisonerNumber or 'placeholder') ~ '" alt="Image of ' ~ prisonerName ~ '" class="results-table__results__image" />'
                 },
                 {
-                  html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Out today', '/out-today', prisoner.prisonerNumber) ~ '" class="govuk-link">' ~ prisonerName ~ '</a>',
+                  html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Out today', '/out-today?sort=' ~ sortParam, prisoner.prisonerNumber) ~ '" class="govuk-link">' ~ prisonerName ~ '</a>',
+                  sortValue: prisoner.lastName,
                   attributes: {
                     "data-sort-value": prisoner.lastName.toLowerCase() if prisoner.displayName else ''
                   }
@@ -101,16 +103,19 @@
                   text: prisoner.prisonerNumber
                 },
                 {
-                  text: departureType ~ (" - " ~ prisoner.reasonDescription if prisoner.reasonDescription else '')
+                  html: departureType ~ (" - " ~ prisoner.reasonDescription if prisoner.reasonDescription else ''),
+                  sortValue: departureType ~ (" - " ~ prisoner.reasonDescription if prisoner.reasonDescription else '')
                 },
                 {
-                  html: prisoner.timeOut | formatTime
+                  html: prisoner.timeOut | formatTime,
+                  sortValue: prisoner.timeOut
                 },
                 {
                   text: prisoner.goingTo or prisoner.toAddress or ''
                 },
                 {
-                  text: prisoner.status
+                  text: prisoner.status,
+                  sortValue: prisoner.status
                 },
                 {
                   html: alertFlags(prisoner.alertFlags) ~ categoryFlag('', prisoner.category) | safe
@@ -129,6 +134,7 @@
                 },
                 {
                   text: "Name",
+                  key: 'lastName',
                   classes: 'govuk-!-font-size-16'
                 },
                 {
@@ -137,14 +143,13 @@
                 },
                 {
                   text: "Reason for absence",
+                  key: 'reasonForAbsence',
                   classes: 'govuk-!-font-size-16'
                 },
                 {
                   text: "Time out",
-                  classes: 'govuk-!-font-size-16',
-                  attributes: {
-                    "aria-sort": "descending"
-                  }
+                  key: 'timeOut',
+                  classes: 'govuk-!-font-size-16'
                 },
                 {
                   text: 'To location',
@@ -152,13 +157,14 @@
                 },
                 {
                   text: 'Current status',
+                  key: 'currentStatus',
                   classes: 'govuk-!-font-size-16'
                 },
                 {
                   text: 'Relevant alerts',
                   classes: 'govuk-!-font-size-16'
                 }
-              ],
+              ] | convertToSortableColumns(sortParam, '?sort={sortKey}&direction={sortDirection}'),
               rows: rows if prisoners.length > 0 else blankRows
             }) }}
         </div>
