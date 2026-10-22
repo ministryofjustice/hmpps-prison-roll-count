@@ -62,6 +62,7 @@
   <div class="govuk-grid-row govuk-!-margin-bottom-9">
         <div class="govuk-grid-column-full results-table results-table__results">
             {% set sortParam = sort or 'timeOut&direction=descending' %}
+            {% set returnPathWithSort = '/out-today?sort=' ~ sortParam %}
             {% set rows = [] %}
             {% set blankRows = [
               [
@@ -93,7 +94,7 @@
                   html: '<img src="/prisonerImage/' ~ (prisoner.prisonerNumber or 'placeholder') ~ '" alt="Image of ' ~ prisonerName ~ '" class="results-table__results__image" />'
                 },
                 {
-                  html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Out today', '/out-today?sort=' ~ sortParam, prisoner.prisonerNumber) ~ '" class="govuk-link">' ~ prisonerName ~ '</a>',
+                  html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to Out today', returnPathWithSort, prisoner.prisonerNumber) ~ '" class="govuk-link">' ~ prisonerName ~ '</a>',
                   sortValue: prisoner.lastName,
                   attributes: {
                     "data-sort-value": prisoner.lastName.toLowerCase() if prisoner.displayName else ''
