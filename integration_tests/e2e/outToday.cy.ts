@@ -41,23 +41,24 @@ context('Out Today Page', () => {
     page.outTodayRows().eq(1).find('td').eq(7).should('contain.text', 'CAT A')
   })
 
-  it('makes Name and Time out sortable but not the other columns', () => {
+  it('makes Name, Reason for absence, Time out and Current status sortable but not the other columns', () => {
     const page = Page.verifyOnPage(OutTodayPage)
 
     // Sortable columns expose aria-sort
     page.outTodayHeaders().eq(1).should('have.attr', 'aria-sort') // Name
+    page.outTodayHeaders().eq(3).should('have.attr', 'aria-sort') // Reason for absence
     page.outTodayHeaders().eq(4).should('have.attr', 'aria-sort') // Time out
+    page.outTodayHeaders().eq(6).should('have.attr', 'aria-sort') // Current status
 
     // Non-sortable columns do not
     page.outTodayHeaders().eq(2).should('not.have.attr', 'aria-sort') // Prison number
-    page.outTodayHeaders().eq(3).should('not.have.attr', 'aria-sort') // Reason for absence
     page.outTodayHeaders().eq(5).should('not.have.attr', 'aria-sort') // To location
-    page.outTodayHeaders().eq(6).should('not.have.attr', 'aria-sort') // Current status
     page.outTodayHeaders().eq(7).should('not.have.attr', 'aria-sort') // Relevant alerts
   })
 
   it('name link returns to the out-today page via the prisoner profile back link', () => {
     const page = Page.verifyOnPage(OutTodayPage)
+    const returnPath = encodeURIComponent('/out-today?sort=timeOut&direction=descending')
 
     page
       .outTodayRows()
@@ -69,7 +70,7 @@ context('Out Today Page', () => {
       .and('contain', '/save-backlink')
       .and('contain', 'service=prison-roll-count')
       .and('contain', 'backLinkText=Back%20to%20Out%20today')
-      .and('contain', 'returnPath=/out-today')
+      .and('contain', `returnPath=${returnPath}`)
       .and('contain', 'redirectPath=/prisoner/A1234AB')
   })
 
