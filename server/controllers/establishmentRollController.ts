@@ -170,10 +170,18 @@ export default class EstablishmentRollController {
     return async (req: Request, res: Response) => {
       const { user } = res.locals
       const { clientToken } = req.middleware
+      const sort = getSortParam(req.query, 'timeOut', 'descending')
 
-      const prisonersOutToday = await this.movementsService.getOutTodayPrisoners(clientToken, user.activeCaseLoadId)
+      const [prisonersOutToday, establishmentRollCounts] = await Promise.all([
+        this.movementsService.getOutTodayPrisoners(clientToken, user.activeCaseLoadId, sort),
+        this.establishmentRollService.getEstablishmentRollCounts(clientToken, user.activeCaseLoadId),
+      ])
 
-      res.render('pages/outToday', { prisoners: prisonersOutToday })
+      res.render('pages/outToday', {
+        prisoners: prisonersOutToday,
+        establishmentRollCounts,
+        sort,
+      })
     }
   }
 

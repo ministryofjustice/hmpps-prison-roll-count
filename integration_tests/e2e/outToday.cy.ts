@@ -8,6 +8,8 @@ context('Out Today Page', () => {
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
     cy.task('stubMovementsOut')
+    cy.task('stubTemporaryAbsences')
+    cy.task('stubInTodayMovementHistoryDefault')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubLocationPrisonRollCount')
@@ -27,35 +29,37 @@ context('Out Today Page', () => {
 
     page.outTodayRows().first().find('td').eq(1).should('contain.text', 'Shannon, Eddie')
     page.outTodayRows().first().find('td').eq(2).should('contain.text', 'A1234AB')
-    page.outTodayRows().first().find('td').eq(3).should('contain.text', '01/01/1980')
+    page.outTodayRows().first().find('td').eq(3).should('contain.text', 'Transfer - Another transfer')
     page.outTodayRows().first().find('td').eq(4).should('contain.text', '11:00')
-    page.outTodayRows().first().find('td').eq(5).should('contain.text', 'Another transfer')
-    // Column index 6 checked in the alerts and category test
+    page.outTodayRows().first().find('td').eq(5).should('not.be.empty')
+    // Column index 6 checked in the current status test, index 7 checked in the alerts and category test
   })
 
   it('should display alerts and category if cat A', () => {
     const page = Page.verifyOnPage(OutTodayPage)
 
-    page.outTodayRows().eq(1).find('td').eq(6).should('contain.text', 'Hidden disability')
-    page.outTodayRows().eq(1).find('td').eq(6).should('contain.text', 'CAT A')
+    page.outTodayRows().eq(1).find('td').eq(7).should('contain.text', 'Hidden disability')
+    page.outTodayRows().eq(1).find('td').eq(7).should('contain.text', 'CAT A')
   })
 
-  it('makes Name, Departed, "En route from" and CSRA sortable but not the other columns', () => {
+  it('makes Name, Reason for absence, Time out and Current status sortable but not the other columns', () => {
     const page = Page.verifyOnPage(OutTodayPage)
 
     // Sortable columns expose aria-sort
     page.outTodayHeaders().eq(1).should('have.attr', 'aria-sort') // Name
-    page.outTodayHeaders().eq(4).should('have.attr', 'aria-sort') // Departed
+    page.outTodayHeaders().eq(3).should('have.attr', 'aria-sort') // Reason for absence
+    page.outTodayHeaders().eq(4).should('have.attr', 'aria-sort') // Time out
+    page.outTodayHeaders().eq(6).should('have.attr', 'aria-sort') // Current status
 
     // Non-sortable columns do not
     page.outTodayHeaders().eq(2).should('not.have.attr', 'aria-sort') // Prison number
-    page.outTodayHeaders().eq(3).should('not.have.attr', 'aria-sort') // Date of birth
-    page.outTodayHeaders().eq(5).should('not.have.attr', 'aria-sort') // Reason
-    page.outTodayHeaders().eq(6).should('not.have.attr', 'aria-sort') // Alert flags
+    page.outTodayHeaders().eq(5).should('not.have.attr', 'aria-sort') // To location
+    page.outTodayHeaders().eq(7).should('not.have.attr', 'aria-sort') // Relevant alerts
   })
 
   it('name link returns to the out-today page via the prisoner profile back link', () => {
     const page = Page.verifyOnPage(OutTodayPage)
+    const returnPath = encodeURIComponent('/out-today?sort=timeOut&direction=descending')
 
     page
       .outTodayRows()
@@ -67,8 +71,22 @@ context('Out Today Page', () => {
       .and('contain', '/save-backlink')
       .and('contain', 'service=prison-roll-count')
       .and('contain', 'backLinkText=Back%20to%20Out%20today')
-      .and('contain', 'returnPath=/out-today')
+      .and('contain', `returnPath=${returnPath}`)
       .and('contain', 'redirectPath=/prisoner/A1234AB')
+  })
+
+  it('should display the correct statistics cards', () => {
+    cy.get('[data-qa="temporary-absence-card"]').should('exist')
+    cy.get('[data-qa="at-court-card"]').should('exist')
+    cy.get('[data-qa="released-card"]').should('exist')
+    cy.get('[data-qa="transferred-out-card"]').should('exist')
+  })
+
+  it('should display the correct counts for departure type cards', () => {
+    cy.get('[data-qa="temporary-absence-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
+    cy.get('[data-qa="at-court-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
+    cy.get('[data-qa="released-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
+    cy.get('[data-qa="transferred-out-card"]').find('.establishment-roll-card__count').should('contain.text', '2')
   })
 })
 
@@ -78,6 +96,7 @@ context('Out Today page without prisoner data', () => {
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
     cy.task('stubMovementsOutEmpty')
+    cy.task('stubInTodayMovementHistoryDefault')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubLocationPrisonRollCount')

@@ -7,8 +7,9 @@ import { stripAgencyPrefix } from '../utils/utils'
 import { Prisoner } from '../data/interfaces/prisoner'
 import { BedAssignment } from '../data/interfaces/bedAssignment'
 import { OffenderMovement } from '../data/interfaces/offenderMovement'
+import { OffenderOut } from '../data/interfaces/offenderOut'
 import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
-import { getEffectiveArrivalType, getMovementHistoryStartDate } from '../utils/arrivalType'
+import { getEffectiveArrivalType, getMovementHistoryStartDate } from '../utils/movementType'
 
 export default class MovementsService {
   constructor(
@@ -16,6 +17,14 @@ export default class MovementsService {
     private readonly prisonerSearchClientBuilder: RestClientBuilder<PrisonerSearchClient>,
     private readonly locationsInsidePrisonApiClientBuilder: RestClientBuilder<LocationsInsidePrisonApiClient>,
   ) {}
+
+  private getMovementHistoryStartDateFromMovement(
+    movement?: { movementDateTime?: string; movementDate?: string } | string,
+  ): string {
+    if (typeof movement === 'string') return getMovementHistoryStartDate(movement)
+
+    return getMovementHistoryStartDate(movement?.movementDateTime || movement?.movementDate)
+  }
 
   public async getInTodayPrisoners(
     clientToken: string,
@@ -40,9 +49,9 @@ export default class MovementsService {
               (
                 await prisonApi.getOffenderMovements(
                   prisonerMovement.offenderNo,
-                  getMovementHistoryStartDate(prisonerMovement.movementDateTime),
+                  this.getMovementHistoryStartDateFromMovement(prisonerMovement),
                 )
-              ).slice(-2),
+              )?.slice(-2) || [],
             ] as const,
         ),
       ),
@@ -117,6 +126,7 @@ export default class MovementsService {
   public async getOutTodayPrisoners(
     clientToken: string,
     caseLoadId: string,
+    sort: string = 'timeOut&direction=descending',
   ): Promise<(PrisonerWithAlerts & { timeOut: string; reasonDescription: string })[]> {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
@@ -124,17 +134,106 @@ export default class MovementsService {
     const movements = await prisonApi.getMovementsOut(caseLoadId, new Date().toISOString())
     if (!movements || !movements?.length) return []
 
-    const prisoners = await prisonerSearchClient.getPrisonersById(movements.map(movement => movement.offenderNo))
+    const temporaryAbsences: OffenderOut[] = await prisonApi.getTemporaryAbsences(caseLoadId)
+    const temporaryAbsenceByOffender = new Map<string, OffenderOut>(
+      (temporaryAbsences || []).map(absence => [absence.offenderNo, absence]),
+    )
 
-    return movements.map(prisonerMovement => {
-      const prisoner = prisoners.find(prisonerToFind => prisonerToFind.prisonerNumber === prisonerMovement.offenderNo)
+    const prisonerNumbers = movements.map(movement => movement.offenderNo)
+
+    const [prisoners, offenderMovements] = await Promise.all([
+      prisonerSearchClient.getPrisonersById(prisonerNumbers),
+      Promise.all(
+        movements.map(
+          async prisonerMovement =>
+            [
+              prisonerMovement.offenderNo,
+              (
+                await prisonApi.getOffenderMovements(
+                  prisonerMovement.offenderNo,
+                  this.getMovementHistoryStartDateFromMovement(prisonerMovement),
+                )
+              )?.slice(-2) || [],
+            ] as const,
+        ),
+      ),
+    ])
+    const prisonerByNumber = new Map(prisoners.map(prisoner => [prisoner.prisonerNumber, prisoner]))
+    const offenderMovementsByOffender = new Map<string, OffenderMovement[]>()
+
+    offenderMovements.forEach(([offenderNo, history]) => {
+      const existingHistory = offenderMovementsByOffender.get(offenderNo) || []
+      offenderMovementsByOffender.set(offenderNo, [...existingHistory, ...history])
+    })
+
+    const mappedPrisoners = movements.map((prisonerMovement, index) => {
+      const prisoner = prisonerByNumber.get(prisonerMovement.offenderNo)
+      const historyForThisMovement = offenderMovements[index]?.[1] || []
+      const latestMovementHistory = historyForThisMovement[historyForThisMovement.length - 1]
+      const departureTypeCode = prisonerMovement.movementType || latestMovementHistory?.movementType
+      const fallbackTemporaryAbsence = temporaryAbsenceByOffender.get(prisonerMovement.offenderNo)
+      const nextLocation =
+        prisonerMovement?.toAddress ||
+        (prisonerMovement.movementType === 'TAP' ? fallbackTemporaryAbsence?.toAddress || '' : '') ||
+        latestMovementHistory?.toAgencyDescription ||
+        latestMovementHistory?.toCity ||
+        ''
+
       return {
         ...prisoner,
         timeOut: prisonerMovement?.timeOut,
         reasonDescription: prisonerMovement.reasonDescription,
-        goingTo: prisonerMovement?.toAddress,
-        alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner.alerts),
+        goingTo: nextLocation,
+        alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner?.alerts || []),
+        ...(departureTypeCode ? { departureTypeCode } : {}),
       }
+    })
+
+    const [sortKey = 'timeOut', sortDirection = 'descending'] = sort.split('&direction=')
+    const isAscending = sortDirection === 'ascending'
+    const compareStrings = (left: string, right: string) => left.localeCompare(right, 'en', { ignorePunctuation: true })
+    const getDepartureTypeLabel = (departureTypeCode?: string) => {
+      switch (departureTypeCode) {
+        case 'TAP':
+          return 'Temporary absence'
+        case 'CRT':
+          return 'At court'
+        case 'REL':
+          return 'Release'
+        case 'TRN':
+          return 'Transfer'
+        default:
+          return ''
+      }
+    }
+
+    return mappedPrisoners.sort((left, right) => {
+      let comparison: number
+
+      switch (sortKey) {
+        case 'lastName':
+          comparison = compareStrings(left.lastName || '', right.lastName || '')
+          if (comparison === 0) {
+            comparison = compareStrings(left.firstName || '', right.firstName || '')
+          }
+          break
+        case 'reasonForAbsence':
+          comparison = compareStrings(
+            getDepartureTypeLabel(left.departureTypeCode) + (left.reasonDescription || ''),
+            getDepartureTypeLabel(right.departureTypeCode) + (right.reasonDescription || ''),
+          )
+          break
+        case 'timeOut':
+          comparison = compareStrings(left.timeOut || '', right.timeOut || '')
+          break
+        case 'currentStatus':
+          comparison = compareStrings(left.status || '', right.status || '')
+          break
+        default:
+          comparison = compareStrings(left.timeOut || '', right.timeOut || '')
+      }
+
+      return isAscending ? comparison : -comparison
     })
   }
 
