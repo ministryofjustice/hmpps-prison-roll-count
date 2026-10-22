@@ -126,6 +126,7 @@ export default class MovementsService {
   public async getOutTodayPrisoners(
     clientToken: string,
     caseLoadId: string,
+    sort: string = 'timeOut&direction=descending',
   ): Promise<(PrisonerWithAlerts & { timeOut: string; reasonDescription: string })[]> {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
@@ -165,7 +166,7 @@ export default class MovementsService {
       offenderMovementsByOffender.set(offenderNo, [...existingHistory, ...history])
     })
 
-    return movements.map((prisonerMovement, index) => {
+    const mappedPrisoners = movements.map((prisonerMovement, index) => {
       const prisoner = prisonerByNumber.get(prisonerMovement.offenderNo)
       const historyForThisMovement = offenderMovements[index]?.[1] || []
       const latestMovementHistory = historyForThisMovement[historyForThisMovement.length - 1]
@@ -186,6 +187,53 @@ export default class MovementsService {
         alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner?.alerts || []),
         ...(departureTypeCode ? { departureTypeCode } : {}),
       }
+    })
+
+    const [sortKey = 'timeOut', sortDirection = 'descending'] = sort.split('&direction=')
+    const isAscending = sortDirection === 'ascending'
+    const compareStrings = (left: string, right: string) => left.localeCompare(right, 'en', { ignorePunctuation: true })
+    const getDepartureTypeLabel = (departureTypeCode?: string) => {
+      switch (departureTypeCode) {
+        case 'TAP':
+          return 'Temporary absence'
+        case 'CRT':
+          return 'At court'
+        case 'REL':
+          return 'Release'
+        case 'TRN':
+          return 'Transfer'
+        default:
+          return ''
+      }
+    }
+
+    return mappedPrisoners.sort((left, right) => {
+      let comparison: number
+
+      switch (sortKey) {
+        case 'lastName':
+          comparison = compareStrings(left.lastName || '', right.lastName || '')
+          if (comparison === 0) {
+            comparison = compareStrings(left.firstName || '', right.firstName || '')
+          }
+          break
+        case 'reasonForAbsence':
+          comparison = compareStrings(
+            getDepartureTypeLabel(left.departureTypeCode) + (left.reasonDescription || ''),
+            getDepartureTypeLabel(right.departureTypeCode) + (right.reasonDescription || ''),
+          )
+          break
+        case 'timeOut':
+          comparison = compareStrings(left.timeOut || '', right.timeOut || '')
+          break
+        case 'currentStatus':
+          comparison = compareStrings(left.status || '', right.status || '')
+          break
+        default:
+          comparison = compareStrings(left.timeOut || '', right.timeOut || '')
+      }
+
+      return isAscending ? comparison : -comparison
     })
   }
 

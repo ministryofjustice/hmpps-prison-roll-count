@@ -301,6 +301,14 @@ describe('movementsService', () => {
 
       expect(result).toEqual([
         {
+          ...prisonerSearchMock[1],
+          alertFlags: [],
+          reasonDescription: 'Another transfer',
+          goingTo: 'HMP Moorland',
+          timeOut: '11:00:00',
+          departureTypeCode: 'TRN',
+        },
+        {
           ...prisonerSearchMock[0],
           alertFlags: [
             {
@@ -313,14 +321,6 @@ describe('movementsService', () => {
           reasonDescription: 'Transfer',
           timeOut: '10:00:00',
           goingTo: 'HMP Leeds',
-          departureTypeCode: 'TRN',
-        },
-        {
-          ...prisonerSearchMock[1],
-          alertFlags: [],
-          reasonDescription: 'Another transfer',
-          goingTo: 'HMP Moorland',
-          timeOut: '11:00:00',
           departureTypeCode: 'TRN',
         },
       ])
