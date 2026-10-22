@@ -8,6 +8,7 @@ context('Out Today Page', () => {
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
     cy.task('stubMovementsOut')
+    cy.task('stubTemporaryAbsences')
     cy.task('stubInTodayMovementHistoryDefault')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })

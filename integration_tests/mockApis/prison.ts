@@ -193,6 +193,22 @@ export default {
     })
   },
 
+  stubTemporaryAbsences: (prisonCode = 'LEI', payload: unknown[] = []) => {
+    return stubFor({
+      request: {
+        method: 'GET',
+        urlPattern: `/prison/api/movements/agency/${prisonCode}/temporary-absences`,
+      },
+      response: {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+        },
+        jsonBody: payload,
+      },
+    })
+  },
+
   stubMovementsEnRoute: (prisonCode = 'LEI') => {
     return stubFor({
       request: {
