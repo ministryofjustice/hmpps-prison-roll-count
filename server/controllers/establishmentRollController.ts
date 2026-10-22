@@ -72,6 +72,83 @@ const getAppliedArrivalTypeFilters = (sort: string, selectedFilters: ArrivalType
     ),
   }))
 
+const departureTypeFilterLabels = {
+  temporaryAbsence: 'Temporary absence',
+  atCourt: 'At court',
+  released: 'Released',
+  transferredOut: 'Transferred out',
+} as const
+
+type DepartureTypeFilter = keyof typeof departureTypeFilterLabels
+
+const normaliseDepartureTypeFilters = (queryValue: Request['query']['departureType']): DepartureTypeFilter[] => {
+  let values: string[] = []
+
+  if (Array.isArray(queryValue)) {
+    values = queryValue.filter((value): value is string => typeof value === 'string')
+  } else if (typeof queryValue === 'string') {
+    values = [queryValue]
+  }
+
+  return values.filter(
+    (value): value is DepartureTypeFilter =>
+      value === 'temporaryAbsence' || value === 'atCourt' || value === 'released' || value === 'transferredOut',
+  )
+}
+
+const hasDepartureTypeCode = (
+  prisoner: unknown,
+): prisoner is { departureTypeCode?: string; lastMovementTypeCode?: string } =>
+  typeof prisoner === 'object' &&
+  prisoner !== null &&
+  ('departureTypeCode' in prisoner || 'lastMovementTypeCode' in prisoner)
+
+const getOutTodayDepartureTypeCode = (prisoner: unknown): string | undefined => {
+  if (typeof prisoner !== 'object' || prisoner === null) return undefined
+
+  if ('departureTypeCode' in prisoner && typeof prisoner.departureTypeCode === 'string') {
+    return prisoner.departureTypeCode
+  }
+
+  if ('lastMovementTypeCode' in prisoner && typeof prisoner.lastMovementTypeCode === 'string') {
+    return prisoner.lastMovementTypeCode
+  }
+
+  return undefined
+}
+
+const filterPrisonersByDepartureType = <T>(prisoners: T[], selectedFilters: DepartureTypeFilter[]): T[] => {
+  if (!selectedFilters.length) return prisoners
+
+  return prisoners.filter(prisoner => {
+    if (!hasDepartureTypeCode(prisoner)) return false
+
+    const departureTypeCode = getOutTodayDepartureTypeCode(prisoner)
+    return (
+      (selectedFilters.includes('temporaryAbsence') && departureTypeCode === 'TAP') ||
+      (selectedFilters.includes('atCourt') && departureTypeCode === 'CRT') ||
+      (selectedFilters.includes('released') && departureTypeCode === 'REL') ||
+      (selectedFilters.includes('transferredOut') && departureTypeCode === 'TRN')
+    )
+  })
+}
+
+const buildDepartureTypeFilterHref = (sort: string, selectedFilters: DepartureTypeFilter[]) => {
+  const baseHref = `/out-today?sort=${sort}`
+  if (!selectedFilters.length) return baseHref
+
+  return `${baseHref}&${selectedFilters.map(filter => `departureType=${filter}`).join('&')}`
+}
+
+const getAppliedDepartureTypeFilters = (sort: string, selectedFilters: DepartureTypeFilter[]) =>
+  selectedFilters.map(selectedFilter => ({
+    text: departureTypeFilterLabels[selectedFilter],
+    href: buildDepartureTypeFilterHref(
+      sort,
+      selectedFilters.filter(filter => filter !== selectedFilter),
+    ),
+  }))
+
 const pageSize = config.envPageSize
 
 const getCurrentPage = (query: Request['query'], totalPages: number) => {
@@ -177,10 +254,27 @@ export default class EstablishmentRollController {
         this.establishmentRollService.getEstablishmentRollCounts(clientToken, user.activeCaseLoadId),
       ])
 
+      const selectedFilters = normaliseDepartureTypeFilters(req.query?.departureType)
+      const filterableOutPrisoners = prisonersOutToday.map(prisoner => {
+        const departureTypeCode = getOutTodayDepartureTypeCode(prisoner)
+
+        return {
+          ...prisoner,
+          departureTypeCode,
+        }
+      })
+
+      const filteredPrisoners = filterPrisonersByDepartureType(filterableOutPrisoners, selectedFilters)
+      const appliedFilters = getAppliedDepartureTypeFilters(sort, selectedFilters)
+      const clearFiltersHref = buildDepartureTypeFilterHref(sort, [])
+
       res.render('pages/outToday', {
-        prisoners: prisonersOutToday,
+        prisoners: filteredPrisoners,
         establishmentRollCounts,
         sort,
+        selectedFilters,
+        appliedFilters,
+        clearFiltersHref,
       })
     }
   }
