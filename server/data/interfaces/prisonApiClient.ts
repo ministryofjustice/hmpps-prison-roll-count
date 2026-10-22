@@ -21,6 +21,7 @@ export interface PrisonApiClient {
   getRecentMovements(prisonerNumbers: string[]): Promise<OffenderMovement[]>
   getMovementsIn(prisonId: string, movementDate: string): Promise<OffenderIn[]>
   getMovementsOut(prisonId: string, movementDate: string): Promise<OffenderOut[]>
+  getTemporaryAbsences(prisonId: string): Promise<OffenderOut[]>
   getMovementsEnRoute(prisonId: string): Promise<OffenderMovement[]>
   getMovementsInReception(prisonId: string): Promise<OffenderInReception[]>
   setActiveCaseload(caseLoad: CaseLoad): Promise<Record<string, string>>
