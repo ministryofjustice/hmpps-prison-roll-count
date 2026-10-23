@@ -123,6 +123,14 @@
       {% set paginationBase = '/in-today?sort=' ~ sortParam %}
       {% set pageParam = '&page=' ~ currentPage if currentPage > 1 else '' %}
       {% set returnPathWithSort = paginationBase ~ pageParam %}
+      {% set selectedFilterQuery = '' %}
+      {% if selectedFilters %}
+        {% for filter in selectedFilters %}
+          {% set selectedFilterQuery = selectedFilterQuery ~ '&arrivalType=' ~ filter %}
+        {% endfor %}
+      {% endif %}
+      {% set sortHrefTemplate = '?sort={sortKey}&direction={sortDirection}' ~ selectedFilterQuery %}
+      {% set returnPathWithSort = paginationBase ~ pageParam ~ selectedFilterQuery %}
       {% set rows = [] %}
       {% set blankRows = [
         [
@@ -234,7 +242,8 @@
             text: 'Relevant alerts',
             classes: 'govuk-!-font-size-16'
           }
-        ] | convertToSortableColumns(sortParam, '?sort={sortKey}&direction={sortDirection}'),
+        ] | convertToSortableColumns(sortParam, sortHrefTemplate),
+
         rows: rows if prisoners.length > 0 else blankRows
       }) }}
 

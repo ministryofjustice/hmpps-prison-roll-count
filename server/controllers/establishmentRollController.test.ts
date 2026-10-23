@@ -10,6 +10,7 @@ const establishmentRollService = {
 }
 const movementsService = {
   getInTodayPrisoners: jest.fn(),
+  getOutTodayPrisoners: jest.fn(),
   getOffendersCurrentlyOutOfBed: jest.fn(),
   getOffendersCurrentlyOutOfLivingUnit: jest.fn(),
   getInReceptionPrisoners: jest.fn(),
@@ -629,6 +630,66 @@ describe('EstablishmentRollController', () => {
         totalPages: 0,
         totalResults: 0,
       })
+    })
+  })
+
+  describe('getOutToday', () => {
+    it('filters prisoners by selected departure types and builds applied filters', async () => {
+      const outPrisoners = [
+        { prisonerNumber: 'A1234BC', departureTypeCode: 'TAP' },
+        { prisonerNumber: 'A1234BD', departureTypeCode: 'REL' },
+        { prisonerNumber: 'A1234BE', lastMovementTypeCode: 'TRN' },
+      ]
+
+      movementsService.getOutTodayPrisoners.mockResolvedValue(outPrisoners)
+      establishmentRollService.getEstablishmentRollCounts.mockResolvedValue({
+        todayStats: {},
+        totals: {},
+        wings: [] as unknown[],
+      })
+
+      const controller = new EstablishmentRollController(
+        establishmentRollService as unknown as EstablishmentRollService,
+        movementsService as unknown as MovementsService,
+        locationService as unknown as LocationService,
+      )
+
+      const req = {
+        ...mockReq(),
+        query: { departureType: ['temporaryAbsence', 'transferredOut'] },
+      } as unknown as Request
+      const res = mockRes()
+      const next = mockNext()
+
+      await controller.getOutToday()(req, res, next)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/outToday',
+        expect.objectContaining({
+          prisoners: [
+            expect.objectContaining({ prisonerNumber: 'A1234BC', departureTypeCode: 'TAP' }),
+            expect.objectContaining({ prisonerNumber: 'A1234BE', departureTypeCode: 'TRN' }),
+          ],
+          establishmentRollCounts: {
+            todayStats: {},
+            totals: {},
+            wings: [] as unknown[],
+          },
+          sort: 'timeOut&direction=descending',
+          selectedFilters: ['temporaryAbsence', 'transferredOut'],
+          appliedFilters: [
+            {
+              text: 'Temporary absence',
+              href: '/out-today?sort=timeOut&direction=descending&departureType=transferredOut',
+            },
+            {
+              text: 'Transferred out',
+              href: '/out-today?sort=timeOut&direction=descending&departureType=temporaryAbsence',
+            },
+          ],
+          clearFiltersHref: '/out-today?sort=timeOut&direction=descending',
+        }),
+      )
     })
   })
 })
