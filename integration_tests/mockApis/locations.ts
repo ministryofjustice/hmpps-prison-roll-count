@@ -3,7 +3,6 @@ import locationPrisonRollCountMock from '../../server/mocks/locationPrisonRollCo
 import locationPrisonRollCountForWingWithSpurMock from '../../server/mocks/locationPrisonRollCountForWingWithSpurMock'
 import prisonerInLocation from '../../server/test/mocks/prisonersInLocation'
 import internalLocationMock from '../../server/mocks/internalLocationMock'
-import { ActiveAgencies } from '../../server/data/locationsInsidePrisonApiClient'
 
 const stubLocationsApiPing = () =>
   stubFor({
@@ -15,22 +14,6 @@ const stubLocationsApiPing = () =>
       status: 200,
     },
   })
-
-const stubActivePrisons = (activeAgencies: ActiveAgencies) => {
-  return stubFor({
-    request: {
-      method: 'GET',
-      url: '/locations/info',
-    },
-    response: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-      },
-      jsonBody: activeAgencies || { activeAgencies: [] },
-    },
-  })
-}
 
 const stubLocationPrisonRollCount = ({ prisonCode = 'LEI', payload = locationPrisonRollCountMock } = {}) => {
   return stubFor({
@@ -137,7 +120,6 @@ const stubPrisonConfiguration = ({ prisonId = 'LEI', resiLocationServiceActive =
 
 export default {
   stubLocationsApiPing,
-  stubActivePrisons,
   stubLocationPrisonRollCount,
   stubLocationPrisonRollCountForLanding,
   stubLocationsOutToday,

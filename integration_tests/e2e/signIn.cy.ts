@@ -11,7 +11,6 @@ context('SignIn', () => {
     cy.task('stubMovementsOut')
     cy.task('stubInTodayMovementHistoryDefault')
     cy.task('stubPostAttributeSearch')
-    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubLocationPrisonRollCount')
     cy.task('stubPrisonConfiguration')
   })
