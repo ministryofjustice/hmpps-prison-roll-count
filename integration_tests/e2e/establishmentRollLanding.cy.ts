@@ -11,7 +11,6 @@ context('Establishment Roll Landing Page', () => {
     cy.task('reset')
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
-    cy.task('stubActivePrisons', { activeAgencies: ['BXI'] })
     cy.task('stubPrisonConfiguration', { prisonId: 'LEI', resiLocationServiceActive: 'INACTIVE' })
     cy.task('stubPrisonRollCount')
     cy.task('stubPrisonRollCountForLanding', { prisonCode: 'LEI', landingId: wingId })

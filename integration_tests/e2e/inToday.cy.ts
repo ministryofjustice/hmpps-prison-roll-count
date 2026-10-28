@@ -12,7 +12,6 @@ context('In Today Page', () => {
     cy.task('stubInTodayMovementHistoryDefault')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
-    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubPrisonRollCount')
     cy.task('stubLocationPrisonRollCount')
     cy.task('stubPrisonConfiguration')
@@ -128,7 +127,6 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.task('stubInTodayTwoRecentMovements')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
-    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubPrisonRollCount')
     cy.task('stubLocationPrisonRollCount')
     cy.task('stubPrisonConfiguration')
@@ -150,7 +148,6 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.task('stubNewAdmissionsMovements') // Custom stub with all ADM
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
-    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubPrisonRollCount')
     cy.task('stubLocationPrisonRollCount')
     cy.task('stubPrisonConfiguration')
@@ -171,7 +168,6 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.task('stubTransfersInMovements') // Custom stub with all TRN
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
-    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubPrisonRollCount')
     cy.task('stubLocationPrisonRollCount')
     cy.task('stubPrisonConfiguration')
@@ -192,7 +188,6 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.task('stubReturnsMovements') // Custom stub with CRT/TAP
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
-    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubPrisonRollCount')
     cy.task('stubLocationPrisonRollCount')
     cy.task('stubPrisonConfiguration')
@@ -213,7 +208,6 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.task('stubMixedMovementTypes') // Custom stub with ADM, TRN, and CRT/TAP
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
-    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubPrisonRollCount')
     cy.task('stubLocationPrisonRollCount')
     cy.task('stubPrisonConfiguration')
@@ -234,7 +228,6 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.task('stubInTodayMovementHistoryDefault')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
-    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubPrisonRollCount')
     cy.task('stubLocationPrisonRollCount')
     cy.task('stubPrisonConfiguration')
@@ -259,7 +252,6 @@ context('Arrived Today page without prisoner data', () => {
     cy.task('stubMovementsOutEmpty')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch', { payload: [] })
-    cy.task('stubActivePrisons', { activeAgencies: ['LEI'] })
     cy.task('stubPrisonRollCount')
     cy.task('stubLocationPrisonRollCount')
     cy.task('stubPrisonConfiguration')
