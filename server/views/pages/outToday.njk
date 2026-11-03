@@ -2,6 +2,7 @@
 {% from "../macros/establishmentRollStatCard.njk" import establishmentRollStatCard %}
 {% from "../macros/alertFlags.njk" import alertFlags %}
 {% from "../macros/categoryFlag.njk" import categoryFlag %}
+{% from "../macros/statusTag.njk" import statusTag %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
@@ -188,8 +189,8 @@
                   text: prisoner.goingTo or prisoner.toAddress or ''
                 },
                 {
-                  text: prisoner.status,
-                  sortValue: prisoner.status
+                  html: statusTag(prisoner.inOutStatus),
+                  sortValue: prisoner.inOutStatus
                 },
                 {
                   html: alertFlags(prisoner.alertFlags) ~ categoryFlag('', prisoner.category) | safe
