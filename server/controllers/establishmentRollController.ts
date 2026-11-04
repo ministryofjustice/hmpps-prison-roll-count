@@ -160,6 +160,67 @@ const getCurrentPage = (query: Request['query'], totalPages: number) => {
   return Math.min(requestedPage, totalPages)
 }
 
+const getArrivalTypeCounts = <T extends { arrivalType?: string }>(prisoners: T[]) => {
+  const counts = {
+    newAdmissions: 0,
+    transfersIn: 0,
+    returns: 0,
+  }
+
+  prisoners.forEach(prisoner => {
+    switch (prisoner.arrivalType) {
+      case 'ADM':
+        counts.newAdmissions += 1
+        break
+      case 'TRN':
+        counts.transfersIn += 1
+        break
+      case 'CRT':
+      case 'TAP':
+        counts.returns += 1
+        break
+      default:
+        break
+    }
+  })
+
+  return counts
+}
+
+const getDepartureTypeCounts = <T extends { departureTypeCode?: string; lastMovementTypeCode?: string }>(
+  prisoners: T[],
+) => {
+  const counts = {
+    temporaryAbsence: 0,
+    atCourt: 0,
+    released: 0,
+    transferredOut: 0,
+  }
+
+  prisoners.forEach(prisoner => {
+    const departureTypeCode = getOutTodayDepartureTypeCode(prisoner)
+
+    switch (departureTypeCode) {
+      case 'TAP':
+        counts.temporaryAbsence += 1
+        break
+      case 'CRT':
+        counts.atCourt += 1
+        break
+      case 'REL':
+        counts.released += 1
+        break
+      case 'TRN':
+        counts.transferredOut += 1
+        break
+      default:
+        break
+    }
+  })
+
+  return counts
+}
+
 export default class EstablishmentRollController {
   constructor(
     private readonly establishmentRollService: EstablishmentRollService,
@@ -187,7 +248,7 @@ export default class EstablishmentRollController {
         establishmentRollCounts: establishmentRollCounts || null,
         date: new Date(),
         useWorkingCapacity: useLocationsApi,
-        displayOvernights: useLocationsApi && eRollEnabled,
+        displayOvernights: Boolean(useLocationsApi && eRollEnabled),
       })
     }
   }
@@ -217,10 +278,7 @@ export default class EstablishmentRollController {
       const { clientToken } = req.middleware
       const sort = getSortParam(req.query, 'timeArrived', 'descending')
 
-      const [arrivedPrisoners, establishmentRollCounts] = await Promise.all([
-        this.movementsService.getInTodayPrisoners(clientToken, user.activeCaseLoadId, sort),
-        this.establishmentRollService.getEstablishmentRollCounts(clientToken, user.activeCaseLoadId),
-      ])
+      const arrivedPrisoners = await this.movementsService.getInTodayPrisoners(clientToken, user.activeCaseLoadId, sort)
 
       const selectedFilters = normaliseArrivalTypeFilters(req.query?.arrivalType)
       const filterableArrivedPrisoners = arrivedPrisoners.map(prisoner => ({
@@ -234,7 +292,13 @@ export default class EstablishmentRollController {
 
       res.render('pages/inToday', {
         prisoners: filteredPrisoners,
-        establishmentRollCounts,
+        establishmentRollCounts: {
+          todayStats: {
+            ...getArrivalTypeCounts(filterableArrivedPrisoners),
+          },
+          totals: {},
+          wings: [],
+        },
         sort,
         selectedFilters,
         appliedFilters,
@@ -249,10 +313,11 @@ export default class EstablishmentRollController {
       const { clientToken } = req.middleware
       const sort = getSortParam(req.query, 'timeOut', 'descending')
 
-      const [prisonersOutToday, establishmentRollCounts] = await Promise.all([
-        this.movementsService.getOutTodayPrisoners(clientToken, user.activeCaseLoadId, sort),
-        this.establishmentRollService.getEstablishmentRollCounts(clientToken, user.activeCaseLoadId),
-      ])
+      const prisonersOutToday = await this.movementsService.getOutTodayPrisoners(
+        clientToken,
+        user.activeCaseLoadId,
+        sort,
+      )
 
       const selectedFilters = normaliseDepartureTypeFilters(req.query?.departureType)
       const filterableOutPrisoners = prisonersOutToday.map(prisoner => {
@@ -270,7 +335,13 @@ export default class EstablishmentRollController {
 
       res.render('pages/outToday', {
         prisoners: filteredPrisoners,
-        establishmentRollCounts,
+        establishmentRollCounts: {
+          todayStats: {
+            ...getDepartureTypeCounts(filterableOutPrisoners),
+          },
+          totals: {},
+          wings: [],
+        },
         sort,
         selectedFilters,
         appliedFilters,

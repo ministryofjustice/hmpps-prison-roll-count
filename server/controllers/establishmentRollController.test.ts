@@ -62,12 +62,12 @@ describe('EstablishmentRollController', () => {
 
       expect(establishmentRollService.getEstablishmentRollCounts).toHaveBeenCalledWith('token', 'LEI', true)
       expect(establishmentRollService.isResiLocationServiceActive).not.toHaveBeenCalled()
-      expect(res.render).toHaveBeenCalledWith(
-        'pages/establishmentRoll',
-        expect.objectContaining({
-          useWorkingCapacity: true,
-        }),
-      )
+      expect(res.render).toHaveBeenCalledWith('pages/establishmentRoll', {
+        establishmentRollCounts: expect.any(Object),
+        date: expect.anything(),
+        useWorkingCapacity: true,
+        displayOvernights: false,
+      })
     })
 
     it('sets useWorkingCapacity to true when service reports active and forceUseLocationsApi is false', async () => {
@@ -86,12 +86,12 @@ describe('EstablishmentRollController', () => {
 
       await controller.getEstablishmentRoll(false)(req, res, next)
 
-      expect(res.render).toHaveBeenCalledWith(
-        'pages/establishmentRoll',
-        expect.objectContaining({
-          useWorkingCapacity: true,
-        }),
-      )
+      expect(res.render).toHaveBeenCalledWith('pages/establishmentRoll', {
+        establishmentRollCounts: expect.any(Object),
+        date: expect.anything(),
+        useWorkingCapacity: true,
+        displayOvernights: false,
+      })
     })
 
     it('sets useWorkingCapacity to false when service reports inactive and forceUseLocationsApi is false', async () => {
@@ -111,12 +111,12 @@ describe('EstablishmentRollController', () => {
       await controller.getEstablishmentRoll(false)(req, res, next)
 
       expect(establishmentRollService.isResiLocationServiceActive).toHaveBeenCalledWith('token', 'LEI')
-      expect(res.render).toHaveBeenCalledWith(
-        'pages/establishmentRoll',
-        expect.objectContaining({
-          useWorkingCapacity: false,
-        }),
-      )
+      expect(res.render).toHaveBeenCalledWith('pages/establishmentRoll', {
+        establishmentRollCounts: expect.any(Object),
+        date: expect.anything(),
+        useWorkingCapacity: false,
+        displayOvernights: false,
+      })
     })
   })
 
@@ -148,10 +148,18 @@ describe('EstablishmentRollController', () => {
         'LEI',
         'timeArrived&direction=descending',
       )
-      expect(establishmentRollService.getEstablishmentRollCounts).toHaveBeenCalledWith('token', 'LEI')
+      expect(establishmentRollService.getEstablishmentRollCounts).not.toHaveBeenCalled()
       expect(res.render).toHaveBeenCalledWith('pages/inToday', {
         prisoners: arrivedPrisoners,
-        establishmentRollCounts,
+        establishmentRollCounts: {
+          todayStats: {
+            newAdmissions: 0,
+            transfersIn: 0,
+            returns: 0,
+          },
+          totals: {},
+          wings: [],
+        },
         sort: 'timeArrived&direction=descending',
         selectedFilters: [],
         appliedFilters: [],
@@ -186,7 +194,11 @@ describe('EstablishmentRollController', () => {
       expect(res.render).toHaveBeenCalledWith('pages/inToday', {
         prisoners: [],
         establishmentRollCounts: {
-          todayStats: {},
+          todayStats: {
+            newAdmissions: 0,
+            transfersIn: 0,
+            returns: 0,
+          },
           totals: {},
           wings: [] as unknown[],
         },
@@ -229,7 +241,11 @@ describe('EstablishmentRollController', () => {
       expect(res.render).toHaveBeenCalledWith('pages/inToday', {
         prisoners: [arrivedPrisoners[0], arrivedPrisoners[2]],
         establishmentRollCounts: {
-          todayStats: {},
+          todayStats: {
+            newAdmissions: 1,
+            transfersIn: 1,
+            returns: 1,
+          },
           totals: {},
           wings: [] as unknown[],
         },
@@ -671,7 +687,12 @@ describe('EstablishmentRollController', () => {
             expect.objectContaining({ prisonerNumber: 'A1234BE', departureTypeCode: 'TRN' }),
           ],
           establishmentRollCounts: {
-            todayStats: {},
+            todayStats: {
+              temporaryAbsence: 1,
+              atCourt: 0,
+              released: 1,
+              transferredOut: 1,
+            },
             totals: {},
             wings: [] as unknown[],
           },

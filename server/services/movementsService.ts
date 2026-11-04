@@ -39,29 +39,16 @@ export default class MovementsService {
 
     const prisonerNumbers = movements.map(movement => movement.offenderNo)
 
-    const [prisoners, offenderMovements] = await Promise.all([
+    const [prisoners, recentMovements] = await Promise.all([
       prisonerSearchClient.getPrisonersById(prisonerNumbers),
-      Promise.all(
-        movements.map(
-          async prisonerMovement =>
-            [
-              prisonerMovement.offenderNo,
-              (
-                await prisonApi.getOffenderMovements(
-                  prisonerMovement.offenderNo,
-                  this.getMovementHistoryStartDateFromMovement(prisonerMovement),
-                )
-              )?.slice(-2) || [],
-            ] as const,
-        ),
-      ),
+      prisonApi.getRecentMovements(prisonerNumbers, false),
     ])
     const prisonerByNumber = new Map(prisoners.map(prisoner => [prisoner.prisonerNumber, prisoner]))
     const offenderMovementsByOffender = new Map<string, OffenderMovement[]>()
 
-    offenderMovements.forEach(([offenderNo, history]) => {
-      const existingHistory = offenderMovementsByOffender.get(offenderNo) || []
-      offenderMovementsByOffender.set(offenderNo, [...existingHistory, ...history])
+    ;(recentMovements || []).forEach(movement => {
+      const existingHistory = offenderMovementsByOffender.get(movement.offenderNo) || []
+      offenderMovementsByOffender.set(movement.offenderNo, [...existingHistory, movement])
     })
 
     const mappedPrisoners = movements.map(prisonerMovement => {
@@ -141,34 +128,21 @@ export default class MovementsService {
 
     const prisonerNumbers = movements.map(movement => movement.offenderNo)
 
-    const [prisoners, offenderMovements] = await Promise.all([
+    const [prisoners, recentMovements] = await Promise.all([
       prisonerSearchClient.getPrisonersById(prisonerNumbers),
-      Promise.all(
-        movements.map(
-          async prisonerMovement =>
-            [
-              prisonerMovement.offenderNo,
-              (
-                await prisonApi.getOffenderMovements(
-                  prisonerMovement.offenderNo,
-                  this.getMovementHistoryStartDateFromMovement(prisonerMovement),
-                )
-              )?.slice(-2) || [],
-            ] as const,
-        ),
-      ),
+      prisonApi.getRecentMovements(prisonerNumbers, false),
     ])
     const prisonerByNumber = new Map(prisoners.map(prisoner => [prisoner.prisonerNumber, prisoner]))
     const offenderMovementsByOffender = new Map<string, OffenderMovement[]>()
 
-    offenderMovements.forEach(([offenderNo, history]) => {
-      const existingHistory = offenderMovementsByOffender.get(offenderNo) || []
-      offenderMovementsByOffender.set(offenderNo, [...existingHistory, ...history])
+    ;(recentMovements || []).forEach(movement => {
+      const existingHistory = offenderMovementsByOffender.get(movement.offenderNo) || []
+      offenderMovementsByOffender.set(movement.offenderNo, [...existingHistory, movement])
     })
 
     const mappedPrisoners = movements.map((prisonerMovement, index) => {
       const prisoner = prisonerByNumber.get(prisonerMovement.offenderNo)
-      const historyForThisMovement = offenderMovements[index]?.[1] || []
+      const historyForThisMovement = offenderMovementsByOffender.get(prisonerMovement.offenderNo) || []
       const latestMovementHistory = historyForThisMovement[historyForThisMovement.length - 1]
       const departureTypeCode = prisonerMovement.movementType || latestMovementHistory?.movementType
       const fallbackTemporaryAbsence = temporaryAbsenceByOffender.get(prisonerMovement.offenderNo)
