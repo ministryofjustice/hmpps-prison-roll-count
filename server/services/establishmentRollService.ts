@@ -38,17 +38,24 @@ export default class EstablishmentRollService {
     ])
 
     // Calculate how many new admissions, transfers in and returns there are based on the recent movement history for offenders that arrived today
-    const offenderMovementHistories = await Promise.all(
-      (arrivedTodayMovements || []).map(async movement => ({
-        offenderNo: movement.offenderNo,
-        history: (
-          await prisonApi.getOffenderMovements(
-            movement.offenderNo,
-            getMovementHistoryStartDate(movement.movementDateTime),
-          )
-        ).slice(-2),
-      })),
-    )
+    const offenderNumbers = (arrivedTodayMovements || []).map(movement => movement.offenderNo)
+    const recentMovements = offenderNumbers.length
+      ? (await prisonApi.getRecentMovements(offenderNumbers, false)) || []
+      : []
+    const offenderMovementsByOffender = new Map<string, typeof recentMovements>()
+
+    if (recentMovements.length) {
+      recentMovements.forEach(movement => {
+        const existingHistory = offenderMovementsByOffender.get(movement.offenderNo) || []
+        offenderMovementsByOffender.set(movement.offenderNo, [...existingHistory, movement])
+      })
+    }
+
+    // Store offender movement histories for offenders that arrived today, limited to the last 2 movements (to determine arrival type)
+    const offenderMovementHistories = offenderNumbers.map(offenderNo => ({
+      offenderNo,
+      history: (offenderMovementsByOffender.get(offenderNo) || []).slice(-2),
+    }))
 
     // Count arrival types based on recent movement types
     let newAdmissions = 0

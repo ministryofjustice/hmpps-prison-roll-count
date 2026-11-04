@@ -30,7 +30,7 @@ describe('establishmentRollService', () => {
         },
       ])
       prisonApiClientMock.getMovementsOut = jest.fn().mockResolvedValue([])
-      prisonApiClientMock.getOffenderMovements = jest.fn().mockResolvedValue([
+      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
         {
           offenderNo: 'A1234AA',
           movementType: 'TRN',
@@ -61,11 +61,11 @@ describe('establishmentRollService', () => {
         transfersIn: 1,
         returns: 0,
       })
-      expect(prisonApiClientMock.getOffenderMovements).toHaveBeenCalledWith('A1234AA', '2024-04-10')
+      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(['A1234AA'], false)
     })
 
     it('should count a prisoner as a transfer when one of their last two movementTypes is TRN', async () => {
-      prisonApiClientMock.getOffenderMovements = jest.fn().mockResolvedValue([
+      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
         {
           offenderNo: 'A1234AA',
           movementType: 'ADM',
@@ -102,7 +102,7 @@ describe('establishmentRollService', () => {
           movementDateTime: '2024-05-10T13:00:00',
         },
       ])
-      prisonApiClientMock.getOffenderMovements = jest.fn().mockResolvedValue([
+      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
         {
           offenderNo: 'A1234AA',
           movementType: 'ADM',
@@ -126,11 +126,11 @@ describe('establishmentRollService', () => {
           returns: 0,
         }),
       )
-      expect(prisonApiClientMock.getOffenderMovements).toHaveBeenCalledTimes(2)
+      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledTimes(1)
     })
 
     it('should count a prisoner as a transfer when recent movements are returned as TRN then ADM', async () => {
-      prisonApiClientMock.getOffenderMovements = jest.fn().mockResolvedValue([
+      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
         {
           offenderNo: 'A1234AA',
           movementType: 'TRN',
@@ -153,7 +153,7 @@ describe('establishmentRollService', () => {
     })
 
     it('should count a prisoner as a transfer when history is returned oldest-first', async () => {
-      prisonApiClientMock.getOffenderMovements = jest.fn().mockResolvedValue([
+      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
         {
           offenderNo: 'A1234AA',
           movementType: 'ADM',
@@ -192,7 +192,7 @@ describe('establishmentRollService', () => {
     })
 
     it('should count a prisoner as a transfer when Prison API returns ADM with a transfer-related reason', async () => {
-      prisonApiClientMock.getOffenderMovements = jest.fn().mockResolvedValue([
+      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
         {
           offenderNo: 'A1234AA',
           movementType: 'ADM',
