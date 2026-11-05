@@ -35,6 +35,29 @@ const stubInTodayOffenderMovements = (payloadByOffender: Record<string, unknown[
     Object.entries(payloadByOffender).map(([offenderNo, payload]) => stubOffenderMovementHistory(offenderNo, payload)),
   )
 
+const toBulkMovementsPayload = (payloadByOffender: Record<string, unknown[]>) =>
+  Object.entries(payloadByOffender).flatMap(([offenderNo, movements]) =>
+    (movements as Record<string, unknown>[]).map(movement => ({ ...movement, offenderNo })),
+  )
+
+const stubMultiOffenderMovementHistory = (payloadByOffender: Record<string, unknown[]>) => {
+  const payload = toBulkMovementsPayload(payloadByOffender)
+
+  return stubFor({
+    request: {
+      method: 'POST',
+      urlPattern: `/prison/api/movements/offenders\\?latestOnly=false`,
+    },
+    response: {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      jsonBody: payload,
+    },
+  })
+}
+
 const asAdmissionMovement = (movement: (typeof movementsRecentMock)[number]) => ({
   ...movement,
   movementType: 'ADM',
@@ -277,7 +300,7 @@ export default {
     return stubFor({
       request: {
         method: 'POST',
-        urlPattern: `/prison/api/movements/offenders`,
+        urlPattern: `/prison/api/movements/offenders(\\?latestOnly=false)?`,
       },
       response: {
         status: 200,
@@ -290,55 +313,85 @@ export default {
   },
 
   stubInTodayMovementHistoryDefault: () => {
-    return stubInTodayOffenderMovements({
+    const payloadByOffender = {
       A1234AA: [{ ...movementsRecentMock[0], movementType: 'TRN' }],
       A1234AB: [{ ...movementsRecentMock[1], movementType: 'TRN' }],
-    })
+    }
+
+    return Promise.all([
+      stubInTodayOffenderMovements(payloadByOffender),
+      stubMultiOffenderMovementHistory(payloadByOffender),
+    ])
   },
 
   stubInTodayTwoRecentMovements: () => {
-    return stubInTodayOffenderMovements({
+    const payloadByOffender = {
       A1234AA: [
         { ...movementsRecentMock[0], movementType: 'TRN', movementDate: '2024-05-10', movementTime: '10:00' },
         { ...movementsRecentMock[0], movementType: 'ADM', movementDate: '2024-05-10', movementTime: '12:00' },
       ],
       A1234AB: [{ ...movementsRecentMock[1], movementType: 'TRN' }],
-    })
+    }
+
+    return Promise.all([
+      stubInTodayOffenderMovements(payloadByOffender),
+      stubMultiOffenderMovementHistory(payloadByOffender),
+    ])
   },
 
   stubInTodayNewAdmissionsMovements: () => {
-    return stubInTodayOffenderMovements({
+    const payloadByOffender = {
       A1234AA: [asAdmissionMovement(movementsRecentMock[0])],
       A1234AB: [asAdmissionMovement(movementsRecentMock[1])],
-    })
+    }
+
+    return Promise.all([
+      stubInTodayOffenderMovements(payloadByOffender),
+      stubMultiOffenderMovementHistory(payloadByOffender),
+    ])
   },
 
   stubInTodayTransfersInMovements: () => {
-    return stubInTodayOffenderMovements({
+    const payloadByOffender = {
       A1234AA: [{ ...movementsRecentMock[0], movementType: 'TRN' }],
       A1234AB: [{ ...movementsRecentMock[1], movementType: 'TRN' }],
-    })
+    }
+
+    return Promise.all([
+      stubInTodayOffenderMovements(payloadByOffender),
+      stubMultiOffenderMovementHistory(payloadByOffender),
+    ])
   },
 
   stubInTodayReturnsMovements: () => {
-    return stubInTodayOffenderMovements({
+    const payloadByOffender = {
       A1234AA: [{ ...movementsRecentMock[0], movementType: 'CRT' }],
       A1234AB: [{ ...movementsRecentMock[1], movementType: 'TAP' }],
-    })
+    }
+
+    return Promise.all([
+      stubInTodayOffenderMovements(payloadByOffender),
+      stubMultiOffenderMovementHistory(payloadByOffender),
+    ])
   },
 
   stubInTodayMixedMovementTypes: () => {
-    return stubInTodayOffenderMovements({
+    const payloadByOffender = {
       A1234AA: [asAdmissionMovement(movementsRecentMock[0])],
       A1234AB: [{ ...movementsRecentMock[1], movementType: 'TRN' }],
-    })
+    }
+
+    return Promise.all([
+      stubInTodayOffenderMovements(payloadByOffender),
+      stubMultiOffenderMovementHistory(payloadByOffender),
+    ])
   },
 
   stubRecentOvernightMovements: () => {
     return stubFor({
       request: {
         method: 'POST',
-        urlPattern: `/prison/api/movements/offenders`,
+        urlPattern: `/prison/api/movements/offenders(\\?latestOnly=false)?`,
       },
       response: {
         status: 200,
@@ -415,30 +468,50 @@ export default {
   },
 
   stubNewAdmissionsMovements: () => {
-    return stubInTodayOffenderMovements({
+    const payloadByOffender = {
       A1234AA: [asAdmissionMovement(movementsRecentMock[0])],
       A1234AB: [asAdmissionMovement(movementsRecentMock[1])],
-    })
+    }
+
+    return Promise.all([
+      stubInTodayOffenderMovements(payloadByOffender),
+      stubMultiOffenderMovementHistory(payloadByOffender),
+    ])
   },
 
   stubTransfersInMovements: () => {
-    return stubInTodayOffenderMovements({
+    const payloadByOffender = {
       A1234AA: [{ ...movementsRecentMock[0], movementType: 'TRN' }],
       A1234AB: [{ ...movementsRecentMock[1], movementType: 'TRN' }],
-    })
+    }
+
+    return Promise.all([
+      stubInTodayOffenderMovements(payloadByOffender),
+      stubMultiOffenderMovementHistory(payloadByOffender),
+    ])
   },
 
   stubReturnsMovements: () => {
-    return stubInTodayOffenderMovements({
+    const payloadByOffender = {
       A1234AA: [{ ...movementsRecentMock[0], movementType: 'CRT' }],
       A1234AB: [{ ...movementsRecentMock[1], movementType: 'TAP' }],
-    })
+    }
+
+    return Promise.all([
+      stubInTodayOffenderMovements(payloadByOffender),
+      stubMultiOffenderMovementHistory(payloadByOffender),
+    ])
   },
 
   stubMixedMovementTypes: () => {
-    return stubInTodayOffenderMovements({
+    const payloadByOffender = {
       A1234AA: [asAdmissionMovement(movementsRecentMock[0])],
       A1234AB: [{ ...movementsRecentMock[1], movementType: 'TRN' }],
-    })
+    }
+
+    return Promise.all([
+      stubInTodayOffenderMovements(payloadByOffender),
+      stubMultiOffenderMovementHistory(payloadByOffender),
+    ])
   },
 }

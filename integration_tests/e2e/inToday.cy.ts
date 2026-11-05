@@ -9,6 +9,7 @@ context('In Today Page', () => {
     cy.setupComponentsData()
     cy.task('stubMovementsIn')
     cy.task('stubMovementsOut')
+    cy.task('stubRecentMovements')
     cy.task('stubInTodayMovementHistoryDefault')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
@@ -124,6 +125,7 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.setupComponentsData()
     cy.task('stubMovementsIn')
     cy.task('stubMovementsOut')
+    cy.task('stubRecentMovements')
     cy.task('stubInTodayTwoRecentMovements')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
@@ -145,6 +147,7 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.setupComponentsData()
     cy.task('stubMovementsIn')
     cy.task('stubMovementsOut')
+    cy.task('stubRecentMovements')
     cy.task('stubNewAdmissionsMovements') // Custom stub with all ADM
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
@@ -165,6 +168,7 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.setupComponentsData()
     cy.task('stubMovementsIn')
     cy.task('stubMovementsOut')
+    cy.task('stubRecentMovements')
     cy.task('stubTransfersInMovements') // Custom stub with all TRN
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
@@ -185,6 +189,7 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.setupComponentsData()
     cy.task('stubMovementsIn')
     cy.task('stubMovementsOut')
+    cy.task('stubRecentMovements')
     cy.task('stubReturnsMovements') // Custom stub with CRT/TAP
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
@@ -205,6 +210,7 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.setupComponentsData()
     cy.task('stubMovementsIn')
     cy.task('stubMovementsOut')
+    cy.task('stubRecentMovements')
     cy.task('stubMixedMovementTypes') // Custom stub with ADM, TRN, and CRT/TAP
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
