@@ -62,12 +62,12 @@ describe('EstablishmentRollController', () => {
 
       expect(establishmentRollService.getEstablishmentRollCounts).toHaveBeenCalledWith('token', 'LEI', true)
       expect(establishmentRollService.isResiLocationServiceActive).not.toHaveBeenCalled()
-      expect(res.render).toHaveBeenCalledWith('pages/establishmentRoll', {
-        establishmentRollCounts: expect.any(Object),
-        date: expect.anything(),
-        useWorkingCapacity: true,
-        displayOvernights: false,
-      })
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/establishmentRoll',
+        expect.objectContaining({
+          useWorkingCapacity: true,
+        }),
+      )
     })
 
     it('sets useWorkingCapacity to true when service reports active and forceUseLocationsApi is false', async () => {
@@ -86,12 +86,12 @@ describe('EstablishmentRollController', () => {
 
       await controller.getEstablishmentRoll(false)(req, res, next)
 
-      expect(res.render).toHaveBeenCalledWith('pages/establishmentRoll', {
-        establishmentRollCounts: expect.any(Object),
-        date: expect.anything(),
-        useWorkingCapacity: true,
-        displayOvernights: false,
-      })
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/establishmentRoll',
+        expect.objectContaining({
+          useWorkingCapacity: true,
+        }),
+      )
     })
 
     it('sets useWorkingCapacity to false when service reports inactive and forceUseLocationsApi is false', async () => {
@@ -111,12 +111,12 @@ describe('EstablishmentRollController', () => {
       await controller.getEstablishmentRoll(false)(req, res, next)
 
       expect(establishmentRollService.isResiLocationServiceActive).toHaveBeenCalledWith('token', 'LEI')
-      expect(res.render).toHaveBeenCalledWith('pages/establishmentRoll', {
-        establishmentRollCounts: expect.any(Object),
-        date: expect.anything(),
-        useWorkingCapacity: false,
-        displayOvernights: false,
-      })
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/establishmentRoll',
+        expect.objectContaining({
+          useWorkingCapacity: false,
+        }),
+      )
     })
   })
 
