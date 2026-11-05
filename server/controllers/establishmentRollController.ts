@@ -248,7 +248,7 @@ export default class EstablishmentRollController {
         establishmentRollCounts: establishmentRollCounts || null,
         date: new Date(),
         useWorkingCapacity: useLocationsApi,
-        displayOvernights: Boolean(useLocationsApi && eRollEnabled),
+        displayOvernights: useLocationsApi && eRollEnabled,
       })
     }
   }
