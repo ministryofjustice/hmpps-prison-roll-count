@@ -5,7 +5,7 @@ import EstablishmentRollSummary from './interfaces/EstablishmentRollSummary'
 import { PrisonApiClient } from '../data/interfaces/prisonApiClient'
 import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
 import { ResidentialLocation } from '../data/interfaces/prisonRollCount'
-import { getEffectiveArrivalType, getMovementHistoryStartDate } from '../utils/movementType'
+import { getEffectiveArrivalType } from '../utils/movementType'
 
 export default class EstablishmentRollService {
   constructor(
