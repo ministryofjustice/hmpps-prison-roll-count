@@ -40,7 +40,7 @@ export default class EstablishmentRollService {
     // Calculate how many new admissions, transfers in and returns there are based on the recent movement history for offenders that arrived today
     const offenderNumbers = (arrivedTodayMovements || []).map(movement => movement.offenderNo)
     const recentMovements = offenderNumbers.length
-      ? (await prisonApi.getRecentMovements(offenderNumbers, false)) || []
+      ? (await prisonApi.getMultipleOffenderMovements(offenderNumbers, false)) || []
       : []
     const offenderMovementsByOffender = new Map<string, typeof recentMovements>()
 

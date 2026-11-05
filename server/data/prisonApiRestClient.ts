@@ -49,7 +49,11 @@ export default class PrisonApiRestClient implements PrisonApiClient {
     })
   }
 
-  getRecentMovements(prisonerNumbers: string[], latestOnly: boolean = false): Promise<OffenderMovement[]> {
+  getRecentMovements(prisonerNumbers: string[]): Promise<OffenderMovement[]> {
+    return this.post<OffenderMovement[]>({ path: `/api/movements/offenders`, data: prisonerNumbers })
+  }
+
+  getMultipleOffenderMovements(prisonerNumbers: string[], latestOnly: boolean = false): Promise<OffenderMovement[]> {
     return this.post<OffenderMovement[]>({
       path: `/api/movements/offenders`,
       query: { latestOnly },
