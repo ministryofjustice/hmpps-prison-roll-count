@@ -9,7 +9,7 @@ import { BedAssignment } from '../data/interfaces/bedAssignment'
 import { OffenderMovement } from '../data/interfaces/offenderMovement'
 import { OffenderOut } from '../data/interfaces/offenderOut'
 import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
-import { getEffectiveArrivalType, getMovementHistoryStartDate } from '../utils/movementType'
+import { getEffectiveArrivalType } from '../utils/movementType'
 
 export default class MovementsService {
   constructor(
@@ -17,14 +17,6 @@ export default class MovementsService {
     private readonly prisonerSearchClientBuilder: RestClientBuilder<PrisonerSearchClient>,
     private readonly locationsInsidePrisonApiClientBuilder: RestClientBuilder<LocationsInsidePrisonApiClient>,
   ) {}
-
-  private getMovementHistoryStartDateFromMovement(
-    movement?: { movementDateTime?: string; movementDate?: string } | string,
-  ): string {
-    if (typeof movement === 'string') return getMovementHistoryStartDate(movement)
-
-    return getMovementHistoryStartDate(movement?.movementDateTime || movement?.movementDate)
-  }
 
   public async getInTodayPrisoners(
     clientToken: string,

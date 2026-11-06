@@ -690,17 +690,6 @@ describe('movementsService', () => {
       },
     ])
     prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock.slice(0, 1))
-    prisonApiClientMock.getOffenderMovements = jest.fn().mockResolvedValue([
-      {
-        ...movementsRecentMock[0],
-        offenderNo: 'A1234AA',
-        movementType: 'TAP',
-        movementTypeDescription: 'Temporary absence',
-        movementReason: 'TEMP',
-        movementReasonDescription: 'Temporary absence',
-        directionCode: 'OUT',
-      },
-    ])
 
     const result = await movementsService.getOutTodayPrisoners('token', 'LEI')
 
