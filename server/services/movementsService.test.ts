@@ -167,6 +167,53 @@ describe('movementsService', () => {
       )
     })
 
+    it('should use the latest history after sorting movement rows by date and time', async () => {
+      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue(movementsInMock)
+      prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
+      prisonApiClientMock.getMultipleOffenderMovements = jest.fn().mockResolvedValue([
+        {
+          ...movementsRecentMock[0],
+          offenderNo: 'A1234AA',
+          movementType: 'ADM',
+          movementDate: '2024-05-10',
+          movementTime: '12:00',
+        },
+        {
+          ...movementsRecentMock[0],
+          offenderNo: 'A1234AA',
+          movementType: 'TRN',
+          movementDate: '2024-05-10',
+          movementTime: '10:00',
+        },
+        {
+          ...movementsRecentMock[0],
+          offenderNo: 'A1234AA',
+          movementType: 'ADM',
+          movementDate: '2024-05-09',
+          movementTime: '06:00',
+        },
+        {
+          ...movementsRecentMock[0],
+          offenderNo: 'A1234AA',
+          movementType: 'ADM',
+          movementDate: '2024-05-08',
+          movementTime: '14:00',
+        },
+        ...movementsRecentMock.filter(movement => movement.offenderNo === 'A1234AB'),
+      ])
+
+      const result = await movementsService.getInTodayPrisoners('token', 'LEI')
+
+      expect(result).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            prisonerNumber: 'A1234AA',
+            arrivalType: 'TRN',
+          }),
+        ]),
+      )
+    })
+
     it('should use TRN as arrivalType when Prison API returns ADM with a transfer-related reason', async () => {
       prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue(movementsInMock)
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)

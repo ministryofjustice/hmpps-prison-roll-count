@@ -18,6 +18,30 @@ export default class MovementsService {
     private readonly locationsInsidePrisonApiClientBuilder: RestClientBuilder<LocationsInsidePrisonApiClient>,
   ) {}
 
+  private sortMovementsByDateTime<T extends { movementDate?: string; movementTime?: string }>(movements: T[]): T[] {
+    return [...movements].sort((left, right) => {
+      const leftDateTime = `${left.movementDate || ''}T${left.movementTime || ''}`
+      const rightDateTime = `${right.movementDate || ''}T${right.movementTime || ''}`
+      return leftDateTime.localeCompare(rightDateTime, 'en', { numeric: true })
+    })
+  }
+
+  private getMovementHistoryByOffender(movements: OffenderMovement[]): Map<string, OffenderMovement[]> {
+    const offenderMovementsByOffender = new Map<string, OffenderMovement[]>()
+
+    movements.forEach(movement => {
+      const existingHistory = offenderMovementsByOffender.get(movement.offenderNo) || []
+      offenderMovementsByOffender.set(movement.offenderNo, [...existingHistory, movement])
+    })
+
+    return new Map(
+      Array.from(offenderMovementsByOffender.entries()).map(([offenderNo, offenderMovements]) => [
+        offenderNo,
+        this.sortMovementsByDateTime(offenderMovements),
+      ]),
+    )
+  }
+
   public async getInTodayPrisoners(
     clientToken: string,
     caseLoadId: string,
@@ -36,12 +60,7 @@ export default class MovementsService {
       prisonApi.getMultipleOffenderMovements(prisonerNumbers, false),
     ])
     const prisonerByNumber = new Map(prisoners.map(prisoner => [prisoner.prisonerNumber, prisoner]))
-    const offenderMovementsByOffender = new Map<string, OffenderMovement[]>()
-
-    ;(recentMovements || []).forEach(movement => {
-      const existingHistory = offenderMovementsByOffender.get(movement.offenderNo) || []
-      offenderMovementsByOffender.set(movement.offenderNo, [...existingHistory, movement])
-    })
+    const offenderMovementsByOffender = this.getMovementHistoryByOffender(recentMovements)
 
     const mappedPrisoners = movements.map(prisonerMovement => {
       const prisoner = prisonerByNumber.get(prisonerMovement.offenderNo)
@@ -125,12 +144,7 @@ export default class MovementsService {
       prisonApi.getMultipleOffenderMovements(prisonerNumbers, true),
     ])
     const prisonerByNumber = new Map(prisoners.map(prisoner => [prisoner.prisonerNumber, prisoner]))
-    const offenderMovementsByOffender = new Map<string, OffenderMovement[]>()
-
-    ;(recentMovements || []).forEach(movement => {
-      const existingHistory = offenderMovementsByOffender.get(movement.offenderNo) || []
-      offenderMovementsByOffender.set(movement.offenderNo, [...existingHistory, movement])
-    })
+    const offenderMovementsByOffender = this.getMovementHistoryByOffender(recentMovements)
 
     const mappedPrisoners = movements.map(prisonerMovement => {
       const prisoner = prisonerByNumber.get(prisonerMovement.offenderNo)
