@@ -281,10 +281,11 @@ describe('movementsService', () => {
     it('should return prisoners from movements api', async () => {
       prisonApiClientMock.getMovementsOut = jest.fn().mockResolvedValue(movementsOutMock)
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
-      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue(movementsRecentMock)
+      prisonApiClientMock.getMultipleOffenderMovements = jest.fn().mockResolvedValue(movementsRecentMock)
 
       const result = await movementsService.getOutTodayPrisoners('token', 'LEI')
       expect(prisonerSearchApiClientMock.getPrisonersById).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
+      expect(prisonApiClientMock.getMultipleOffenderMovements).toHaveBeenCalledWith(['A1234AA', 'A1234AB'], true)
 
       expect(result).toEqual([
         {

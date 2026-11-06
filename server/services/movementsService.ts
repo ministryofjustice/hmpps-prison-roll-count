@@ -130,7 +130,7 @@ export default class MovementsService {
 
     const [prisoners, recentMovements] = await Promise.all([
       prisonerSearchClient.getPrisonersById(prisonerNumbers),
-      prisonApi.getMultipleOffenderMovements(prisonerNumbers, false),
+      prisonApi.getMultipleOffenderMovements(prisonerNumbers, true),
     ])
     const prisonerByNumber = new Map(prisoners.map(prisoner => [prisoner.prisonerNumber, prisoner]))
     const offenderMovementsByOffender = new Map<string, OffenderMovement[]>()
