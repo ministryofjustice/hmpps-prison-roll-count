@@ -149,22 +149,23 @@ describe('EstablishmentRollController', () => {
         'timeArrived&direction=descending',
       )
       expect(establishmentRollService.getEstablishmentRollCounts).not.toHaveBeenCalled()
-      expect(res.render).toHaveBeenCalledWith('pages/inToday', {
-        prisoners: arrivedPrisoners,
-        establishmentRollCounts: {
-          todayStats: {
-            newAdmissions: 0,
-            transfersIn: 0,
-            returns: 0,
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/inToday',
+        expect.objectContaining({
+          prisoners: [expect.objectContaining({ prisonerNumber: 'A1234BC', arrivalType: undefined })],
+          establishmentRollCounts: {
+            todayStats: {
+              newAdmissions: 0,
+              transfersIn: 0,
+              returns: 0,
+            },
           },
-          totals: {},
-          wings: [],
-        },
-        sort: 'timeArrived&direction=descending',
-        selectedFilters: [],
-        appliedFilters: [],
-        clearFiltersHref: '/in-today?sort=timeArrived&direction=descending',
-      })
+          sort: 'timeArrived&direction=descending',
+          selectedFilters: [],
+          appliedFilters: [],
+          clearFiltersHref: '/in-today?sort=timeArrived&direction=descending',
+        }),
+      )
     })
 
     it('combines sort and direction query params when provided', async () => {
@@ -191,22 +192,23 @@ describe('EstablishmentRollController', () => {
       await controller.getInToday()(req, res, next)
 
       expect(movementsService.getInTodayPrisoners).toHaveBeenCalledWith('token', 'LEI', 'lastName&direction=ascending')
-      expect(res.render).toHaveBeenCalledWith('pages/inToday', {
-        prisoners: [],
-        establishmentRollCounts: {
-          todayStats: {
-            newAdmissions: 0,
-            transfersIn: 0,
-            returns: 0,
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/inToday',
+        expect.objectContaining({
+          prisoners: [],
+          establishmentRollCounts: {
+            todayStats: {
+              newAdmissions: 0,
+              transfersIn: 0,
+              returns: 0,
+            },
           },
-          totals: {},
-          wings: [] as unknown[],
-        },
-        sort: 'lastName&direction=ascending',
-        selectedFilters: [],
-        appliedFilters: [],
-        clearFiltersHref: '/in-today?sort=lastName&direction=ascending',
-      })
+          sort: 'lastName&direction=ascending',
+          selectedFilters: [],
+          appliedFilters: [],
+          clearFiltersHref: '/in-today?sort=lastName&direction=ascending',
+        }),
+      )
     })
 
     it('filters prisoners by selected arrival types and builds applied filters', async () => {
@@ -238,31 +240,35 @@ describe('EstablishmentRollController', () => {
 
       await controller.getInToday()(req, res, next)
 
-      expect(res.render).toHaveBeenCalledWith('pages/inToday', {
-        prisoners: [arrivedPrisoners[0], arrivedPrisoners[2]],
-        establishmentRollCounts: {
-          todayStats: {
-            newAdmissions: 1,
-            transfersIn: 1,
-            returns: 1,
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/inToday',
+        expect.objectContaining({
+          prisoners: [
+            expect.objectContaining({ prisonerNumber: 'A1234BC', arrivalType: 'ADM' }),
+            expect.objectContaining({ prisonerNumber: 'A1234BE', arrivalType: 'CRT' }),
+          ],
+          establishmentRollCounts: {
+            todayStats: {
+              newAdmissions: 1,
+              transfersIn: 1,
+              returns: 1,
+            },
           },
-          totals: {},
-          wings: [] as unknown[],
-        },
-        sort: 'timeArrived&direction=descending',
-        selectedFilters: ['newAdmissions', 'returns'],
-        appliedFilters: [
-          {
-            text: 'New admissions',
-            href: '/in-today?sort=timeArrived&direction=descending&arrivalType=returns',
-          },
-          {
-            text: 'Returns',
-            href: '/in-today?sort=timeArrived&direction=descending&arrivalType=newAdmissions',
-          },
-        ],
-        clearFiltersHref: '/in-today?sort=timeArrived&direction=descending',
-      })
+          sort: 'timeArrived&direction=descending',
+          selectedFilters: ['newAdmissions', 'returns'],
+          appliedFilters: [
+            {
+              text: 'New admissions',
+              href: '/in-today?sort=timeArrived&direction=descending&arrivalType=returns',
+            },
+            {
+              text: 'Returns',
+              href: '/in-today?sort=timeArrived&direction=descending&arrivalType=newAdmissions',
+            },
+          ],
+          clearFiltersHref: '/in-today?sort=timeArrived&direction=descending',
+        }),
+      )
     })
 
     it('ignores non-string arrival type query values', async () => {
@@ -293,7 +299,7 @@ describe('EstablishmentRollController', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/inToday',
         expect.objectContaining({
-          prisoners: arrivedPrisoners,
+          prisoners: [expect.objectContaining({ prisonerNumber: 'A1234BC', arrivalType: 'ADM' })],
           selectedFilters: ['newAdmissions'],
           appliedFilters: [
             {
@@ -693,8 +699,6 @@ describe('EstablishmentRollController', () => {
               released: 1,
               transferredOut: 1,
             },
-            totals: {},
-            wings: [] as unknown[],
           },
           sort: 'timeOut&direction=descending',
           selectedFilters: ['temporaryAbsence', 'transferredOut'],

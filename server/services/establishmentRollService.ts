@@ -57,59 +57,6 @@ export default class EstablishmentRollService {
       history: (offenderMovementsByOffender.get(offenderNo) || []).slice(-2),
     }))
 
-    // Count arrival types based on recent movement types
-    let newAdmissions = 0
-    let transfersIn = 0
-    let returns = 0
-
-    offenderMovementHistories.forEach(({ history }) => {
-      const arrivalType = getEffectiveArrivalType(history)
-
-      switch (arrivalType) {
-        case 'ADM':
-          newAdmissions += 1
-          break
-        case 'TRN':
-          transfersIn += 1
-          break
-        case 'CRT':
-        case 'TAP':
-          returns += 1
-          break
-        default:
-          break
-      }
-    })
-
-    // Calculate how many temporary absences, court appearances, releases and transfers out there are based on the recent movement history for offenders that departed today
-
-    // Count departure types based on recent movement types
-    let temporaryAbsence = 0
-    let atCourt = 0
-    let released = 0
-    let transferredOut = 0
-
-    outTodayMovements.forEach(movements => {
-      const departureType = movements.movementType
-
-      switch (departureType) {
-        case 'TAP':
-          temporaryAbsence += 1
-          break
-        case 'CRT':
-          atCourt += 1
-          break
-        case 'REL':
-          released += 1
-          break
-        case 'TRN':
-          transferredOut += 1
-          break
-        default:
-          break
-      }
-    })
-
     return {
       todayStats: {
         unlockRoll: rollCount.numUnlockRollToday,
@@ -120,13 +67,6 @@ export default class EstablishmentRollService {
         enroute: rollCount.numStillToArrive,
         noCellAllocated: rollCount.numNoCellAllocated,
         overnights: rollCount.numOvernights,
-        newAdmissions,
-        transfersIn,
-        returns,
-        temporaryAbsence,
-        atCourt,
-        released,
-        transferredOut,
       },
       totals: rollCount.totals,
       wings: rollCount.locations,

@@ -45,21 +45,14 @@ describe('establishmentRollService', () => {
       const establishmentRollCounts = await establishmentRollService.getEstablishmentRollCounts('token', 'LEI')
 
       expect(establishmentRollCounts.todayStats).toEqual({
-        atCourt: 0,
-        released: 0,
-        temporaryAbsence: 0,
-        transferredOut: 0,
-        currentRoll: 200,
-        enroute: 500,
-        inToday: 300,
-        noCellAllocated: 700,
-        outToday: 600,
-        unassignedIn: 400,
         unlockRoll: 100,
+        inToday: 300,
+        outToday: 600,
+        currentRoll: 200,
+        unassignedIn: 400,
+        enroute: 500,
+        noCellAllocated: 700,
         overnights: 800,
-        newAdmissions: 0,
-        transfersIn: 1,
-        returns: 0,
       })
       expect(prisonApiClientMock.getMultipleOffenderMovements).toHaveBeenCalledWith(['A1234AA'], false)
     })
@@ -84,9 +77,14 @@ describe('establishmentRollService', () => {
 
       expect(establishmentRollCounts.todayStats).toEqual(
         expect.objectContaining({
-          newAdmissions: 0,
-          transfersIn: 1,
-          returns: 0,
+          unlockRoll: 100,
+          inToday: 300,
+          outToday: 600,
+          currentRoll: 200,
+          unassignedIn: 400,
+          enroute: 500,
+          noCellAllocated: 700,
+          overnights: 800,
         }),
       )
     })
@@ -121,9 +119,14 @@ describe('establishmentRollService', () => {
 
       expect(establishmentRollCounts.todayStats).toEqual(
         expect.objectContaining({
-          newAdmissions: 2,
-          transfersIn: 0,
-          returns: 0,
+          unlockRoll: 100,
+          inToday: 300,
+          outToday: 600,
+          currentRoll: 200,
+          unassignedIn: 400,
+          enroute: 500,
+          noCellAllocated: 700,
+          overnights: 800,
         }),
       )
       expect(prisonApiClientMock.getMultipleOffenderMovements).toHaveBeenCalledTimes(1)
@@ -145,9 +148,14 @@ describe('establishmentRollService', () => {
 
       expect(establishmentRollCounts.todayStats).toEqual(
         expect.objectContaining({
-          newAdmissions: 0,
-          transfersIn: 1,
-          returns: 0,
+          unlockRoll: 100,
+          inToday: 300,
+          outToday: 600,
+          currentRoll: 200,
+          unassignedIn: 400,
+          enroute: 500,
+          noCellAllocated: 700,
+          overnights: 800,
         }),
       )
     })
@@ -184,9 +192,14 @@ describe('establishmentRollService', () => {
 
       expect(establishmentRollCounts.todayStats).toEqual(
         expect.objectContaining({
-          newAdmissions: 0,
-          transfersIn: 1,
-          returns: 0,
+          unlockRoll: 100,
+          inToday: 300,
+          outToday: 600,
+          currentRoll: 200,
+          unassignedIn: 400,
+          enroute: 500,
+          noCellAllocated: 700,
+          overnights: 800,
         }),
       )
     })
@@ -205,9 +218,14 @@ describe('establishmentRollService', () => {
 
       expect(establishmentRollCounts.todayStats).toEqual(
         expect.objectContaining({
-          newAdmissions: 0,
-          transfersIn: 1,
-          returns: 0,
+          unlockRoll: 100,
+          inToday: 300,
+          outToday: 600,
+          currentRoll: 200,
+          unassignedIn: 400,
+          enroute: 500,
+          noCellAllocated: 700,
+          overnights: 800,
         }),
       )
     })

@@ -296,8 +296,6 @@ export default class EstablishmentRollController {
           todayStats: {
             ...getArrivalTypeCounts(filterableArrivedPrisoners),
           },
-          totals: {},
-          wings: [],
         },
         sort,
         selectedFilters,
@@ -339,8 +337,6 @@ export default class EstablishmentRollController {
           todayStats: {
             ...getDepartureTypeCounts(filterableOutPrisoners),
           },
-          totals: {},
-          wings: [],
         },
         sort,
         selectedFilters,
