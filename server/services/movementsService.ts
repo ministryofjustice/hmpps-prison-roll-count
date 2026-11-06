@@ -57,7 +57,7 @@ export default class MovementsService {
 
     const [prisoners, recentMovements] = await Promise.all([
       prisonerSearchClient.getPrisonersById(prisonerNumbers),
-      prisonApi.getMultipleOffenderMovements(prisonerNumbers, false),
+      prisonApi.getRecentMovements(prisonerNumbers, false),
     ])
     const prisonerByNumber = new Map(prisoners.map(prisoner => [prisoner.prisonerNumber, prisoner]))
     const offenderMovementsByOffender = this.getMovementHistoryByOffender(recentMovements)
@@ -141,7 +141,7 @@ export default class MovementsService {
 
     const [prisoners, recentMovements] = await Promise.all([
       prisonerSearchClient.getPrisonersById(prisonerNumbers),
-      prisonApi.getMultipleOffenderMovements(prisonerNumbers, true),
+      prisonApi.getRecentMovements(prisonerNumbers, true),
     ])
     const prisonerByNumber = new Map(prisoners.map(prisoner => [prisoner.prisonerNumber, prisoner]))
     const offenderMovementsByOffender = this.getMovementHistoryByOffender(recentMovements)
@@ -434,7 +434,7 @@ export default class MovementsService {
 
     const [prisoners, recentMovements] = await Promise.all([
       prisonerSearchClient.getPrisonersById(prisonerNumbers),
-      prisonApi.getRecentMovements(prisonerNumbers),
+      prisonApi.getRecentMovements(prisonerNumbers, false),
     ])
 
     return this.mapCurrentlyOutPrisoners(prisoners, recentMovements)
@@ -455,7 +455,7 @@ export default class MovementsService {
 
     const [prisoners, recentMovements] = await Promise.all([
       prisonerSearchClient.getPrisonersById(prisonerNumbers),
-      prisonApi.getRecentMovements(prisonerNumbers),
+      prisonApi.getRecentMovements(prisonerNumbers, false),
     ])
 
     return this.mapCurrentlyOutPrisoners(prisoners, recentMovements)
@@ -474,7 +474,7 @@ export default class MovementsService {
 
     const [prisoners, recentMovements] = await Promise.all([
       prisonerSearchClient.getPrisonersById(prisonerNumbers),
-      prisonApi.getRecentMovements(prisonerNumbers),
+      prisonApi.getRecentMovements(prisonerNumbers, false),
     ])
 
     return this.mapCurrentlyOutPrisoners(prisoners, recentMovements)
