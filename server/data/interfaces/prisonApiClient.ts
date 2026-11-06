@@ -17,8 +17,7 @@ export interface PrisonApiClient {
   getUserLocations(): Promise<Location[]>
   getLocation(locationId: string): Promise<Location>
   getMovements(prisonId: string): Promise<Movements>
-  getOffenderMovements(offenderNo: string, movementsAfter: string): Promise<OffenderMovement[]>
-  getRecentMovements(prisonerNumbers: string[]): Promise<OffenderMovement[]>
+  getRecentMovements(prisonerNumbers: string[], latestOnly?: boolean): Promise<OffenderMovement[]>
   getMovementsIn(prisonId: string, movementDate: string): Promise<OffenderIn[]>
   getMovementsOut(prisonId: string, movementDate: string): Promise<OffenderOut[]>
   getTemporaryAbsences(prisonId: string): Promise<OffenderOut[]>
