@@ -58,6 +58,7 @@ export default class PrisonApiRestClient implements PrisonApiClient {
       path: `/api/movements/offenders`,
       query: { latestOnly },
       data: prisonerNumbers,
+      retry: true,
     })
   }
 
