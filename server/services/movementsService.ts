@@ -50,14 +50,22 @@ export default class MovementsService {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
 
+    // Get all movements in for today
     const movements = await prisonApi.getMovementsIn(caseLoadId, new Date().toISOString())
     if (!movements || !movements?.length) return []
 
     const prisonerNumbers = movements.map(movement => movement.offenderNo)
+    const admissionPrisonerNumbers = movements
+      .filter(movement => movement.movementType === 'ADM')
+      .map(movement => movement.offenderNo)
 
+    // Get prisoner details and recent movements for all prisoners that arrived today,
+    // but only fetch history for admissions where it can affect arrival type inference.
     const [prisoners, recentMovements] = await Promise.all([
       prisonerSearchClient.getPrisonersById(prisonerNumbers),
-      prisonApi.getRecentMovements(prisonerNumbers, false),
+      admissionPrisonerNumbers.length
+        ? prisonApi.getRecentMovements(admissionPrisonerNumbers, false)
+        : Promise.resolve([]),
     ])
     const prisonerByNumber = new Map(prisoners.map(prisoner => [prisoner.prisonerNumber, prisoner]))
     const offenderMovementsByOffender = this.getMovementHistoryByOffender(recentMovements)
@@ -65,7 +73,10 @@ export default class MovementsService {
     const mappedPrisoners = movements.map(prisonerMovement => {
       const prisoner = prisonerByNumber.get(prisonerMovement.offenderNo)
       const movementHistory = offenderMovementsByOffender.get(prisonerMovement.offenderNo) || []
-      const arrivalType = getEffectiveArrivalType(movementHistory)
+      const arrivalType =
+        prisonerMovement.movementType === 'ADM'
+          ? getEffectiveArrivalType(movementHistory) || prisonerMovement.movementType
+          : prisonerMovement.movementType
 
       return {
         ...prisoner,
@@ -73,6 +84,8 @@ export default class MovementsService {
         arrivedFrom: prisonerMovement?.fromAgencyDescription || prisonerMovement?.fromAddress,
         alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner?.alerts || []),
         ...(arrivalType ? { arrivalType } : {}),
+        movementType: prisonerMovement?.movementType,
+        movementReason: prisonerMovement.movementReasonDescription,
       }
     })
 

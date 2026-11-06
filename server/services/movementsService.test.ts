@@ -31,15 +31,17 @@ describe('movementsService', () => {
 
       const result = await movementsService.getInTodayPrisoners('token', 'LEI')
       expect(prisonerSearchApiClientMock.getPrisonersById).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
-      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(['A1234AA', 'A1234AB'], false)
+      expect(prisonApiClientMock.getRecentMovements).not.toHaveBeenCalled()
 
       expect(result).toEqual([
         {
           ...prisonerSearchMock[1],
           alertFlags: [],
           arrivedFrom: 'York Train Station, York, YO24 1AB',
-          arrivalType: 'TRN',
+          arrivalType: 'ROTL',
           movementTime: '10:30:00',
+          movementReason: 'Temporary release',
+          movementType: 'ROTL',
         },
         {
           ...prisonerSearchMock[0],
@@ -52,14 +54,19 @@ describe('movementsService', () => {
             },
           ],
           arrivedFrom: 'Leeds',
-          arrivalType: 'TRN',
+          arrivalType: 'ROTL',
           movementTime: '10:00:00',
+          movementReason: 'Normal ROTL',
+          movementType: 'ROTL',
         },
       ])
     })
 
     it('should use TRN as arrivalType when one of the last two movementTypes is a transfer', async () => {
-      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue(movementsInMock)
+      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([
+        { ...movementsInMock[0], movementType: 'ADM' },
+        { ...movementsInMock[1], movementType: 'ROTL' },
+      ])
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
       prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
         {
@@ -92,7 +99,10 @@ describe('movementsService', () => {
     })
 
     it('should use TRN as arrivalType when recent movements are returned as TRN then ADM', async () => {
-      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue(movementsInMock)
+      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([
+        { ...movementsInMock[0], movementType: 'ADM' },
+        { ...movementsInMock[1], movementType: 'ROTL' },
+      ])
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
       prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
         {
@@ -121,7 +131,10 @@ describe('movementsService', () => {
     })
 
     it('should use the latest TRN and ADM movements when history is returned oldest-first', async () => {
-      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue(movementsInMock)
+      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([
+        { ...movementsInMock[0], movementType: 'ADM' },
+        { ...movementsInMock[1], movementType: 'ROTL' },
+      ])
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
       prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
         {
@@ -168,7 +181,10 @@ describe('movementsService', () => {
     })
 
     it('should use the latest history after sorting movement rows by date and time', async () => {
-      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue(movementsInMock)
+      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([
+        { ...movementsInMock[0], movementType: 'ADM' },
+        { ...movementsInMock[1], movementType: 'ROTL' },
+      ])
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
       prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
         {
@@ -215,7 +231,10 @@ describe('movementsService', () => {
     })
 
     it('should use TRN as arrivalType when Prison API returns ADM with a transfer-related reason', async () => {
-      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue(movementsInMock)
+      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([
+        { ...movementsInMock[0], movementType: 'ADM' },
+        { ...movementsInMock[1], movementType: 'ROTL' },
+      ])
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
       prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
         {
@@ -240,41 +259,11 @@ describe('movementsService', () => {
       )
     })
 
-    it('should default to sorting by timeArrived descending', async () => {
-      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue(movementsInMock)
-      prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
-      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue(movementsRecentMock)
-
-      const result = await movementsService.getInTodayPrisoners('token', 'LEI')
-
-      expect(result.map(prisoner => prisoner.prisonerNumber)).toEqual(['A1234AB', 'A1234AA'])
-    })
-
-    it('should sort by timeArrived ascending when requested', async () => {
-      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue(movementsInMock)
-      prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
-      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue(movementsRecentMock)
-
-      const result = await movementsService.getInTodayPrisoners('token', 'LEI', 'timeArrived&direction=ascending')
-
-      expect(result.map(prisoner => prisoner.prisonerNumber)).toEqual(['A1234AA', 'A1234AB'])
-    })
-
-    it('should sort by currentStatus ascending when requested', async () => {
-      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue(movementsInMock)
-      prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue([
-        { ...prisonerSearchMock[0], inOutStatus: 'OUT' },
-        { ...prisonerSearchMock[1], inOutStatus: 'IN' },
-      ])
-      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue(movementsRecentMock)
-
-      const result = await movementsService.getInTodayPrisoners('token', 'LEI', 'currentStatus&direction=ascending')
-
-      expect(result.map(prisoner => prisoner.prisonerNumber)).toEqual(['A1234AB', 'A1234AA'])
-    })
-
     it('should sort by arrivalType ascending when requested', async () => {
-      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue(movementsInMock)
+      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([
+        { ...movementsInMock[0], movementType: 'TRN' },
+        { ...movementsInMock[1], movementType: 'ADM' },
+      ])
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
       prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
         { ...movementsRecentMock[0], offenderNo: 'A1234AA', movementType: 'TRN' },

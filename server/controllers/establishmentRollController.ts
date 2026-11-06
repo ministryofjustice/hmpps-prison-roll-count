@@ -160,7 +160,7 @@ const getCurrentPage = (query: Request['query'], totalPages: number) => {
   return Math.min(requestedPage, totalPages)
 }
 
-const getArrivalTypeCounts = <T extends { arrivalType?: string }>(prisoners: T[]) => {
+const getArrivalTypeCounts = <T extends { arrivalType?: string; movementType?: string }>(prisoners: T[]) => {
   const counts = {
     newAdmissions: 0,
     transfersIn: 0,
@@ -168,7 +168,9 @@ const getArrivalTypeCounts = <T extends { arrivalType?: string }>(prisoners: T[]
   }
 
   prisoners.forEach(prisoner => {
-    switch (prisoner.arrivalType) {
+    const movementType = prisoner.movementType ?? prisoner.arrivalType
+
+    switch (movementType) {
       case 'ADM':
         counts.newAdmissions += 1
         break
