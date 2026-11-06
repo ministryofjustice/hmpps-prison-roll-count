@@ -5,7 +5,6 @@ import EstablishmentRollSummary from './interfaces/EstablishmentRollSummary'
 import { PrisonApiClient } from '../data/interfaces/prisonApiClient'
 import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
 import { ResidentialLocation } from '../data/interfaces/prisonRollCount'
-import { getEffectiveArrivalType } from '../utils/movementType'
 
 export default class EstablishmentRollService {
   constructor(
@@ -29,7 +28,7 @@ export default class EstablishmentRollService {
 
     const resiLocationServiceActive = await this.isResiLocationServiceActive(clientToken, caseLoadId)
 
-    const [rollCount, arrivedTodayMovements = [], outTodayMovements = []] = await Promise.all([
+    const [rollCount, arrivedTodayMovements = []] = await Promise.all([
       forceUseLocationsApi || resiLocationServiceActive
         ? locationsApi.getPrisonRollCount(caseLoadId)
         : prisonApi.getPrisonRollCount(caseLoadId),
@@ -50,12 +49,6 @@ export default class EstablishmentRollService {
         offenderMovementsByOffender.set(movement.offenderNo, [...existingHistory, movement])
       })
     }
-
-    // Store offender movement histories for offenders that arrived today, limited to the last 2 movements (to determine arrival type)
-    const offenderMovementHistories = offenderNumbers.map(offenderNo => ({
-      offenderNo,
-      history: (offenderMovementsByOffender.get(offenderNo) || []).slice(-2),
-    }))
 
     return {
       todayStats: {
