@@ -29,26 +29,6 @@ const withMovementTypeOverrides = (
     movementType: movementTypeByOffender[movement.offenderNo as string] ?? movement.movementType,
   }))
 
-const stubOffenderMovementHistory = (offenderNo: string, payload: unknown[]) =>
-  stubFor({
-    request: {
-      method: 'GET',
-      urlPattern: `/prison/api/movements/offender/${offenderNo}\\?movementsAfter=.*`,
-    },
-    response: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-      },
-      jsonBody: payload,
-    },
-  })
-
-const stubInTodayOffenderMovements = (payloadByOffender: Record<string, unknown[]>) =>
-  Promise.all(
-    Object.entries(payloadByOffender).map(([offenderNo, payload]) => stubOffenderMovementHistory(offenderNo, payload)),
-  )
-
 const toBulkMovementsPayload = (payloadByOffender: Record<string, unknown[]>) =>
   Object.entries(payloadByOffender).flatMap(([offenderNo, movements]) =>
     (movements as Record<string, unknown>[]).map(movement => ({ ...movement, offenderNo })),
@@ -344,7 +324,7 @@ export default {
     return stubFor({
       request: {
         method: 'POST',
-        urlPattern: `/prison/api/movements/offenders(\\?latestOnly=false)?`,
+        urlPattern: `/prison/api/movements/offenders(\\?latestOnly=(true|false))?`,
       },
       response: {
         status: 200,
@@ -360,7 +340,7 @@ export default {
     return stubFor({
       request: {
         method: 'POST',
-        urlPattern: `/prison/api/movements/offenders(\\?latestOnly=false)?`,
+        urlPattern: `/prison/api/movements/offenders(\\?latestOnly=(true|false))?`,
       },
       response: {
         status: 200,
@@ -380,7 +360,6 @@ export default {
 
     return Promise.all([
       stubTodayMovementsIn('LEI', { A1234AA: 'TRN', A1234AB: 'TRN' }),
-      stubInTodayOffenderMovements(payloadByOffender),
       stubMultiOffenderMovementHistory(payloadByOffender),
     ])
   },
@@ -396,7 +375,6 @@ export default {
 
     return Promise.all([
       stubTodayMovementsIn('LEI', { A1234AA: 'TRN', A1234AB: 'TRN' }),
-      stubInTodayOffenderMovements(payloadByOffender),
       stubMultiOffenderMovementHistory(payloadByOffender),
     ])
   },
@@ -421,10 +399,7 @@ export default {
       ],
     }
 
-    return Promise.all([
-      stubInTodayOffenderMovements(payloadByOffender),
-      stubMultiOffenderMovementHistory(payloadByOffender),
-    ])
+    return Promise.all([stubMultiOffenderMovementHistory(payloadByOffender)])
   },
 
   stubTransfersInMovements: () => {
@@ -435,7 +410,6 @@ export default {
 
     return Promise.all([
       stubTodayMovementsIn('LEI', { A1234AA: 'TRN', A1234AB: 'TRN' }),
-      stubInTodayOffenderMovements(payloadByOffender),
       stubMultiOffenderMovementHistory(payloadByOffender),
     ])
   },
@@ -448,7 +422,6 @@ export default {
 
     return Promise.all([
       stubTodayMovementsIn('LEI', { A1234AA: 'CRT', A1234AB: 'TAP' }),
-      stubInTodayOffenderMovements(payloadByOffender),
       stubMultiOffenderMovementHistory(payloadByOffender),
     ])
   },
@@ -466,10 +439,7 @@ export default {
       A1234AB: [{ ...movementsRecentMock[1], movementType: 'TRN' }],
     }
 
-    return Promise.all([
-      stubInTodayOffenderMovements(payloadByOffender),
-      stubMultiOffenderMovementHistory(payloadByOffender),
-    ])
+    return Promise.all([stubMultiOffenderMovementHistory(payloadByOffender)])
   },
 
   stubGetLocation: ({ locationId = 123, payload = locationMock } = {}) => {
@@ -542,7 +512,6 @@ export default {
   ) =>
     Promise.all([
       stubTodayMovementsIn('LEI', movementTypeByOffender),
-      stubInTodayOffenderMovements(payloadByOffender),
       stubMultiOffenderMovementHistory(payloadByOffender),
     ]),
 }
