@@ -45,7 +45,7 @@ const stubMultiOffenderMovementHistory = (payloadByOffender: Record<string, unkn
   return stubFor({
     request: {
       method: 'POST',
-      urlPattern: `/prison/api/movements/offenders\\?latestOnly=false`,
+      urlPattern: `/prison/api/movements/offenders(\\?latestOnly=(true|false))?`,
     },
     response: {
       status: 200,
