@@ -321,7 +321,7 @@ describe('movementsService', () => {
 
       const result = await movementsService.getOutTodayPrisoners('token', 'LEI')
       expect(prisonerSearchApiClientMock.getPrisonersById).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
-      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(['A1234AA', 'A1234AB'], true)
+      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
 
       expect(result).toEqual([
         {
@@ -592,7 +592,7 @@ describe('movementsService', () => {
     it('should search for prisoners for prisoners from getPrisonersCurrentlyOutOfLivingUnit', async () => {
       const result = await movementsService.getOffendersCurrentlyOutOfLivingUnit('token', 'MDI')
       expect(prisonerSearchApiClientMock.getPrisonersById).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
-      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(['A1234AA', 'A1234AB'], false)
+      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
 
       expect(result).toEqual([
         expect.objectContaining(prisonerSearchMock[0]),
@@ -667,7 +667,7 @@ describe('movementsService', () => {
     it('should search for prisoners for prisoners from getPrisonersCurrentlyOutOfPrison', async () => {
       const result = await movementsService.getOffendersCurrentlyOutTotal('token', 'MDI')
       expect(prisonerSearchApiClientMock.getPrisonersById).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
-      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(['A1234AA', 'A1234AB'], false)
+      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
 
       expect(result).toEqual([
         expect.objectContaining(prisonerSearchMock[0]),

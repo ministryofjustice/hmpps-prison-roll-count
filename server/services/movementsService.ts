@@ -154,7 +154,7 @@ export default class MovementsService {
 
     const [prisoners, recentMovements] = await Promise.all([
       prisonerSearchClient.getPrisonersById(prisonerNumbers),
-      prisonApi.getRecentMovements(prisonerNumbers, true),
+      prisonApi.getRecentMovements(prisonerNumbers),
     ])
     const prisonerByNumber = new Map(prisoners.map(prisoner => [prisoner.prisonerNumber, prisoner]))
     const offenderMovementsByOffender = this.getMovementHistoryByOffender(recentMovements)
@@ -447,7 +447,7 @@ export default class MovementsService {
 
     const [prisoners, recentMovements] = await Promise.all([
       prisonerSearchClient.getPrisonersById(prisonerNumbers),
-      prisonApi.getRecentMovements(prisonerNumbers, false),
+      prisonApi.getRecentMovements(prisonerNumbers),
     ])
 
     return this.mapCurrentlyOutPrisoners(prisoners, recentMovements)
@@ -468,7 +468,7 @@ export default class MovementsService {
 
     const [prisoners, recentMovements] = await Promise.all([
       prisonerSearchClient.getPrisonersById(prisonerNumbers),
-      prisonApi.getRecentMovements(prisonerNumbers, false),
+      prisonApi.getRecentMovements(prisonerNumbers),
     ])
 
     return this.mapCurrentlyOutPrisoners(prisoners, recentMovements)
@@ -487,7 +487,7 @@ export default class MovementsService {
 
     const [prisoners, recentMovements] = await Promise.all([
       prisonerSearchClient.getPrisonersById(prisonerNumbers),
-      prisonApi.getRecentMovements(prisonerNumbers, false),
+      prisonApi.getRecentMovements(prisonerNumbers),
     ])
 
     return this.mapCurrentlyOutPrisoners(prisoners, recentMovements)
