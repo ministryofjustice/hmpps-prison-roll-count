@@ -17,18 +17,6 @@ const getNormalisedArrivalType = (movement?: ArrivalTypeMovement): OffenderMovem
 // Get last two movements to determine if either of them have a 'TRN' movement type, which would indicate that the offender is a transfer in, even if the most recent movement is an 'ADM' movement type.
 export const getLastTwoMovements = <T>(movements: T[]) => movements.slice(-2)
 
-export const getMovementHistoryStartDate = (movementDateTime?: string) => {
-  const movementDate = movementDateTime?.split('T')[0]
-
-  if (!movementDate) return new Date().toISOString().split('T')[0]
-
-  const parsedMovementDate = new Date(movementDate)
-  if (Number.isNaN(parsedMovementDate.getTime())) return movementDate
-
-  parsedMovementDate.setDate(parsedMovementDate.getDate() - 30)
-  return parsedMovementDate.toISOString().split('T')[0]
-}
-
 // Determine the effective arrival type based on the last two movements. If either of the last two movements is a transfer in ('TRN'), then the effective arrival type is 'TRN'. If the most recent movement is a transfer in, then the effective arrival type is 'TRN'. Otherwise, the effective arrival type is the most recent movement type.
 export const getEffectiveArrivalType = (
   recentMovements: ArrivalTypeMovement[],
