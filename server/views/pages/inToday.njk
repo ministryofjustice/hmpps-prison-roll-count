@@ -144,12 +144,12 @@
         {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
         {% set csraLevel = prisoner.csra or 'None' %}
 
-        {# Set arrival type based on the prisoner.movementType #}
-        {% if prisoner.movementType === "ADM" %}
+        {# Set arrival type based on the prisoner.arrivalType #}
+        {% if prisoner.arrivalType === "ADM" %}
           {% set arrivalType = "New admission" %}
-        {% elseif prisoner.movementType === "TRN" %}
+        {% elseif prisoner.arrivalType === "TRN" %}
           {% set arrivalType = "Transfers in" %}
-        {% elseif prisoner.movementType === "CRT" or prisoner.movementType === "TAP" %}
+        {% elseif prisoner.arrivalType === "CRT" or prisoner.arrivalType === "TAP" %}
           {% set arrivalType = "Return" %}
         {% else %}
           {% set arrivalType = "" %}

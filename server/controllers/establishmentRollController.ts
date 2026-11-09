@@ -168,9 +168,9 @@ const getArrivalTypeCounts = <T extends { arrivalType?: string; movementType?: s
   }
 
   prisoners.forEach(prisoner => {
-    const movementType = prisoner.movementType ?? prisoner.arrivalType
+    const arrivalType = prisoner.arrivalType ?? prisoner.movementType
 
-    switch (movementType) {
+    switch (arrivalType) {
       case 'ADM':
         counts.newAdmissions += 1
         break

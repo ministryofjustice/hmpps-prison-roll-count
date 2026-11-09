@@ -311,11 +311,11 @@ describe('EstablishmentRollController', () => {
       )
     })
 
-    it('counts movementType before arrivalType in the card totals', async () => {
+    it('counts arrivalType before movementType in the card totals', async () => {
       const arrivedPrisoners = [
-        { prisonerNumber: 'A1234BC', arrivalType: 'TRN', movementType: 'ADM' },
+        { prisonerNumber: 'A1234BC', movementType: 'ADM', arrivalType: 'TRN' },
         { prisonerNumber: 'A1234BD', arrivalType: 'ADM', movementType: 'TRN' },
-        { prisonerNumber: 'A1234BE', arrivalType: 'CRT', movementType: 'CRT' },
+        { prisonerNumber: 'A1234BE', movementType: 'CRT', arrivalType: 'CRT' },
       ]
 
       movementsService.getInTodayPrisoners.mockResolvedValue(arrivedPrisoners)
