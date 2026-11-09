@@ -28,27 +28,11 @@ export default class EstablishmentRollService {
 
     const resiLocationServiceActive = await this.isResiLocationServiceActive(clientToken, caseLoadId)
 
-    const [rollCount, arrivedTodayMovements = []] = await Promise.all([
+    const [rollCount] = await Promise.all([
       forceUseLocationsApi || resiLocationServiceActive
         ? locationsApi.getPrisonRollCount(caseLoadId)
         : prisonApi.getPrisonRollCount(caseLoadId),
-      prisonApi.getMovementsIn(caseLoadId, new Date().toISOString()),
-      prisonApi.getMovementsOut(caseLoadId, new Date().toISOString()),
     ])
-
-    // Calculate how many new admissions, transfers in and returns there are based on the recent movement history for offenders that arrived today
-    const offenderNumbers = (arrivedTodayMovements || []).map(movement => movement.offenderNo)
-    const recentMovements = offenderNumbers.length
-      ? (await prisonApi.getRecentMovements(offenderNumbers, false)) || []
-      : []
-    const offenderMovementsByOffender = new Map<string, typeof recentMovements>()
-
-    if (recentMovements.length) {
-      recentMovements.forEach(movement => {
-        const existingHistory = offenderMovementsByOffender.get(movement.offenderNo) || []
-        offenderMovementsByOffender.set(movement.offenderNo, [...existingHistory, movement])
-      })
-    }
 
     return {
       todayStats: {

@@ -54,7 +54,6 @@ describe('establishmentRollService', () => {
         noCellAllocated: 700,
         overnights: 800,
       })
-      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(['A1234AA'], false)
     })
 
     it('should count a prisoner as a transfer when one of their last two movementTypes is TRN', async () => {
@@ -129,7 +128,6 @@ describe('establishmentRollService', () => {
           overnights: 800,
         }),
       )
-      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledTimes(1)
     })
 
     it('should count a prisoner as a transfer when recent movements are returned as TRN then ADM', async () => {
