@@ -29,11 +29,6 @@ const withMovementTypeOverrides = (
     movementType: movementTypeByOffender[movement.offenderNo as string] ?? movement.movementType,
   }))
 
-const asMovementType = (movement: unknown, movementType: string) => ({
-  ...(movement as Record<string, unknown>),
-  movementType,
-})
-
 const stubOffenderMovementHistory = (offenderNo: string, payload: unknown[]) =>
   stubFor({
     request: {
