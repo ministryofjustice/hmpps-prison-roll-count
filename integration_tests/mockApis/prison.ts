@@ -34,8 +34,6 @@ const asMovementType = (movement: unknown, movementType: string) => ({
   movementType,
 })
 
-const asAdmissionMovement = (movement: unknown) => asMovementType(movement, 'ADM')
-
 const stubOffenderMovementHistory = (offenderNo: string, payload: unknown[]) =>
   stubFor({
     request: {
