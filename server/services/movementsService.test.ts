@@ -724,6 +724,15 @@ describe('movementsService', () => {
         reasonDescription: 'Court',
         toAddress: 'Leeds Magistrates Court',
       },
+      {
+        offenderNo: 'A1234AA',
+        dateOfBirth: '1980-01-01',
+        firstName: 'John',
+        lastName: 'Smith',
+        timeOut: '11:00:00',
+        movementType: 'ADM',
+        reasonDescription: 'New admission',
+      },
     ])
     prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock.slice(0, 1))
 
