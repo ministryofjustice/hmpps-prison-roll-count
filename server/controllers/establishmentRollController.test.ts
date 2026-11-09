@@ -310,6 +310,46 @@ describe('EstablishmentRollController', () => {
         }),
       )
     })
+
+    it('counts movementType before arrivalType in the card totals', async () => {
+      const arrivedPrisoners = [
+        { prisonerNumber: 'A1234BC', arrivalType: 'TRN', movementType: 'ADM' },
+        { prisonerNumber: 'A1234BD', arrivalType: 'ADM', movementType: 'TRN' },
+        { prisonerNumber: 'A1234BE', arrivalType: 'CRT', movementType: 'CRT' },
+      ]
+
+      movementsService.getInTodayPrisoners.mockResolvedValue(arrivedPrisoners)
+      establishmentRollService.getEstablishmentRollCounts.mockResolvedValue({
+        todayStats: {},
+        totals: {},
+        wings: [] as unknown[],
+      })
+
+      const controller = new EstablishmentRollController(
+        establishmentRollService as unknown as EstablishmentRollService,
+        movementsService as unknown as MovementsService,
+        locationService as unknown as LocationService,
+      )
+
+      const req = mockReq()
+      const res = mockRes()
+      const next = mockNext()
+
+      await controller.getInToday()(req, res, next)
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/inToday',
+        expect.objectContaining({
+          establishmentRollCounts: {
+            todayStats: {
+              newAdmissions: 1,
+              transfersIn: 1,
+              returns: 1,
+            },
+          },
+        }),
+      )
+    })
   })
 
   describe('getCurrentlyOut', () => {
