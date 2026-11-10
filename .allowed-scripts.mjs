@@ -12,6 +12,5 @@ export default configureAllowedScripts({
     'node_modules/fsevents@2.3.3': 'ALLOW',
     // Needed by esbuild for watching files during development
     'node_modules/@parcel/watcher@2.6.0': 'ALLOW',
-    'node_modules/mocha/node_modules/fsevents@2.1.3': 'FORBID',
   },
 })
