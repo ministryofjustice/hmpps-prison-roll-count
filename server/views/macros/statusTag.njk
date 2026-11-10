@@ -6,8 +6,8 @@
         {{ govukTag({ text: status, classes: "govuk-tag govuk-tag--yellow govuk-!-font-size-16" }) }}
       {% elseif status === "OUT"  %}
         {{ govukTag({ text: status, classes: "govuk-tag govuk-tag--green govuk-!-font-size-16" }) }}
-      {% elseif status === "UAL"  %}
-        {{ govukTag({ text: 'Unlawfully at large', classes: "govuk-tag govuk-tag--red govuk-!-font-size-16" }) }}
+      {% elseif (status === "UAL") or (status === "TRN")  %}
+        {{ govukTag({ text: 'OUT', classes: "govuk-tag govuk-tag--green govuk-!-font-size-16" }) }}
       {% endif %}
   {% else %}
     <span class="govuk-!-font-size-16">No status</span>

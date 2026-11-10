@@ -9,6 +9,7 @@ context('In Today Page', () => {
     cy.setupComponentsData()
     cy.task('stubMovementsIn')
     cy.task('stubMovementsOut')
+    cy.task('stubRecentMovements')
     cy.task('stubInTodayMovementHistoryDefault')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
@@ -108,7 +109,7 @@ context('In Today Page', () => {
 
   it('should display the correct counts for new admissions, transfers in, and returns', () => {
     // Based on the stubInTodayMovementHistoryDefault, verify the correct counts are displayed
-    // The default mock has 2 prisoners both with movementType 'TRN'
+    // The default mock has 2 prisoners both with arrivalType 'TRN'
     cy.get('[data-qa="new-admissions-card"]').find('.establishment-roll-card__count').should('contain.text', '0')
 
     cy.get('[data-qa="transfers-in-card"]').find('.establishment-roll-card__count').should('contain.text', '2')
@@ -122,7 +123,7 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.task('reset')
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
-    cy.task('stubMovementsIn')
+    cy.task('stubMovementsInWithDuplicateOffender')
     cy.task('stubMovementsOut')
     cy.task('stubInTodayTwoRecentMovements')
     cy.task('stubPostSearchPrisonersById')
@@ -143,9 +144,9 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.task('reset')
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
-    cy.task('stubMovementsIn')
+    cy.task('stubMovementsIn', { prisonCode: 'LEI', movementTypeByOffender: { A1234AA: 'ADM', A1234AB: 'ADM' } })
     cy.task('stubMovementsOut')
-    cy.task('stubNewAdmissionsMovements') // Custom stub with all ADM
+    cy.task('stubNewAdmissionsMovements') // Custom stub with all ADM movements
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
     cy.task('stubPrisonRollCount')
@@ -163,9 +164,9 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.task('reset')
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
-    cy.task('stubMovementsIn')
+    cy.task('stubMovementsIn', { prisonCode: 'LEI', movementTypeByOffender: { A1234AA: 'TRN', A1234AB: 'TRN' } })
     cy.task('stubMovementsOut')
-    cy.task('stubTransfersInMovements') // Custom stub with all TRN
+    cy.task('stubTransfersInMovements') // Custom stub with all TRN movements
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
     cy.task('stubPrisonRollCount')
@@ -183,9 +184,9 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.task('reset')
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
-    cy.task('stubMovementsIn')
+    cy.task('stubMovementsIn', { prisonCode: 'LEI', movementTypeByOffender: { A1234AA: 'CRT', A1234AB: 'TAP' } })
     cy.task('stubMovementsOut')
-    cy.task('stubReturnsMovements') // Custom stub with CRT/TAP
+    cy.task('stubReturnsMovements')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
     cy.task('stubPrisonRollCount')
@@ -203,9 +204,9 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.task('reset')
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
     cy.setupComponentsData()
-    cy.task('stubMovementsIn')
+    cy.task('stubMovementsIn', { prisonCode: 'LEI', movementTypeByOffender: { A1234AA: 'ADM', A1234AB: 'TRN' } })
     cy.task('stubMovementsOut')
-    cy.task('stubMixedMovementTypes') // Custom stub with ADM, TRN, and CRT/TAP
+    cy.task('stubMixedMovementTypes') // Custom stub with ADM, TRN, and CRT movements
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
     cy.task('stubPrisonRollCount')
@@ -225,7 +226,6 @@ context('In Today Page - Arrival Type Statistics', () => {
     cy.setupComponentsData()
     cy.task('stubMovementsInWithDuplicateOffender')
     cy.task('stubMovementsOut')
-    cy.task('stubInTodayMovementHistoryDefault')
     cy.task('stubPostSearchPrisonersById')
     cy.task('stubPostAttributeSearch')
     cy.task('stubPrisonRollCount')
