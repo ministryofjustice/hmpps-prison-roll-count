@@ -10,13 +10,6 @@ export default interface EstablishmentRollCount {
     enroute: number
     noCellAllocated: number
     overnights: number
-    newAdmissions: number
-    transfersIn: number
-    returns: number
-    temporaryAbsence: number
-    atCourt: number
-    released: number
-    transferredOut: number
   }
   totals: PrisonRollCount['totals']
   wings: ResidentialLocation[]

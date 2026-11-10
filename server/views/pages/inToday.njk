@@ -144,7 +144,7 @@
         {% set prisonerName = prisoner.firstName | formatName("", prisoner.lastName, { style: 'lastCommaFirst' }) %}
         {% set csraLevel = prisoner.csra or 'None' %}
 
-        {# Set arrival type based on arrivalType #}
+        {# Set arrival type based on the prisoner.arrivalType #}
         {% if prisoner.arrivalType === "ADM" %}
           {% set arrivalType = "New admission" %}
         {% elseif prisoner.arrivalType === "TRN" %}
