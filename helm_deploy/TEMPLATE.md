@@ -22,7 +22,7 @@ Our security policy is located [here](https://github.com/ministryofjustice/hmpps
 
 When deploying to a new namespace, you may wish to use the
 [templates project namespace](https://github.com/ministryofjustice/cloud-platform-environments/tree/main/namespaces/live.cloud-platform.service.justice.gov.uk/hmpps-templates-dev)
-as the basis for your new namespace. This namespace contains both the kotlin and typescript template projects,
+as the basis for your new namespace. This namespace contains both the kotlin and typescript template projects, 
 which is the usual way that projects are setup.
 
 Copy this folder and update all the existing namespace references to correspond to the environment to which you're deploying.
@@ -78,8 +78,7 @@ application is crash looping, there are a significant number of errors from the 
 cloud platform AlertManager needs to be setup first with your channel. Please see
 [Create your own custom alerts](https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html)
 in the Cloud Platform user guide. Once that is setup then the `custom severity label` can be used for
-`alertSeverityOverride` under the top-level `generic-prometheus-alerts` key in the
-`helm_deploy/values-*.yaml` configuration.
+`alertSeverity` in the `helm_deploy/values-*.yaml` configuration.
 
 Normally it is worth setting up two separate labels and therefore two separate slack channels - one for your production
 alerts and one for your non-production alerts. Using the same channel can mean that production alerts are sometimes

@@ -77,8 +77,7 @@ application is crash looping, there are a significant number of errors from the 
 cloud platform AlertManager needs to be setup first with your channel. Please see
 [Create your own custom alerts](https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html)
 in the Cloud Platform user guide. Once that is setup then the `custom severity label` can be used for
-`alertSeverityOverride` under the top-level `generic-prometheus-alerts` key in the
-`helm_deploy/values-*.yaml` configuration.
+`alertSeverity` in the `helm_deploy/values-*.yaml` configuration.
 
 Normally it is worth setting up two separate labels and therefore two separate slack channels - one for your production
 alerts and one for your non-production alerts. Using the same channel can mean that production alerts are sometimes
