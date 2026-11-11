@@ -38,5 +38,5 @@ generic-service:
 
     FLAG_E_ROLL_REBUILD: enabled
 
-  generic-prometheus-alerts:
-    alertSeverity: move-a-prisoner-alerts-prod
+generic-prometheus-alerts:
+  alertSeverityOverride: move-a-prisoner-alerts-prod
