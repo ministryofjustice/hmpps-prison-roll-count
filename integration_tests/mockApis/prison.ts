@@ -379,6 +379,67 @@ export default {
     ])
   },
 
+  stubAdmissionAndReturn: () => {
+    const today = new Date().toISOString().split('T')[0]
+    return Promise.all([
+      stubFor({
+        request: {
+          method: 'GET',
+          urlPattern: `/prison/api/movements/LEI/in/${today}`,
+        },
+        response: {
+          status: 200,
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+          jsonBody: [
+            {
+              ...movementsInMock[0],
+              movementType: 'ADM',
+              movementTime: '09:20:00',
+              movementDateTime: `${today}T09:20:00`,
+              movementReasonDescription: 'New admission',
+            },
+            {
+              ...movementsInMock[0],
+              movementType: 'TAP',
+              movementTime: '10:53:25',
+              movementDateTime: `${today}T10:53:25`,
+              movementReasonDescription: 'Outside Prison Activity',
+            },
+          ],
+        },
+      }),
+      stubMultiOffenderMovementHistory({
+        A1234AA: [
+          {
+            ...movementsRecentMock[0],
+            bookingId: movementsInMock[0].bookingId,
+            movementType: 'ADM',
+            movementDate: today,
+            movementTime: '09:20:00',
+            movementReason: 'New admission',
+            movementReasonDescription: 'New admission',
+          },
+          {
+            ...movementsRecentMock[0],
+            bookingId: movementsInMock[0].bookingId,
+            movementType: 'TAP',
+            movementDate: today,
+            movementTime: '10:51:57',
+            directionCode: 'OUT',
+          },
+          {
+            ...movementsRecentMock[0],
+            bookingId: movementsInMock[0].bookingId,
+            movementType: 'TAP',
+            movementDate: today,
+            movementTime: '10:53:25',
+            directionCode: 'IN',
+          },
+        ],
+      }),
+    ])
+  },
+
   stubNewAdmissionsMovements: () => {
     const payloadByOffender = {
       A1234AA: [

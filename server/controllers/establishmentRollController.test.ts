@@ -271,6 +271,30 @@ describe('EstablishmentRollController', () => {
       )
     })
 
+    it('counts and filters separate arrivals for the same prisoner', async () => {
+      movementsService.getInTodayPrisoners.mockResolvedValue([
+        { prisonerNumber: 'A1234BC', movementTime: '10:53:25', arrivalType: 'TAP' },
+        { prisonerNumber: 'A1234BC', movementTime: '09:20:00', arrivalType: 'ADM' },
+      ])
+      const controller = new EstablishmentRollController(
+        establishmentRollService as unknown as EstablishmentRollService,
+        movementsService as unknown as MovementsService,
+        locationService as unknown as LocationService,
+      )
+      const req = { ...mockReq(), query: { arrivalType: 'newAdmissions' } } as unknown as Request
+      const res = mockRes()
+
+      await controller.getInToday()(req, res, mockNext())
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/inToday',
+        expect.objectContaining({
+          prisoners: [{ prisonerNumber: 'A1234BC', movementTime: '09:20:00', arrivalType: 'ADM' }],
+          establishmentRollCounts: { todayStats: { newAdmissions: 1, transfersIn: 0, returns: 1 } },
+        }),
+      )
+    })
+
     it('ignores non-string arrival type query values', async () => {
       const arrivedPrisoners = [{ prisonerNumber: 'A1234BC', arrivalType: 'ADM' }]
 

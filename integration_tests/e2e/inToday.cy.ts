@@ -119,6 +119,36 @@ context('In Today Page', () => {
 })
 
 context('In Today Page - Arrival Type Statistics', () => {
+  it('keeps an admission and a later return separate in the table, counts and filters', () => {
+    cy.task('reset')
+    cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })
+    cy.setupComponentsData()
+    cy.task('stubAdmissionAndReturn')
+    cy.task('stubMovementsOut')
+    cy.task('stubPostSearchPrisonersById')
+    cy.task('stubPostAttributeSearch')
+    cy.task('stubPrisonRollCount')
+    cy.task('stubLocationPrisonRollCount')
+    cy.task('stubPrisonConfiguration')
+    cy.signIn({ redirectPath: '/in-today' })
+    cy.visit('/in-today')
+
+    const page = Page.verifyOnPage(inTodayPage)
+    page.inTodayRows().should('have.length', 2)
+    page.inTodayRows().eq(0).find('td').eq(3).should('contain.text', 'Return')
+    page.inTodayRows().eq(0).find('td').eq(4).should('contain.text', '10:53')
+    page.inTodayRows().eq(1).find('td').eq(3).should('contain.text', 'New admission')
+    page.inTodayRows().eq(1).find('td').eq(4).should('contain.text', '09:20')
+    cy.get('[data-qa="new-admissions-card"]').find('.establishment-roll-card__count').should('contain.text', '1')
+    cy.get('[data-qa="returns-card"]').find('.establishment-roll-card__count').should('contain.text', '1')
+
+    cy.get('input[name="arrivalType"][value="newAdmissions"]').check()
+    cy.contains('button', 'Apply').click()
+    page.inTodayRows().should('have.length', 1)
+    page.inTodayRows().first().find('td').eq(3).should('contain.text', 'New admission')
+    page.inTodayRows().first().find('td').eq(4).should('contain.text', '09:20')
+  })
+
   it('should display Transfers in when one of the last two movements is TRN', () => {
     cy.task('reset')
     cy.setupUserAuth({ roles: [`ROLE_PRISON`, `ROLE_${Role.GlobalSearch}`] })

@@ -39,6 +39,7 @@ describe('movementsService', () => {
           alertFlags: [],
           arrivedFrom: 'York Train Station, York, YO24 1AB',
           arrivalType: 'ROTL',
+          movementDate: '2024-05-10',
           movementTime: '10:30:00',
           movementReason: 'Temporary release',
           movementType: 'ROTL',
@@ -55,6 +56,7 @@ describe('movementsService', () => {
           ],
           arrivedFrom: 'Leeds',
           arrivalType: 'ROTL',
+          movementDate: '2024-05-10',
           movementTime: '10:00:00',
           movementReason: 'Normal ROTL',
           movementType: 'ROTL',
@@ -64,7 +66,7 @@ describe('movementsService', () => {
 
     it('should use TRN as arrivalType when one of the last two movementTypes is a transfer', async () => {
       prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([
-        { ...movementsInMock[0], movementType: 'ADM' },
+        { ...movementsInMock[0], movementType: 'ADM', movementTime: '12:00:00' },
         { ...movementsInMock[1], movementType: 'ROTL' },
       ])
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
@@ -72,6 +74,7 @@ describe('movementsService', () => {
         {
           ...movementsRecentMock[0],
           offenderNo: 'A1234AA',
+          bookingId: 1,
           movementType: 'ADM',
           movementDate: '2024-05-10',
           movementTime: '12:00',
@@ -109,11 +112,16 @@ describe('movementsService', () => {
           ...movementsRecentMock[0],
           offenderNo: 'A1234AA',
           movementType: 'TRN',
+          movementDate: '2024-05-10',
+          movementTime: '09:00',
         },
         {
           ...movementsRecentMock[0],
           offenderNo: 'A1234AA',
+          bookingId: 1,
           movementType: 'ADM',
+          movementDate: '2024-05-10',
+          movementTime: '10:00',
         },
         ...movementsRecentMock.filter(movement => movement.offenderNo === 'A1234AB'),
       ])
@@ -132,7 +140,7 @@ describe('movementsService', () => {
 
     it('should use the latest TRN and ADM movements when history is returned oldest-first', async () => {
       prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([
-        { ...movementsInMock[0], movementType: 'ADM' },
+        { ...movementsInMock[0], movementType: 'ADM', movementTime: '12:00:00' },
         { ...movementsInMock[1], movementType: 'ROTL' },
       ])
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
@@ -161,6 +169,7 @@ describe('movementsService', () => {
         {
           ...movementsRecentMock[0],
           offenderNo: 'A1234AA',
+          bookingId: 1,
           movementType: 'ADM',
           movementDate: '2024-05-10',
           movementTime: '12:00',
@@ -182,7 +191,7 @@ describe('movementsService', () => {
 
     it('should use the latest history after sorting movement rows by date and time', async () => {
       prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([
-        { ...movementsInMock[0], movementType: 'ADM' },
+        { ...movementsInMock[0], movementType: 'ADM', movementTime: '12:00:00' },
         { ...movementsInMock[1], movementType: 'ROTL' },
       ])
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
@@ -190,6 +199,7 @@ describe('movementsService', () => {
         {
           ...movementsRecentMock[0],
           offenderNo: 'A1234AA',
+          bookingId: 1,
           movementType: 'ADM',
           movementDate: '2024-05-10',
           movementTime: '12:00',
@@ -240,7 +250,10 @@ describe('movementsService', () => {
         {
           ...movementsRecentMock[0],
           offenderNo: 'A1234AA',
+          bookingId: 1,
           movementType: 'ADM',
+          movementDate: '2024-05-10',
+          movementTime: '10:00',
           movementReason: 'Transfer In from Other Establishment',
           movementReasonDescription: 'Transfer In from Other Establishment',
         },
@@ -298,6 +311,154 @@ describe('movementsService', () => {
 
       expect(result).toHaveLength(2)
       expect(result.map(prisoner => prisoner.prisonerNumber)).toEqual(['A1234AA', 'A1234AA'])
+    })
+
+    it('keeps the admission and subsequent return as separate arrivals', async () => {
+      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([
+        {
+          ...movementsInMock[0],
+          movementType: 'ADM',
+          movementTime: '09:20:00',
+          movementDateTime: '2024-05-10T09:20:00',
+          movementReasonDescription: 'Imprisonment Without Option',
+          fromAgencyDescription: 'Court',
+        },
+        {
+          ...movementsInMock[0],
+          movementType: 'TAP',
+          movementTime: '10:53:25',
+          movementDateTime: '2024-05-10T10:53:25',
+          movementReasonDescription: 'Outside Prison Activity',
+          fromAgencyDescription: 'Temporary absence',
+        },
+      ])
+      prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue([prisonerSearchMock[0]])
+      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
+        {
+          ...movementsRecentMock[0],
+          bookingId: 1,
+          movementType: 'TAP',
+          movementDate: '2024-05-10',
+          movementTime: '10:53:25',
+          directionCode: 'IN',
+        },
+        {
+          ...movementsRecentMock[0],
+          bookingId: 1,
+          movementType: 'ADM',
+          movementDate: '2024-05-10',
+          movementTime: '09:20:00',
+          movementReason: 'Imprisonment Without Option',
+          movementReasonDescription: 'Imprisonment Without Option',
+        },
+        {
+          ...movementsRecentMock[0],
+          bookingId: 1,
+          movementType: 'TAP',
+          movementDate: '2024-05-10',
+          movementTime: '10:51:57',
+          directionCode: 'OUT',
+        },
+      ])
+
+      const result = await movementsService.getInTodayPrisoners('token', 'LEI')
+
+      expect(result).toEqual([
+        expect.objectContaining({
+          prisonerNumber: 'A1234AA',
+          arrivalType: 'TAP',
+          movementDate: '2024-05-10',
+          movementTime: '10:53:25',
+          arrivedFrom: 'Temporary absence',
+        }),
+        expect.objectContaining({
+          prisonerNumber: 'A1234AA',
+          arrivalType: 'ADM',
+          movementDate: '2024-05-10',
+          movementTime: '09:20:00',
+          arrivedFrom: 'Court',
+        }),
+      ])
+    })
+
+    it('classifies each admission using its own preceding history', async () => {
+      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([
+        { ...movementsInMock[0], movementType: 'ADM', movementTime: '09:00:00' },
+        { ...movementsInMock[0], movementType: 'ADM', movementTime: '12:00:00' },
+      ])
+      prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue([prisonerSearchMock[0]])
+      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
+        {
+          ...movementsRecentMock[0],
+          bookingId: 1,
+          movementType: 'TAP',
+          movementDate: '2024-05-10',
+          movementTime: '13:00:00',
+        },
+        {
+          ...movementsRecentMock[0],
+          bookingId: 1,
+          movementType: 'ADM',
+          movementDate: '2024-05-10',
+          movementTime: '12:00:00',
+          movementReason: 'New admission',
+          movementReasonDescription: 'New admission',
+        },
+        {
+          ...movementsRecentMock[0],
+          bookingId: 1,
+          movementType: 'TRN',
+          movementDate: '2024-05-10',
+          movementTime: '11:00:00',
+        },
+        {
+          ...movementsRecentMock[0],
+          bookingId: 1,
+          movementType: 'ADM',
+          movementDate: '2024-05-10',
+          movementTime: '09:00:00',
+          movementReason: 'New admission',
+          movementReasonDescription: 'New admission',
+        },
+      ])
+
+      const result = await movementsService.getInTodayPrisoners('token', 'LEI')
+
+      expect(result.map(({ movementTime, arrivalType }) => ({ movementTime, arrivalType }))).toEqual([
+        { movementTime: '12:00:00', arrivalType: 'TRN' },
+        { movementTime: '09:00:00', arrivalType: 'ADM' },
+      ])
+    })
+
+    it('uses the admission itself when the corresponding history is missing', async () => {
+      prisonApiClientMock.getMovementsIn = jest.fn().mockResolvedValue([
+        { ...movementsInMock[0], movementType: 'ADM', movementReasonDescription: 'New admission' },
+        {
+          ...movementsInMock[0],
+          movementType: 'ADM',
+          movementTime: '11:00:00',
+          movementReasonDescription: 'Transfer in',
+        },
+      ])
+      prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue([prisonerSearchMock[0]])
+      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
+        { ...movementsRecentMock[0], movementType: 'TAP', movementDate: '2024-05-10', movementTime: '12:00:00' },
+        {
+          ...movementsRecentMock[0],
+          bookingId: 99,
+          movementType: 'ADM',
+          movementDate: '2024-05-10',
+          movementTime: '10:00:00',
+          movementReason: 'Transfer in',
+        },
+      ])
+
+      const result = await movementsService.getInTodayPrisoners('token', 'LEI')
+
+      expect(result.map(({ movementTime, arrivalType }) => ({ movementTime, arrivalType }))).toEqual([
+        { movementTime: '11:00:00', arrivalType: 'TRN' },
+        { movementTime: '10:00:00', arrivalType: 'ADM' },
+      ])
     })
 
     it('should return empty api if no incoming prisoners', async () => {
