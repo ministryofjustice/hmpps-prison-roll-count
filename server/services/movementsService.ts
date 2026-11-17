@@ -46,7 +46,9 @@ export default class MovementsService {
     clientToken: string,
     caseLoadId: string,
     sort: string = 'timeArrived&direction=descending',
-  ): Promise<(PrisonerWithAlerts & { movementTime: string; arrivedFrom: string; arrivalType?: string })[]> {
+  ): Promise<
+    (PrisonerWithAlerts & { movementDate: string; movementTime: string; arrivedFrom: string; arrivalType?: string })[]
+  > {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
 
@@ -73,13 +75,34 @@ export default class MovementsService {
     const mappedPrisoners = movements.map(prisonerMovement => {
       const prisoner = prisonerByNumber.get(prisonerMovement.offenderNo)
       const movementHistory = offenderMovementsByOffender.get(prisonerMovement.offenderNo) || []
+      const movementDate = prisonerMovement.movementDateTime.split('T')[0]
+      const normaliseTime = (time: string) => (time.length === 5 ? `${time}:00` : time)
+      const matchingMovementIndex = movementHistory.findIndex(
+        movement =>
+          movement.bookingId === prisonerMovement.bookingId &&
+          movement.directionCode === 'IN' &&
+          movement.movementType === prisonerMovement.movementType &&
+          movement.movementDate === movementDate &&
+          normaliseTime(movement.movementTime) === normaliseTime(prisonerMovement.movementTime),
+      )
       const arrivalType =
         prisonerMovement.movementType === 'ADM'
-          ? getEffectiveArrivalType(movementHistory) || prisonerMovement.movementType
+          ? getEffectiveArrivalType(
+              matchingMovementIndex === -1
+                ? [
+                    {
+                      offenderNo: prisonerMovement.offenderNo,
+                      movementType: 'ADM',
+                      movementReasonDescription: prisonerMovement.movementReasonDescription,
+                    },
+                  ]
+                : movementHistory.slice(0, matchingMovementIndex + 1),
+            )
           : prisonerMovement.movementType
 
       return {
         ...prisoner,
+        movementDate,
         movementTime: prisonerMovement?.movementTime,
         arrivedFrom: prisonerMovement?.fromAgencyDescription || prisonerMovement?.fromAddress,
         alertFlags: dpsShared.getAlertFlagLabelsForAlerts(prisoner?.alerts || []),
