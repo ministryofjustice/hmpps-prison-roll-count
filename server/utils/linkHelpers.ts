@@ -1,4 +1,5 @@
 import config from '../config'
+import { CaseLoad } from '../data/interfaces/caseLoad'
 
 const serviceName = 'prison-roll-count'
 
@@ -14,4 +15,8 @@ export function prisonerProfileBackLinkUrl(
 ): string {
   const returnPathParam = returnPath.includes('?') ? encodeURIComponent(returnPath) : returnPath
   return `${config.serviceUrls.prisonerProfile}/save-backlink?service=${serviceName}&backLinkText=${encodeURIComponent(backLinkText)}&returnPath=${returnPathParam}&redirectPath=/prisoner/${prisonerNumber}${subPath ?? ''}`
+}
+
+export function residentialUrl(caseLoad: CaseLoad, cellLocationId: string): string {
+  return `${config.serviceUrls.locationsInsidePrison}/${caseLoad}/${cellLocationId}/view`
 }

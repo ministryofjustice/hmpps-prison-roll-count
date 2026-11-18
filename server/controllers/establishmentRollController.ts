@@ -270,7 +270,7 @@ export default class EstablishmentRollController {
         sort,
       )
 
-      res.render('pages/establishmentRollLanding', { ...rollCounts, sort })
+      res.render('pages/establishmentRollLanding', { ...rollCounts, sort, user })
     }
   }
 
