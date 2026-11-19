@@ -255,7 +255,7 @@ export default class EstablishmentRollController {
     }
   }
 
-  public getEstablishmentRollForLanding(): RequestHandler {
+  public getEstablishmentRollForLanding(forceUseLocationsApi: boolean = false): RequestHandler {
     return async (req: Request, res: Response) => {
       const { user } = res.locals
       const { clientToken } = req.middleware
@@ -270,7 +270,18 @@ export default class EstablishmentRollController {
         sort,
       )
 
-      res.render('pages/establishmentRollLanding', { ...rollCounts, sort, user })
+      const useLocationsApi =
+        forceUseLocationsApi ||
+        (await this.establishmentRollService.isResiLocationServiceActive(clientToken, user.activeCaseLoadId))
+
+      const eRollEnabled = req.featureFlags?.eRollRebuild
+
+      res.render('pages/establishmentRollLanding', {
+        ...rollCounts,
+        sort,
+        user,
+        displayResidentialLink: useLocationsApi && eRollEnabled,
+      })
     }
   }
 
