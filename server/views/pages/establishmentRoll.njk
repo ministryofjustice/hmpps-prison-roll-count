@@ -35,7 +35,11 @@
         </td>
         <td class="govuk-table__cell">{{ block.rollCount.workingCapacity }}</td>
         <td class="govuk-table__cell">{{ block.rollCount.netVacancies }}</td>
-        <td class="govuk-table__cell">{{ block.rollCount.outOfOrder }}</td>
+        <td class="govuk-table__cell">
+          {% if block.rollCount.outOfOrder > 0 %}
+            <a class="govuk-link" href="{{ inactiveCellUrl(user.activeCaseLoadId, block.locationId) }}">{{block.rollCount.outOfOrder}}</a>
+          {% else %} 0 {% endif %}
+        </td>
     </tr>
 {% endmacro %}
 
@@ -187,7 +191,9 @@
                 </td>
                 <td class="govuk-table__cell">{{ totals.workingCapacity }}</td>
                 <td class="govuk-table__cell">{{ totals.netVacancies }}</td>
-                <td class="govuk-table__cell">{{ totals.outOfOrder }}</td>
+                <td class="govuk-table__cell">
+                  {{ totals.outOfOrder }}
+                </td>
             </tr>
         </tbody>
     </table>
