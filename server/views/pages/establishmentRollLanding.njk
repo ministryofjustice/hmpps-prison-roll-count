@@ -128,7 +128,7 @@
             ]), prisonerRows) %}
           {% endfor %}
           {% set cellName = cell.localName or cell.locationCode %}
-          {% set cellNameHtml = '<a href="' ~ residentialUrl(user.activeCaseLoadId, cell.locationId) ~ '">' ~ cellName ~ '</a><br/>' ~ ("<span class='govuk-table__cell-tag govuk-!-margin-top-2'>Inactive</span>" if cell.rollCount.outOfOrder else "") if displayResidentialLink else '<span> ' ~ cellName ~ '</span>' %}
+          {% set cellNameHtml = '<a href="' ~ residentialServiceBackLinkUrl(user.activeCaseLoadId, cell.locationId, 'Back to ' ~ pageTitle, returnPathWithSort) ~ '">' ~ cellName ~ '</a><br/>' ~ ("<span class='govuk-table__cell-tag govuk-!-margin-top-2'>Inactive</span>" if cell.rollCount.outOfOrder else "") if displayResidentialLink else '<span> ' ~ cellName ~ '</span>' %}
           {% set cellRows = (cellRows.push([
             {
               html: cellNameHtml,
