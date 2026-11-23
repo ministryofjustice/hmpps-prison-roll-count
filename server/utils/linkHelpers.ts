@@ -20,3 +20,7 @@ export function prisonerProfileBackLinkUrl(
 export function residentialUrl(caseLoad: CaseLoad, cellLocationId: string): string {
   return `${config.serviceUrls.locationsInsidePrison}/${caseLoad}/${cellLocationId}/view`
 }
+
+export function inactiveCellUrl(caseLoad: CaseLoad, wing: string): string {
+  return `${config.serviceUrls.locationsInsidePrison}/${caseLoad}/${wing}/inactive-cells/`
+}

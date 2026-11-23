@@ -5,7 +5,7 @@ import express from 'express'
 import fs from 'fs'
 import { formatName, initialiseName, prisonerBelongsToUsersCaseLoad, userHasAllRoles, userHasRoles } from './utils'
 import { formatDate, formatDateTime, formatTime, timeFromDate, toUnixTimeStamp } from './dateHelpers'
-import { prisonerProfileUrl, prisonerProfileBackLinkUrl, residentialUrl } from './linkHelpers'
+import { prisonerProfileUrl, prisonerProfileBackLinkUrl, residentialUrl, inactiveCellUrl } from './linkHelpers'
 import { convertToSortableColumns } from './convertToSortableColumns'
 import config from '../config'
 import logger from '../logger'
@@ -54,6 +54,7 @@ export default function nunjucksSetup(app: express.Express): void {
   njkEnv.addGlobal('prisonerProfileUrl', prisonerProfileUrl)
   njkEnv.addGlobal('prisonerProfileBackLinkUrl', prisonerProfileBackLinkUrl)
   njkEnv.addGlobal('residentialUrl', residentialUrl)
+  njkEnv.addGlobal('inactiveCellUrl', inactiveCellUrl)
 
   // Expose the page size override to the nunjucks environment
   njkEnv.addGlobal('envPageSize', config.envPageSize)
