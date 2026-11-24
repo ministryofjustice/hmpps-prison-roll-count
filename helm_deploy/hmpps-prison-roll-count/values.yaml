@@ -3,7 +3,7 @@ generic-service:
   productId: 'DPS118' # productId for the product that this belongs too, i.e. DPS001, see README.md for details
 
   # the IRSA service account name for accessing AWS resources
-  serviceAccountName: "hmpps-audit-sa"
+  serviceAccountName: 'hmpps-prison-roll-count'
 
   replicaCount: 4
 
@@ -31,8 +31,9 @@ generic-service:
     REDIS_ENABLED: 'true'
     REDIS_TLS_ENABLED: 'true'
     TOKEN_VERIFICATION_ENABLED: 'true'
+    AUDIT_ENABLED: 'true'
     AUDIT_SQS_REGION: 'eu-west-2'
-    AUDIT_SERVICE_NAME: 'DPS118' # Your audit service name
+    AUDIT_SERVICE_NAME: 'hmpps-prison-roll-count'
 
   # Pre-existing kubernetes secrets to load as environment variables in the deployment.
   # namespace_secrets:
