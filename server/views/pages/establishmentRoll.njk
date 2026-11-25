@@ -35,7 +35,13 @@
         </td>
         <td class="govuk-table__cell">{{ block.rollCount.workingCapacity }}</td>
         <td class="govuk-table__cell">{{ block.rollCount.netVacancies }}</td>
-        <td class="govuk-table__cell">{{ block.rollCount.outOfOrder }}</td>
+        <td class="govuk-table__cell">
+          <!-- Only show the link to inactive cells if the user has access to the locations service and the location has inactive cells -->
+          {% set displayResidentialLink = useWorkingCapacity and block.rollCount.outOfOrder > 0 %}
+          {% set inactiveCellUrl = inactiveCellUrl(user.activeCaseLoadId, block.locationId) %}
+          {% set outOfOrder = '<a class="govuk-link" href="' ~ inactiveCellUrl ~ '">' ~ block.rollCount.outOfOrder ~ '</a>' if displayResidentialLink else block.rollCount.outOfOrder %}
+          {{ outOfOrder | safe }}
+        </td>
     </tr>
 {% endmacro %}
 
@@ -187,7 +193,9 @@
                 </td>
                 <td class="govuk-table__cell">{{ totals.workingCapacity }}</td>
                 <td class="govuk-table__cell">{{ totals.netVacancies }}</td>
-                <td class="govuk-table__cell">{{ totals.outOfOrder }}</td>
+                <td class="govuk-table__cell">
+                  {{ totals.outOfOrder }}
+                </td>
             </tr>
         </tbody>
     </table>
