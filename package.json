@@ -162,7 +162,7 @@
     },
     "cypress-multi-reporters": {
       "mocha": {
-        "serialize-javascript": "7.1.2"
+        "serialize-javascript": "7.1.3"
       }
     },
     "nunjucks": {
