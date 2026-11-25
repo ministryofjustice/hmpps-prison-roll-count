@@ -475,6 +475,10 @@ describe('movementsService', () => {
   })
 
   describe('getOutTodayPrisoners', () => {
+    beforeEach(() => {
+      prisonApiClientMock.getTemporaryAbsences = jest.fn().mockResolvedValue([])
+    })
+
     it('should return prisoners from movements api', async () => {
       prisonApiClientMock.getMovementsOut = jest.fn().mockResolvedValue(movementsOutMock)
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
@@ -482,7 +486,8 @@ describe('movementsService', () => {
 
       const result = await movementsService.getOutTodayPrisoners('token', 'LEI')
       expect(prisonerSearchApiClientMock.getPrisonersById).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
-      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
+      expect(prisonApiClientMock.getRecentMovements).toHaveBeenCalledWith(['A1234AA', 'A1234AB'], false)
+      expect(prisonApiClientMock.getTemporaryAbsences).not.toHaveBeenCalled()
 
       expect(result).toEqual([
         {
@@ -508,6 +513,76 @@ describe('movementsService', () => {
           goingTo: 'HMP Leeds',
           departureTypeCode: 'TRN',
         },
+      ])
+    })
+
+    it('uses the destination of each matching outgoing movement for the same prisoner', async () => {
+      const today = new Date().toISOString().split('T')[0]
+      prisonApiClientMock.getMovementsOut = jest.fn().mockResolvedValue([
+        { ...movementsOutMock[0], movementType: 'CRT', timeOut: '12:16:39', toAddress: undefined },
+        { ...movementsOutMock[0], movementType: 'CRT', timeOut: '12:21:21', toAddress: undefined },
+      ])
+      prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue([prisonerSearchMock[0]])
+      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
+        {
+          ...movementsRecentMock[0],
+          directionCode: 'OUT',
+          movementType: 'CRT',
+          movementDate: today,
+          movementTime: '12:21:21',
+          toAgencyDescription: 'Margate Youth Court',
+        },
+        {
+          ...movementsRecentMock[0],
+          directionCode: 'OUT',
+          movementType: 'CRT',
+          movementDate: today,
+          movementTime: '12:16:39',
+          toAgencyDescription: 'Leicester Youth Court',
+        },
+      ])
+
+      const result = await movementsService.getOutTodayPrisoners('token', 'LEI')
+
+      expect(result.map(({ timeOut, goingTo }) => ({ timeOut, goingTo }))).toEqual([
+        { timeOut: '12:21:21', goingTo: 'Margate Youth Court' },
+        { timeOut: '12:16:39', goingTo: 'Leicester Youth Court' },
+      ])
+    })
+
+    it('uses the matching history for each TAP movement, including city and times without seconds', async () => {
+      const today = new Date().toISOString().split('T')[0]
+      prisonApiClientMock.getMovementsOut = jest.fn().mockResolvedValue([
+        { ...movementsOutMock[0], movementType: 'TAP', timeOut: '10:00:00', toAddress: undefined },
+        { ...movementsOutMock[0], movementType: 'TAP', timeOut: '11:00:00', toAddress: undefined },
+      ])
+      prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue([prisonerSearchMock[0]])
+      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
+        {
+          ...movementsRecentMock[0],
+          directionCode: 'OUT',
+          movementType: 'TAP',
+          movementDate: today,
+          movementTime: '10:00',
+          toAgencyDescription: '',
+          toCity: 'Leicester',
+        },
+        {
+          ...movementsRecentMock[0],
+          directionCode: 'OUT',
+          movementType: 'TAP',
+          movementDate: today,
+          movementTime: '11:00:00',
+          toAgencyDescription: '',
+          toCity: 'Margate',
+        },
+      ])
+
+      const result = await movementsService.getOutTodayPrisoners('token', 'LEI')
+
+      expect(result.map(({ timeOut, goingTo }) => ({ timeOut, goingTo }))).toEqual([
+        { timeOut: '11:00:00', goingTo: 'Margate' },
+        { timeOut: '10:00:00', goingTo: 'Leicester' },
       ])
     })
 
