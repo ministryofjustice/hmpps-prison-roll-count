@@ -4,6 +4,7 @@ import { Location } from './location'
 import { Movements } from './movements'
 import { OffenderIn } from './offenderIn'
 import { OffenderOut } from './offenderOut'
+import { OutOnTemporaryAbsence } from './outOnTemporaryAbsence'
 import { OffenderMovement } from './offenderMovement'
 import { OffenderInReception } from './offenderInReception'
 import { PagedList } from './pagedList'
@@ -20,7 +21,7 @@ export interface PrisonApiClient {
   getRecentMovements(prisonerNumbers: string[], latestOnly?: boolean): Promise<OffenderMovement[]>
   getMovementsIn(prisonId: string, movementDate: string): Promise<OffenderIn[]>
   getMovementsOut(prisonId: string, movementDate: string): Promise<OffenderOut[]>
-  getTemporaryAbsences(prisonId: string): Promise<OffenderOut[]>
+  getTemporaryAbsences(prisonId: string): Promise<OutOnTemporaryAbsence[]>
   getMovementsEnRoute(prisonId: string): Promise<OffenderMovement[]>
   getMovementsInReception(prisonId: string): Promise<OffenderInReception[]>
   setActiveCaseload(caseLoad: CaseLoad): Promise<Record<string, string>>

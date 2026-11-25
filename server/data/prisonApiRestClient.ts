@@ -7,6 +7,7 @@ import { Location } from './interfaces/location'
 import { Movements } from './interfaces/movements'
 import { OffenderIn } from './interfaces/offenderIn'
 import { OffenderOut } from './interfaces/offenderOut'
+import { OutOnTemporaryAbsence } from './interfaces/outOnTemporaryAbsence'
 import { OffenderMovement } from './interfaces/offenderMovement'
 import { OffenderInReception } from './interfaces/offenderInReception'
 import { UserDetail } from './interfaces/userDetail'
@@ -59,8 +60,8 @@ export default class PrisonApiRestClient implements PrisonApiClient {
     return this.get<OffenderOut[]>({ path: `/api/movements/${prisonId}/out/${movementDate.split('T')[0]}` })
   }
 
-  getTemporaryAbsences(prisonId: string): Promise<OffenderOut[]> {
-    return this.get<OffenderOut[]>({ path: `/api/movements/agency/${prisonId}/temporary-absences` })
+  getTemporaryAbsences(prisonId: string): Promise<OutOnTemporaryAbsence[]> {
+    return this.get<OutOnTemporaryAbsence[]>({ path: `/api/movements/agency/${prisonId}/temporary-absences` })
   }
 
   getMovementsEnRoute(prisonId: string): Promise<OffenderMovement[]> {

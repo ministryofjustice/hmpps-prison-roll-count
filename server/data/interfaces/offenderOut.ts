@@ -4,8 +4,8 @@ export interface OffenderOut {
   firstName: string
   lastName: string
   timeOut: string
-  movementType: string
+  movementType?: string
   reasonDescription: string
-  toAddress: string
+  toAddress?: string
   movementDate?: string
 }

@@ -7,7 +7,6 @@ import { stripAgencyPrefix } from '../utils/utils'
 import { Prisoner } from '../data/interfaces/prisoner'
 import { BedAssignment } from '../data/interfaces/bedAssignment'
 import { OffenderMovement } from '../data/interfaces/offenderMovement'
-import { OffenderOut } from '../data/interfaces/offenderOut'
 import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
 import { getEffectiveArrivalType } from '../utils/movementType'
 
@@ -161,39 +160,48 @@ export default class MovementsService {
     clientToken: string,
     caseLoadId: string,
     sort: string = 'timeOut&direction=descending',
-  ): Promise<(PrisonerWithAlerts & { timeOut: string; reasonDescription: string })[]> {
+  ): Promise<(PrisonerWithAlerts & { timeOut: string; reasonDescription: string; goingTo: string })[]> {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
 
-    const movements = await prisonApi.getMovementsOut(caseLoadId, new Date().toISOString())
+    const movementDate = new Date().toISOString().split('T')[0]
+    const movements = await prisonApi.getMovementsOut(caseLoadId, movementDate)
     if (!movements || !movements?.length) return []
-
-    const temporaryAbsences: OffenderOut[] = await prisonApi.getTemporaryAbsences(caseLoadId)
-    const temporaryAbsenceByOffender = new Map<string, OffenderOut>(
-      (temporaryAbsences || []).map(absence => [absence.offenderNo, absence]),
-    )
 
     const prisonerNumbers = movements.map(movement => movement.offenderNo)
 
     const [prisoners, recentMovements] = await Promise.all([
       prisonerSearchClient.getPrisonersById(prisonerNumbers),
-      prisonApi.getRecentMovements(prisonerNumbers),
+      prisonApi.getRecentMovements(prisonerNumbers, false),
     ])
     const prisonerByNumber = new Map(prisoners.map(prisoner => [prisoner.prisonerNumber, prisoner]))
     const offenderMovementsByOffender = this.getMovementHistoryByOffender(recentMovements)
+    const normaliseTime = (time: string) => (time.length === 5 ? `${time}:00` : time)
 
     const mappedPrisoners = movements.map(prisonerMovement => {
       const prisoner = prisonerByNumber.get(prisonerMovement.offenderNo)
       const historyForThisMovement = offenderMovementsByOffender.get(prisonerMovement.offenderNo) || []
-      const latestMovementHistory = historyForThisMovement[historyForThisMovement.length - 1]
-      const departureTypeCode = prisonerMovement.movementType || latestMovementHistory?.movementType
-      const fallbackTemporaryAbsence = temporaryAbsenceByOffender.get(prisonerMovement.offenderNo)
+      const matchingRows = movements.filter(
+        movement =>
+          movement.offenderNo === prisonerMovement.offenderNo &&
+          normaliseTime(movement.timeOut) === normaliseTime(prisonerMovement.timeOut) &&
+          (!prisonerMovement.movementType ||
+            !movement.movementType ||
+            movement.movementType === prisonerMovement.movementType),
+      )
+      const matchingHistory = historyForThisMovement.filter(
+        movement =>
+          movement.directionCode === 'OUT' &&
+          movement.fromAgency === caseLoadId &&
+          movement.movementDate === movementDate &&
+          normaliseTime(movement.movementTime) === normaliseTime(prisonerMovement.timeOut) &&
+          (!prisonerMovement.movementType || movement.movementType === prisonerMovement.movementType),
+      )
+      const matchingMovement =
+        matchingHistory.length === 1 && matchingRows.length === 1 ? matchingHistory[0] : undefined
+      const departureTypeCode = prisonerMovement.movementType || matchingMovement?.movementType
       const nextLocation =
-        prisonerMovement?.toAddress ||
-        (prisonerMovement.movementType === 'TAP' ? fallbackTemporaryAbsence?.toAddress || '' : '') ||
-        latestMovementHistory?.toAgencyDescription ||
-        latestMovementHistory?.toCity ||
-        ''
+        prisonerMovement?.toAddress || matchingMovement?.toAgencyDescription || matchingMovement?.toCity || ''
 
       return {
         ...prisoner,
