@@ -302,9 +302,14 @@ export default class EstablishmentRollController {
       const filteredPrisoners = filterPrisonersByArrivalType(filterableArrivedPrisoners, selectedFilters)
       const appliedFilters = getAppliedArrivalTypeFilters(sort, selectedFilters)
       const clearFiltersHref = buildArrivalTypeFilterHref(sort, [])
+      const totalResults = filteredPrisoners.length
+      const totalPages = Math.ceil(totalResults / pageSize)
+      const currentPage = getCurrentPage(req.query, totalPages)
+      const startIndex = (currentPage - 1) * pageSize
+      const prisonersForCurrentPage = filteredPrisoners.slice(startIndex, startIndex + pageSize)
 
       res.render('pages/inToday', {
-        prisoners: filteredPrisoners,
+        prisoners: prisonersForCurrentPage,
         establishmentRollCounts: {
           todayStats: {
             ...getArrivalTypeCounts(filterableArrivedPrisoners),
@@ -314,6 +319,10 @@ export default class EstablishmentRollController {
         selectedFilters,
         appliedFilters,
         clearFiltersHref,
+        currentPage,
+        totalPages,
+        totalResults,
+        pageSize,
       })
     }
   }
