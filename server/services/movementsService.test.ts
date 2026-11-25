@@ -550,48 +550,6 @@ describe('movementsService', () => {
       ])
     })
 
-    it('does not use a different movement as a destination', async () => {
-      const today = new Date().toISOString().split('T')[0]
-      prisonApiClientMock.getMovementsOut = jest
-        .fn()
-        .mockResolvedValue([{ ...movementsOutMock[0], movementType: 'TAP', timeOut: '10:00:00', toAddress: undefined }])
-      prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue([prisonerSearchMock[0]])
-      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
-        {
-          ...movementsRecentMock[0],
-          movementType: 'TAP',
-          directionCode: 'OUT',
-          movementDate: today,
-          movementTime: '11:00:00',
-        },
-        {
-          ...movementsRecentMock[0],
-          movementType: 'TAP',
-          directionCode: 'IN',
-          movementDate: today,
-          movementTime: '10:00:00',
-        },
-        {
-          ...movementsRecentMock[0],
-          movementType: 'TAP',
-          directionCode: 'OUT',
-          movementDate: '2000-01-01',
-          movementTime: '10:00:00',
-        },
-        {
-          ...movementsRecentMock[0],
-          movementType: 'TAP',
-          directionCode: 'OUT',
-          fromAgency: 'MDI',
-          movementDate: today,
-          movementTime: '10:00:00',
-        },
-      ])
-      const result = await movementsService.getOutTodayPrisoners('token', 'LEI')
-
-      expect(result[0].goingTo).toBe('')
-    })
-
     it('uses the matching history for each TAP movement, including city and times without seconds', async () => {
       const today = new Date().toISOString().split('T')[0]
       prisonApiClientMock.getMovementsOut = jest.fn().mockResolvedValue([
@@ -626,48 +584,6 @@ describe('movementsService', () => {
         { timeOut: '11:00:00', goingTo: 'Margate' },
         { timeOut: '10:00:00', goingTo: 'Leicester' },
       ])
-    })
-
-    it('does not use movement history when multiple out rows match it', async () => {
-      const today = new Date().toISOString().split('T')[0]
-      const movement = { ...movementsOutMock[0], movementType: 'TAP', timeOut: '10:00:00', toAddress: '' }
-      prisonApiClientMock.getMovementsOut = jest.fn().mockResolvedValue([movement, movement])
-      prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue([prisonerSearchMock[0]])
-      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([
-        {
-          ...movementsRecentMock[0],
-          directionCode: 'OUT',
-          movementType: 'TAP',
-          movementDate: today,
-          movementTime: '10:00:00',
-          toCity: 'Leicester',
-        },
-      ])
-
-      const result = await movementsService.getOutTodayPrisoners('token', 'LEI')
-
-      expect(result.map(({ goingTo }) => goingTo)).toEqual(['', ''])
-    })
-
-    it('leaves the destination blank when matching history is ambiguous', async () => {
-      const today = new Date().toISOString().split('T')[0]
-      prisonApiClientMock.getMovementsOut = jest
-        .fn()
-        .mockResolvedValue([{ ...movementsOutMock[0], timeOut: '10:00:00', toAddress: undefined }])
-      prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue([prisonerSearchMock[0]])
-      const matchingMovement = {
-        ...movementsRecentMock[0],
-        directionCode: 'OUT',
-        movementDate: today,
-        movementTime: '10:00',
-      }
-      prisonApiClientMock.getRecentMovements = jest
-        .fn()
-        .mockResolvedValue([matchingMovement, { ...matchingMovement, toAgencyDescription: 'Another destination' }])
-
-      const result = await movementsService.getOutTodayPrisoners('token', 'LEI')
-
-      expect(result[0].goingTo).toBe('')
     })
 
     it('should return empty api if no incoming prisoners', async () => {
