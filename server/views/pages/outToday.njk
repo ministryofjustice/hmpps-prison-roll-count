@@ -189,8 +189,8 @@
                   text: prisoner.goingTo or ''
                 },
                 {
-                  html: statusTag(prisoner.inOutStatus),
-                  sortValue: prisoner.inOutStatus
+                  html: statusTag(prisoner.currentStatus),
+                  sortValue: prisoner.currentStatus
                 },
                 {
                   html: alertFlags(prisoner.alertFlags) ~ categoryFlag('', prisoner.category) | safe
