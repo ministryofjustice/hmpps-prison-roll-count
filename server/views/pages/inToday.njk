@@ -181,7 +181,7 @@
             html: prisoner.arrivedFrom
           },
           {
-            html: statusTag(prisoner.inOutStatus)
+            html: statusTag(prisoner.currentStatus)
           },
           {
             html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to In today', returnPathWithSort, prisoner.prisonerNumber, '/csra-history') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>',

@@ -1,6 +1,7 @@
 import Page from '../pages/page'
 import Role from '../../server/enums/role'
 import inTodayPage from '../pages/inToday'
+import prisonerSearchMock from '../../server/test/mocks/prisonerSearchMock'
 
 context('In Today Page', () => {
   beforeEach(() => {
@@ -69,6 +70,22 @@ context('In Today Page', () => {
     const page = Page.verifyOnPage(inTodayPage)
 
     page.inTodayHeaders().eq(6).find('a').should('have.attr', 'href').and('contain', 'sort=currentStatus')
+  })
+
+  it('displays and sorts current status relative to the caseload', () => {
+    cy.task('stubPostSearchPrisonersById', {
+      payload: [
+        { ...prisonerSearchMock[0], prisonId: 'LEI', inOutStatus: 'IN' },
+        { ...prisonerSearchMock[1], prisonId: 'MDI', inOutStatus: 'IN' },
+      ],
+    })
+    cy.visit('/in-today?sort=currentStatus&direction=ascending')
+
+    const page = Page.verifyOnPage(inTodayPage)
+    page.inTodayRows().eq(0).find('td').eq(2).should('contain.text', 'A1234AA')
+    page.inTodayRows().eq(0).find('td').eq(6).should('contain.text', 'IN')
+    page.inTodayRows().eq(1).find('td').eq(2).should('contain.text', 'A1234AB')
+    page.inTodayRows().eq(1).find('td').eq(6).should('contain.text', 'OUT')
   })
 
   it('toggles the time arrived sort and reorders the table', () => {

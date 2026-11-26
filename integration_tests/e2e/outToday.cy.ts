@@ -1,6 +1,7 @@
 import Page from '../pages/page'
 import Role from '../../server/enums/role'
 import OutTodayPage from '../pages/outToday'
+import prisonerSearchMock from '../../server/test/mocks/prisonerSearchMock'
 
 context('Out Today Page', () => {
   beforeEach(() => {
@@ -54,6 +55,22 @@ context('Out Today Page', () => {
     page.outTodayHeaders().eq(2).should('not.have.attr', 'aria-sort') // Prison number
     page.outTodayHeaders().eq(5).should('not.have.attr', 'aria-sort') // To location
     page.outTodayHeaders().eq(7).should('not.have.attr', 'aria-sort') // Relevant alerts
+  })
+
+  it('displays and sorts current status relative to the caseload', () => {
+    cy.task('stubPostSearchPrisonersById', {
+      payload: [
+        { ...prisonerSearchMock[0], prisonId: 'LEI', inOutStatus: 'IN' },
+        { ...prisonerSearchMock[1], prisonId: 'MDI', inOutStatus: 'IN' },
+      ],
+    })
+    cy.visit('/out-today?sort=currentStatus&direction=ascending')
+
+    const page = Page.verifyOnPage(OutTodayPage)
+    page.outTodayRows().eq(0).find('td').eq(2).should('contain.text', 'A1234AA')
+    page.outTodayRows().eq(0).find('td').eq(6).should('contain.text', 'IN')
+    page.outTodayRows().eq(1).find('td').eq(2).should('contain.text', 'A1234AB')
+    page.outTodayRows().eq(1).find('td').eq(6).should('contain.text', 'OUT')
   })
 
   it('name link returns to the out-today page via the prisoner profile back link', () => {
