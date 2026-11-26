@@ -11,6 +11,7 @@ import { offenderCellHistory2Mock, offenderCellHistoryMock } from '../test/mocks
 import userDetailsMock from '../test/mocks/userDetailsMock'
 import pagedListMock from '../test/mocks/pagedListMock'
 import locationsInsidePrisonApiClientMock from '../test/mocks/locationsInsidePrisonApiClientMock'
+import { Prisoner } from '../data/interfaces/prisoner'
 
 describe('movementsService', () => {
   let movementsService: MovementsService
@@ -21,6 +22,61 @@ describe('movementsService', () => {
       () => prisonerSearchApiClientMock,
       () => locationsInsidePrisonApiClientMock,
     )
+  })
+
+  describe.each(['getInTodayPrisoners', 'getOutTodayPrisoners'] as const)('%s current status', method => {
+    it('displays and sorts statuses relative to the current caseload', async () => {
+      const prisoners: Prisoner[] = [
+        { ...prisonerSearchMock[0], prisonerNumber: 'OTHER', prisonId: 'MDI', inOutStatus: 'IN' as const, status: 'A' },
+        { ...prisonerSearchMock[0], prisonerNumber: 'HERE', prisonId: 'LEI', inOutStatus: 'IN' as const, status: 'Z' },
+        { ...prisonerSearchMock[0], prisonerNumber: 'AWAY', prisonId: 'LEI', inOutStatus: 'OUT' as const },
+        { ...prisonerSearchMock[0], prisonerNumber: 'TRANSIT', prisonId: 'LEI', inOutStatus: 'TRN' as const },
+        { ...prisonerSearchMock[0], prisonerNumber: 'UAL', prisonId: 'LEI', inOutStatus: 'UAL' as const },
+        { ...prisonerSearchMock[0], prisonerNumber: 'UNKNOWN', prisonId: undefined, inOutStatus: 'IN' as const },
+        { ...prisonerSearchMock[0], prisonerNumber: 'NO_STATUS', prisonId: 'LEI', inOutStatus: undefined },
+      ]
+      const offenderNumbers = [...prisoners.map(prisoner => prisoner.prisonerNumber), 'NOT_FOUND']
+      prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisoners)
+      prisonApiClientMock.getRecentMovements = jest.fn().mockResolvedValue([])
+      prisonApiClientMock.getMovementsIn = jest
+        .fn()
+        .mockResolvedValue(offenderNumbers.map(offenderNo => ({ ...movementsInMock[0], offenderNo })))
+      prisonApiClientMock.getMovementsOut = jest
+        .fn()
+        .mockResolvedValue(offenderNumbers.map(offenderNo => ({ ...movementsOutMock[0], offenderNo })))
+
+      const ascending = await movementsService[method]('token', 'LEI', 'currentStatus&direction=ascending')
+      expect(ascending.map(({ currentStatus }) => currentStatus)).toEqual([
+        undefined,
+        undefined,
+        undefined,
+        'IN',
+        'OUT',
+        'OUT',
+        'OUT',
+        'OUT',
+      ])
+      expect(ascending.find(prisoner => prisoner.prisonerNumber === 'OTHER')).toMatchObject({
+        inOutStatus: 'IN',
+        currentStatus: 'OUT',
+      })
+      expect(ascending.find(prisoner => prisoner.prisonerNumber === 'HERE')?.currentStatus).toBe('IN')
+      expect(ascending.find(prisoner => prisoner.prisonerNumber === 'AWAY')?.currentStatus).toBe('OUT')
+      expect(ascending.find(prisoner => prisoner.prisonerNumber === 'TRANSIT')?.currentStatus).toBe('OUT')
+      expect(ascending.find(prisoner => prisoner.prisonerNumber === 'UAL')?.currentStatus).toBe('OUT')
+
+      const descending = await movementsService[method]('token', 'LEI', 'currentStatus&direction=descending')
+      expect(descending.map(({ currentStatus }) => currentStatus)).toEqual([
+        'OUT',
+        'OUT',
+        'OUT',
+        'OUT',
+        'IN',
+        undefined,
+        undefined,
+        undefined,
+      ])
+    })
   })
 
   describe('getInTodayPrisoners', () => {
@@ -36,6 +92,7 @@ describe('movementsService', () => {
       expect(result).toEqual([
         {
           ...prisonerSearchMock[1],
+          currentStatus: undefined,
           alertFlags: [],
           arrivedFrom: 'York Train Station, York, YO24 1AB',
           arrivalType: 'ROTL',
@@ -46,6 +103,7 @@ describe('movementsService', () => {
         },
         {
           ...prisonerSearchMock[0],
+          currentStatus: undefined,
           alertFlags: [
             {
               alertCodes: ['HID'],
@@ -492,6 +550,7 @@ describe('movementsService', () => {
       expect(result).toEqual([
         {
           ...prisonerSearchMock[1],
+          currentStatus: undefined,
           alertFlags: [],
           reasonDescription: 'Another transfer',
           goingTo: 'HMP Moorland',
@@ -500,6 +559,7 @@ describe('movementsService', () => {
         },
         {
           ...prisonerSearchMock[0],
+          currentStatus: undefined,
           alertFlags: [
             {
               alertCodes: ['HID'],
