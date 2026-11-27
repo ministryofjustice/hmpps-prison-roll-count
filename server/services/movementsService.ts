@@ -10,12 +10,22 @@ import { OffenderMovement } from '../data/interfaces/offenderMovement'
 import { LocationsInsidePrisonApiClient } from '../data/interfaces/locationsInsidePrisonApiClient'
 import { getEffectiveArrivalType } from '../utils/movementType'
 
+type MovementListPrisoner = PrisonerWithAlerts & { currentStatus?: 'IN' | 'OUT' }
+
 export default class MovementsService {
   constructor(
     private readonly prisonApiClientBuilder: RestClientBuilder<PrisonApiClient>,
     private readonly prisonerSearchClientBuilder: RestClientBuilder<PrisonerSearchClient>,
     private readonly locationsInsidePrisonApiClientBuilder: RestClientBuilder<LocationsInsidePrisonApiClient>,
   ) {}
+
+  private getCurrentStatus(prisoner: Prisoner | undefined, caseLoadId: string): 'IN' | 'OUT' | undefined {
+    if (prisoner?.inOutStatus === 'IN') {
+      if (!prisoner.prisonId) return undefined
+      return prisoner.prisonId === caseLoadId ? 'IN' : 'OUT'
+    }
+    return prisoner?.inOutStatus === 'TRN' || prisoner?.inOutStatus === 'UAL' ? 'OUT' : prisoner?.inOutStatus
+  }
 
   private sortMovementsByDateTime<T extends { movementDate?: string; movementTime?: string }>(movements: T[]): T[] {
     return [...movements].sort((left, right) => {
@@ -46,7 +56,7 @@ export default class MovementsService {
     caseLoadId: string,
     sort: string = 'timeArrived&direction=descending',
   ): Promise<
-    (PrisonerWithAlerts & { movementDate: string; movementTime: string; arrivedFrom: string; arrivalType?: string })[]
+    (MovementListPrisoner & { movementDate: string; movementTime: string; arrivedFrom: string; arrivalType?: string })[]
   > {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
@@ -101,6 +111,7 @@ export default class MovementsService {
 
       return {
         ...prisoner,
+        currentStatus: this.getCurrentStatus(prisoner, caseLoadId),
         movementDate,
         movementTime: prisonerMovement?.movementTime,
         arrivedFrom: prisonerMovement?.fromAgencyDescription || prisonerMovement?.fromAddress,
@@ -139,7 +150,7 @@ export default class MovementsService {
           comparison = compareStrings(left.movementTime || '', right.movementTime || '')
           break
         case 'currentStatus':
-          comparison = compareStrings(left.inOutStatus || '', right.inOutStatus || '')
+          comparison = compareStrings(left.currentStatus || '', right.currentStatus || '')
           break
         case 'csra':
           comparison = compareStrings(left.csra || 'None', right.csra || 'None')
@@ -160,7 +171,7 @@ export default class MovementsService {
     clientToken: string,
     caseLoadId: string,
     sort: string = 'timeOut&direction=descending',
-  ): Promise<(PrisonerWithAlerts & { timeOut: string; reasonDescription: string; goingTo: string })[]> {
+  ): Promise<(MovementListPrisoner & { timeOut: string; reasonDescription: string; goingTo: string })[]> {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
 
@@ -205,6 +216,7 @@ export default class MovementsService {
 
       return {
         ...prisoner,
+        currentStatus: this.getCurrentStatus(prisoner, caseLoadId),
         timeOut: prisonerMovement?.timeOut,
         reasonDescription: prisonerMovement.reasonDescription,
         goingTo: nextLocation,
@@ -251,7 +263,7 @@ export default class MovementsService {
           comparison = compareStrings(left.timeOut || '', right.timeOut || '')
           break
         case 'currentStatus':
-          comparison = compareStrings(left.status || '', right.status || '')
+          comparison = compareStrings(left.currentStatus || '', right.currentStatus || '')
           break
         default:
           comparison = compareStrings(left.timeOut || '', right.timeOut || '')

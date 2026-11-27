@@ -4,11 +4,12 @@
 {% from "../macros/alertFlags.njk" import alertFlags %}
 {% from "../macros/statusTag.njk" import statusTag %}
 {% from "../macros/categoryFlag.njk" import categoryFlag %}
+{% from "../macros/pagination.njk" import pagination %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
-{% set todayStats = establishmentRollCounts.todayStats %}
 
+{% set todayStats = establishmentRollCounts.todayStats %}
 {% set pageTitle = "In today" %}
 {% set mainClasses = "govuk-body govuk-main-wrapper--auto-spacing" %}
 
@@ -129,8 +130,9 @@
           {% set selectedFilterQuery = selectedFilterQuery ~ '&arrivalType=' ~ filter %}
         {% endfor %}
       {% endif %}
+      {% set paginationBase = paginationBase ~ selectedFilterQuery %}
       {% set sortHrefTemplate = '?sort={sortKey}&direction={sortDirection}' ~ selectedFilterQuery %}
-      {% set returnPathWithSort = paginationBase ~ pageParam ~ selectedFilterQuery %}
+      {% set returnPathWithSort = paginationBase ~ pageParam %}
       {% set rows = [] %}
       {% set blankRows = [
         [
@@ -179,7 +181,7 @@
             html: prisoner.arrivedFrom
           },
           {
-            html: statusTag(prisoner.inOutStatus)
+            html: statusTag(prisoner.currentStatus)
           },
           {
             html: '<a href="' ~ prisonerProfileBackLinkUrl('Back to In today', returnPathWithSort, prisoner.prisonerNumber, '/csra-history') ~ '" class="govuk-link">' ~ csraLevel ~ '</a>',
@@ -191,6 +193,8 @@
         ]), rows) %}
 
       {% endfor %}
+
+      {{ pagination(currentPage, totalPages, paginationBase, totalResults, envPageSize) }}
 
       {{ govukTable({
         caption: 'In today (column headers with buttons are sortable)',
@@ -246,6 +250,8 @@
 
         rows: rows if prisoners.length > 0 else blankRows
       }) }}
+
+      {{ pagination(currentPage, totalPages, paginationBase, totalResults, envPageSize) }}
 
     </div>
   </div>

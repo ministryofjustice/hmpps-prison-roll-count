@@ -272,6 +272,42 @@ describe('EstablishmentRollController', () => {
       )
     })
 
+    it('paginates the filtered prisoner list', async () => {
+      const arrivedPrisoners = [
+        ...Array.from({ length: 30 }, (_, index) => ({
+          prisonerNumber: `A${index}`,
+          arrivalType: 'ADM',
+        })),
+        { prisonerNumber: 'B1', arrivalType: 'TRN' },
+      ]
+      movementsService.getInTodayPrisoners.mockResolvedValue(arrivedPrisoners)
+
+      const controller = new EstablishmentRollController(
+        establishmentRollService as unknown as EstablishmentRollService,
+        movementsService as unknown as MovementsService,
+        locationService as unknown as LocationService,
+      )
+      const req = {
+        ...mockReq(),
+        query: { page: '2', arrivalType: 'newAdmissions' },
+      } as unknown as Request
+      const res = mockRes()
+
+      await controller.getInToday()(req, res, mockNext())
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/inToday',
+        expect.objectContaining({
+          prisoners: arrivedPrisoners.slice(25, 30),
+          currentPage: 2,
+          totalPages: 2,
+          totalResults: 30,
+          pageSize: 25,
+          selectedFilters: ['newAdmissions'],
+        }),
+      )
+    })
+
     it('counts and filters separate arrivals for the same prisoner', async () => {
       movementsService.getInTodayPrisoners.mockResolvedValue([
         { prisonerNumber: 'A1234BC', movementTime: '10:53:25', arrivalType: 'TAP' },
