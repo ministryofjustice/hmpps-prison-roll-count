@@ -131,5 +131,5 @@ export default {
   featureFlags: {
     eRollRebuild: get('FLAG_E_ROLL_REBUILD', 'disabled') === 'enabled',
   },
-  envPageSize: Number(get('PAGE_SIZE', 5)),
+  envPageSize: Number(get('PAGE_SIZE', 25)),
 }
