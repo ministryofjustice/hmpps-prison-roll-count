@@ -273,8 +273,9 @@ describe('EstablishmentRollController', () => {
     })
 
     it('paginates the filtered prisoner list', async () => {
+      const { envPageSize } = config
       const arrivedPrisoners = [
-        ...Array.from({ length: 30 }, (_, index) => ({
+        ...Array.from({ length: envPageSize * 2 }, (_, index) => ({
           prisonerNumber: `A${index}`,
           arrivalType: 'ADM',
         })),
@@ -298,11 +299,11 @@ describe('EstablishmentRollController', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/inToday',
         expect.objectContaining({
-          prisoners: arrivedPrisoners.slice(25, 30),
+          prisoners: arrivedPrisoners.slice(envPageSize, envPageSize * 2),
           currentPage: 2,
           totalPages: 2,
-          totalResults: 30,
-          pageSize: 25,
+          totalResults: envPageSize * 2,
+          pageSize: envPageSize,
           selectedFilters: ['newAdmissions'],
         }),
       )
@@ -619,7 +620,7 @@ describe('EstablishmentRollController', () => {
       )
       expect(res.render).toHaveBeenCalledWith('pages/overnights', {
         currentPage: 1,
-        pageSize: 25,
+        pageSize: config.envPageSize,
         prisoners: [],
         prison: 'Leeds',
         totalPages: 0,
@@ -649,7 +650,7 @@ describe('EstablishmentRollController', () => {
       expect(movementsService.getOvernightPrisoners).toHaveBeenCalledWith('token', 'LEI', 'reason&direction=ascending')
       expect(res.render).toHaveBeenCalledWith('pages/overnights', {
         currentPage: 1,
-        pageSize: 25,
+        pageSize: config.envPageSize,
         prisoners: [],
         prison: 'Leeds',
         sort: 'reason&direction=ascending',
@@ -659,7 +660,8 @@ describe('EstablishmentRollController', () => {
     })
 
     it('renders only prisoners for the requested page', async () => {
-      const prisoners = Array.from({ length: 30 }, (_, index) => ({ prisonerNumber: `A${index}` }))
+      const { envPageSize } = config
+      const prisoners = Array.from({ length: envPageSize * 2 }, (_, index) => ({ prisonerNumber: `A${index}` }))
       movementsService.getOvernightPrisoners.mockResolvedValue(prisoners)
 
       const controller = new EstablishmentRollController(
@@ -679,12 +681,12 @@ describe('EstablishmentRollController', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/overnights', {
         currentPage: 2,
-        pageSize: 25,
-        prisoners: prisoners.slice(25, 50),
+        pageSize: envPageSize,
+        prisoners: prisoners.slice(envPageSize, envPageSize * 2),
         prison: 'Leeds',
         sort: 'timeDateDeparted&direction=descending',
         totalPages: 2,
-        totalResults: 30,
+        totalResults: envPageSize * 2,
       })
     })
   })
@@ -712,7 +714,7 @@ describe('EstablishmentRollController', () => {
       )
       expect(res.render).toHaveBeenCalledWith('pages/inReception', {
         currentPage: 1,
-        pageSize: 25,
+        pageSize: config.envPageSize,
         prisoners: [],
         prison: 'Leeds',
         sort: 'prisonerName&direction=ascending',
@@ -746,7 +748,7 @@ describe('EstablishmentRollController', () => {
       )
       expect(res.render).toHaveBeenCalledWith('pages/inReception', {
         currentPage: 1,
-        pageSize: 25,
+        pageSize: config.envPageSize,
         prisoners: [],
         prison: 'Leeds',
         sort: 'timeArrived&direction=descending',
