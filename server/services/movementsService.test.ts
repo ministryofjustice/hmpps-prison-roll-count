@@ -4,7 +4,7 @@ import prisonerSearchApiClientMock from '../test/mocks/prisonerSearchApiClientMo
 import { movementsInMock } from '../test/mocks/movementsInMock'
 import prisonerSearchMock from '../test/mocks/prisonerSearchMock'
 import { movementsOutMock } from '../test/mocks/movementsOutMock'
-import { movementsEnRouteMock } from '../test/mocks/movementsEnRouteMock'
+import { movementsIncomingTransfersMock } from '../test/mocks/movementsIncomingTransfersMock'
 import { movementsInReceptionMock } from '../test/mocks/movementsInReceptionMock'
 import { movementsRecentMock } from '../test/mocks/movementsRecentMock'
 import { offenderCellHistory2Mock, offenderCellHistoryMock } from '../test/mocks/offenderCellHistoryMock'
@@ -657,12 +657,12 @@ describe('movementsService', () => {
     })
   })
 
-  describe('getEnRoutePrisoners', () => {
+  describe('getIncomingTransfersPrisoners', () => {
     it('should return prisoners from movements api', async () => {
-      prisonApiClientMock.getMovementsEnRoute = jest.fn().mockResolvedValue(movementsEnRouteMock)
+      prisonApiClientMock.getMovementsIncomingTransfers = jest.fn().mockResolvedValue(movementsIncomingTransfersMock)
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
 
-      const result = await movementsService.getEnRoutePrisoners('token', 'LEI')
+      const result = await movementsService.getIncomingTransfersPrisoners('token', 'LEI')
       expect(prisonerSearchApiClientMock.getPrisonersById).toHaveBeenCalledWith(['A1234AA', 'A1234AB'])
 
       expect(result).toEqual([
@@ -693,10 +693,10 @@ describe('movementsService', () => {
     })
 
     it('should return empty api if no incoming prisoners', async () => {
-      prisonApiClientMock.getMovementsEnRoute = jest.fn().mockResolvedValue([])
+      prisonApiClientMock.getMovementsIncomingTransfers = jest.fn().mockResolvedValue([])
       prisonerSearchApiClientMock.getPrisonersById = jest.fn().mockResolvedValue(prisonerSearchMock)
 
-      const result = await movementsService.getEnRoutePrisoners('token', 'LEI')
+      const result = await movementsService.getIncomingTransfersPrisoners('token', 'LEI')
       expect(prisonerSearchApiClientMock.getPrisonersById).not.toHaveBeenCalled()
 
       expect(result).toEqual([])

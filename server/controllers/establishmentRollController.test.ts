@@ -15,6 +15,7 @@ const movementsService = {
   getOffendersCurrentlyOutOfBed: jest.fn(),
   getOffendersCurrentlyOutOfLivingUnit: jest.fn(),
   getInReceptionPrisoners: jest.fn(),
+  getIncomingTransfersPrisoners: jest.fn(),
   getOvernightPrisoners: jest.fn(),
 }
 const locationService = {
@@ -42,6 +43,28 @@ const mockNext = () => jest.fn() as NextFunction
 describe('EstablishmentRollController', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+  })
+
+  describe('getIncomingTransfers', () => {
+    it('renders the incoming transfers page with prisoners from the active caseload', async () => {
+      const prisoners = [{ prisonerNumber: 'A1234BC' }]
+      movementsService.getIncomingTransfersPrisoners.mockResolvedValue(prisoners)
+      const controller = new EstablishmentRollController(
+        establishmentRollService as unknown as EstablishmentRollService,
+        movementsService as unknown as MovementsService,
+        locationService as unknown as LocationService,
+      )
+      const req = { ...mockReq(), query: {} } as Request
+      const res = mockRes()
+
+      await controller.getIncomingTransfers()(req, res, mockNext())
+
+      expect(movementsService.getIncomingTransfersPrisoners).toHaveBeenCalledWith('token', 'LEI')
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/incomingTransfers',
+        expect.objectContaining({ prisoners, prison: 'Leeds', totalResults: 1 }),
+      )
+    })
   })
 
   describe('getEstablishmentRoll', () => {

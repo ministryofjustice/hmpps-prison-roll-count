@@ -7,7 +7,7 @@ export default interface EstablishmentRollCount {
     outToday: number
     currentRoll: number
     unassignedIn: number
-    enroute: number
+    incomingTransfers: number
     noCellAllocated: number
     overnights: number
   }

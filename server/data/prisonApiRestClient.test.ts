@@ -66,6 +66,15 @@ describe('prisonApiClient', () => {
     })
   })
 
+  describe('getMovementsIncomingTransfers', () => {
+    it('requests incoming transfers from the enroute endpoint', async () => {
+      mockSuccessfulPrisonApiCall('/api/movements/LEI/enroute', [])
+
+      expect(await prisonApiClient.getMovementsIncomingTransfers('LEI')).toEqual([])
+      expect(fakePrisonApi.isDone()).toBe(true)
+    })
+  })
+
   describe('setActiveCaseLoad', () => {
     it('Should return data from the API', async () => {
       const caseLoadMock = {

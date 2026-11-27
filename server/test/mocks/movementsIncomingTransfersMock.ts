@@ -1,7 +1,7 @@
 import { OffenderMovement } from '../../data/interfaces/offenderMovement'
 
 // eslint-disable-next-line import/prefer-default-export
-export const movementsEnRouteMock: OffenderMovement[] = [
+export const movementsIncomingTransfersMock: OffenderMovement[] = [
   {
     offenderNo: 'A1234AA',
     dateOfBirth: '1980-01-01',

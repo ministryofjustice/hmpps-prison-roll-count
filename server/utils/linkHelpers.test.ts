@@ -58,14 +58,14 @@ describe('generate prisoner profile back link URL', () => {
       undefined,
     ],
     [
-      'returnPath to /en-route',
+      'returnPath to /incoming-transfers',
       '',
-      '/en-route',
+      '/incoming-transfers',
       '',
       undefined,
       `${
         prisonerProfileBaseUrl
-      }/save-backlink?service=prison-roll-count&backLinkText=&returnPath=/en-route&redirectPath=/prisoner/`,
+      }/save-backlink?service=prison-roll-count&backLinkText=&returnPath=/incoming-transfers&redirectPath=/prisoner/`,
       undefined,
     ],
     [

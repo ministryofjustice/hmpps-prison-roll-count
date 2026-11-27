@@ -4,7 +4,7 @@ import { Location } from '../../server/data/interfaces/location'
 import { locationMock, locationsMock } from '../../server/mocks/locationMock'
 import { movementsInMock } from '../../server/test/mocks/movementsInMock'
 import { movementsOutMock } from '../../server/test/mocks/movementsOutMock'
-import { movementsEnRouteMock } from '../../server/test/mocks/movementsEnRouteMock'
+import { movementsIncomingTransfersMock } from '../../server/test/mocks/movementsIncomingTransfersMock'
 import { movementsInReceptionMock } from '../../server/test/mocks/movementsInReceptionMock'
 import { movementsRecentMock } from '../../server/test/mocks/movementsRecentMock'
 import { movementsOvernightMock } from '../../server/test/mocks/movementsOvernightMock'
@@ -13,7 +13,6 @@ import userDetailsMock from '../../server/test/mocks/userDetailsMock'
 import pagedListMock from '../../server/test/mocks/pagedListMock'
 import prisonRollCountMock from '../../server/mocks/prisonRollCountMock'
 import prisonRollCountForWingWithSpurMock from '../../server/mocks/prisonRollCountForWingWithSpurMock'
-import prisonEstablishmentRollSummaryMock from '../../server/mocks/prisonRollCountSummaryMock'
 
 const defaultInTodayMovements = [
   { ...movementsInMock[0], offenderNo: 'A1234AA', movementType: 'TRN' },
@@ -129,22 +128,6 @@ export default {
     })
   },
 
-  stubPrisonRollCountSummary: ({ prisonCode = 'LEI' } = {}) => {
-    return stubFor({
-      request: {
-        method: 'GET',
-        url: `/prison/api/prison/roll-count/${prisonCode}/summary`,
-      },
-      response: {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: { ...prisonEstablishmentRollSummaryMock, prisonId: prisonCode },
-      },
-    })
-  },
-
   stubPrisonRollCountForLanding: ({
     prisonCode = 'LEI',
     landingId = '123',
@@ -256,7 +239,7 @@ export default {
     })
   },
 
-  stubMovementsEnRoute: (prisonCode = 'LEI') => {
+  stubMovementsIncomingTransfers: (prisonCode = 'LEI') => {
     return stubFor({
       request: {
         method: 'GET',
@@ -267,7 +250,7 @@ export default {
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
         },
-        jsonBody: movementsEnRouteMock,
+        jsonBody: movementsIncomingTransfersMock,
       },
     })
   },
@@ -519,22 +502,6 @@ export default {
     })
   },
 
-  stubSetActiveCaseload: (status = 200) => {
-    return stubFor({
-      request: {
-        method: 'PUT',
-        urlPattern: `/prison/api/users/me/activeCaseLoad`,
-      },
-      response: {
-        status,
-        headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-        jsonBody: {},
-      },
-    })
-  },
-
   stubGetOffenderCellHistory: (bookingId = 123) => {
     return stubFor({
       request: {
@@ -566,13 +533,4 @@ export default {
       },
     })
   },
-
-  stubCurrentDayInMovements: (
-    movementTypeByOffender: Record<string, string>,
-    payloadByOffender: Record<string, unknown[]>,
-  ) =>
-    Promise.all([
-      stubTodayMovementsIn('LEI', movementTypeByOffender),
-      stubMultiOffenderMovementHistory(payloadByOffender),
-    ]),
 }

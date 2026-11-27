@@ -41,7 +41,7 @@ export default class EstablishmentRollService {
         outToday: rollCount.numOutToday,
         currentRoll: rollCount.numCurrentPopulation,
         unassignedIn: rollCount.numInReception,
-        enroute: rollCount.numStillToArrive,
+        incomingTransfers: rollCount.numStillToArrive,
         noCellAllocated: rollCount.numNoCellAllocated,
         overnights: rollCount.numOvernights,
       },
