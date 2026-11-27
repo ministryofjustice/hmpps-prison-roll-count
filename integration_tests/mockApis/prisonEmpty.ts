@@ -35,7 +35,7 @@ export default {
     })
   },
 
-  stubMovementsEnRouteEmpty: (prisonCode = 'LEI') => {
+  stubMovementsIncomingTransfersEmpty: (prisonCode = 'LEI') => {
     return stubFor({
       request: {
         method: 'GET',

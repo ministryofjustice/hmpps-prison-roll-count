@@ -1,6 +1,5 @@
 import { stubFor } from './wiremock'
 import locationPrisonRollCountMock from '../../server/mocks/locationPrisonRollCountMock'
-import locationPrisonRollCountForWingWithSpurMock from '../../server/mocks/locationPrisonRollCountForWingWithSpurMock'
 import prisonerInLocation from '../../server/test/mocks/prisonersInLocation'
 import internalLocationMock from '../../server/mocks/internalLocationMock'
 
@@ -20,26 +19,6 @@ const stubLocationPrisonRollCount = ({ prisonCode = 'LEI', payload = locationPri
     request: {
       method: 'GET',
       url: `/locations/prison/roll-count/${prisonCode}`,
-    },
-    response: {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-      },
-      jsonBody: payload,
-    },
-  })
-}
-
-const stubLocationPrisonRollCountForLanding = ({
-  prisonCode = 'LEI',
-  landingId = '01922dda-5d40-7720-a3f5-a1e37e0b8389',
-  payload = locationPrisonRollCountForWingWithSpurMock,
-} = {}) => {
-  return stubFor({
-    request: {
-      method: 'GET',
-      url: `/locations/prison/roll-count/${prisonCode}/cells-only/${landingId}`,
     },
     response: {
       status: 200,
@@ -121,7 +100,6 @@ const stubPrisonConfiguration = ({ prisonId = 'LEI', resiLocationServiceActive =
 export default {
   stubLocationsApiPing,
   stubLocationPrisonRollCount,
-  stubLocationPrisonRollCountForLanding,
   stubLocationsOutToday,
   stubLocationsPrisonersInPrison,
   stubInternalLocation,

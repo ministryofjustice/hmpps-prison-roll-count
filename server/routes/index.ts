@@ -37,7 +37,7 @@ export default function establishmentRollRouter(services: Services): Router {
   )
   get('/in-today', 'IN_TODAY', establishmentRollController.getInToday())
   get('/out-today', 'OUT_TODAY', establishmentRollController.getOutToday())
-  get('/en-route', 'EN_ROUTE', establishmentRollController.getEnRoute())
+  get('/incoming-transfers', 'INCOMING_TRANSFERS', establishmentRollController.getIncomingTransfers())
   get('/in-reception', 'IN_RECEPTION', establishmentRollController.getInReception())
   get('/no-cell-allocated', 'NO_CELL_ALLOCATED', establishmentRollController.getUnallocated())
   get('/total-currently-out', 'TOTAL_CURRENTLY_OUT', establishmentRollController.getTotalCurrentlyOut())

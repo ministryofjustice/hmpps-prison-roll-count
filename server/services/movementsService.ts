@@ -273,14 +273,14 @@ export default class MovementsService {
     })
   }
 
-  public async getEnRoutePrisoners(
+  public async getIncomingTransfersPrisoners(
     clientToken: string,
     caseLoadId: string,
   ): Promise<(PrisonerWithAlerts & { from: string; reason: string })[]> {
     const prisonApi = this.prisonApiClientBuilder(clientToken)
     const prisonerSearchClient = this.prisonerSearchClientBuilder(clientToken)
 
-    const movements = await prisonApi.getMovementsEnRoute(caseLoadId)
+    const movements = await prisonApi.getMovementsIncomingTransfers(caseLoadId)
     if (!movements || !movements?.length) return []
 
     const prisoners = await prisonerSearchClient.getPrisonersById(movements.map(movement => movement.offenderNo))

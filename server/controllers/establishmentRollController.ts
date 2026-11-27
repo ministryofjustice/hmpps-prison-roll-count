@@ -376,20 +376,23 @@ export default class EstablishmentRollController {
     }
   }
 
-  public getEnRoute(): RequestHandler {
+  public getIncomingTransfers(): RequestHandler {
     return async (req: Request, res: Response) => {
       const { user } = res.locals
       const { clientToken } = req.middleware
 
-      const prisonersEnRoute = await this.movementsService.getEnRoutePrisoners(clientToken, user.activeCaseLoadId)
+      const prisonersIncomingTransfers = await this.movementsService.getIncomingTransfersPrisoners(
+        clientToken,
+        user.activeCaseLoadId,
+      )
 
-      const totalResults = prisonersEnRoute.length
-      const totalPages = Math.ceil(prisonersEnRoute.length / pageSize)
+      const totalResults = prisonersIncomingTransfers.length
+      const totalPages = Math.ceil(prisonersIncomingTransfers.length / pageSize)
       const currentPage = getCurrentPage(req.query, totalPages)
       const startIndex = (currentPage - 1) * pageSize
-      const prisonersForCurrentPage = prisonersEnRoute.slice(startIndex, startIndex + pageSize)
+      const prisonersForCurrentPage = prisonersIncomingTransfers.slice(startIndex, startIndex + pageSize)
 
-      res.render('pages/enRoute', {
+      res.render('pages/incomingTransfers', {
         prisoners: prisonersForCurrentPage,
         prison: user.activeCaseLoad.description,
         currentPage,
@@ -406,17 +409,17 @@ export default class EstablishmentRollController {
       const { clientToken } = req.middleware
       const sort = getSortParam(req.query, 'prisonerName', 'ascending')
 
-      const prisonersEnRoute = await this.movementsService.getInReceptionPrisoners(
+      const prisonersIncomingTransfers = await this.movementsService.getInReceptionPrisoners(
         clientToken,
         user.activeCaseLoadId,
         sort,
       )
 
-      const totalResults = prisonersEnRoute.length
-      const totalPages = Math.ceil(prisonersEnRoute.length / pageSize)
+      const totalResults = prisonersIncomingTransfers.length
+      const totalPages = Math.ceil(prisonersIncomingTransfers.length / pageSize)
       const currentPage = getCurrentPage(req.query, totalPages)
       const startIndex = (currentPage - 1) * pageSize
-      const prisonersForCurrentPage = prisonersEnRoute.slice(startIndex, startIndex + pageSize)
+      const prisonersForCurrentPage = prisonersIncomingTransfers.slice(startIndex, startIndex + pageSize)
 
       res.render('pages/inReception', {
         prisoners: prisonersForCurrentPage,
