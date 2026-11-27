@@ -3,6 +3,7 @@
 {% from "../macros/alertFlags.njk" import alertFlags %}
 {% from "../macros/categoryFlag.njk" import categoryFlag %}
 {% from "../macros/statusTag.njk" import statusTag %}
+{% from "../macros/pagination.njk" import pagination %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
@@ -127,7 +128,6 @@
   <div class="govuk-grid-row govuk-!-margin-bottom-9">
         <div class="govuk-grid-column-full results-table results-table__results">
             {% set sortParam = sort or 'timeOut&direction=descending' %}
-            {% set returnPathWithSort = '/out-today?sort=' ~ sortParam %}
             {% set selectedFilterQuery = '' %}
             {% if selectedFilters %}
               {% for filter in selectedFilters %}
@@ -135,7 +135,9 @@
               {% endfor %}
             {% endif %}
             {% set sortHrefTemplate = '?sort={sortKey}&direction={sortDirection}' ~ selectedFilterQuery %}
-            {% set returnPathWithSort = '/out-today?sort=' ~ sortParam ~ selectedFilterQuery %}
+            {% set paginationBase = '/out-today?sort=' ~ sortParam ~ selectedFilterQuery %}
+            {% set pageParam = '&page=' ~ currentPage if currentPage > 1 else '' %}
+            {% set returnPathWithSort = paginationBase ~ pageParam %}
 
             {% set rows = [] %}
             {% set blankRows = [
@@ -198,6 +200,8 @@
               ]), rows) %}
             {% endfor %}
 
+            {{ pagination(currentPage, totalPages, paginationBase, totalResults, pageSize) }}
+
             {{ govukTable({
               caption: 'Out today (column headers with buttons are sortable)',
               captionClasses: 'govuk-visually-hidden',
@@ -243,6 +247,7 @@
 
               rows: rows if prisoners.length > 0 else blankRows
             }) }}
+            {{ pagination(currentPage, totalPages, paginationBase, totalResults, pageSize) }}
         </div>
     </div>
 </div>

@@ -3,6 +3,7 @@ import EstablishmentRollController from './establishmentRollController'
 import EstablishmentRollService from '../services/establishmentRollService'
 import MovementsService from '../services/movementsService'
 import LocationService from '../services/locationsService'
+import config from '../config'
 
 const establishmentRollService = {
   getEstablishmentRollCounts: jest.fn(),
@@ -272,8 +273,9 @@ describe('EstablishmentRollController', () => {
     })
 
     it('paginates the filtered prisoner list', async () => {
+      const { envPageSize } = config
       const arrivedPrisoners = [
-        ...Array.from({ length: 30 }, (_, index) => ({
+        ...Array.from({ length: envPageSize * 2 }, (_, index) => ({
           prisonerNumber: `A${index}`,
           arrivalType: 'ADM',
         })),
@@ -297,11 +299,11 @@ describe('EstablishmentRollController', () => {
       expect(res.render).toHaveBeenCalledWith(
         'pages/inToday',
         expect.objectContaining({
-          prisoners: arrivedPrisoners.slice(25, 30),
+          prisoners: arrivedPrisoners.slice(envPageSize, envPageSize * 2),
           currentPage: 2,
           totalPages: 2,
-          totalResults: 30,
-          pageSize: 25,
+          totalResults: envPageSize * 2,
+          pageSize: envPageSize,
           selectedFilters: ['newAdmissions'],
         }),
       )
@@ -618,7 +620,7 @@ describe('EstablishmentRollController', () => {
       )
       expect(res.render).toHaveBeenCalledWith('pages/overnights', {
         currentPage: 1,
-        pageSize: 25,
+        pageSize: config.envPageSize,
         prisoners: [],
         prison: 'Leeds',
         totalPages: 0,
@@ -648,7 +650,7 @@ describe('EstablishmentRollController', () => {
       expect(movementsService.getOvernightPrisoners).toHaveBeenCalledWith('token', 'LEI', 'reason&direction=ascending')
       expect(res.render).toHaveBeenCalledWith('pages/overnights', {
         currentPage: 1,
-        pageSize: 25,
+        pageSize: config.envPageSize,
         prisoners: [],
         prison: 'Leeds',
         sort: 'reason&direction=ascending',
@@ -658,7 +660,8 @@ describe('EstablishmentRollController', () => {
     })
 
     it('renders only prisoners for the requested page', async () => {
-      const prisoners = Array.from({ length: 30 }, (_, index) => ({ prisonerNumber: `A${index}` }))
+      const { envPageSize } = config
+      const prisoners = Array.from({ length: envPageSize * 2 }, (_, index) => ({ prisonerNumber: `A${index}` }))
       movementsService.getOvernightPrisoners.mockResolvedValue(prisoners)
 
       const controller = new EstablishmentRollController(
@@ -678,12 +681,12 @@ describe('EstablishmentRollController', () => {
 
       expect(res.render).toHaveBeenCalledWith('pages/overnights', {
         currentPage: 2,
-        pageSize: 25,
-        prisoners: prisoners.slice(25, 50),
+        pageSize: envPageSize,
+        prisoners: prisoners.slice(envPageSize, envPageSize * 2),
         prison: 'Leeds',
         sort: 'timeDateDeparted&direction=descending',
         totalPages: 2,
-        totalResults: 30,
+        totalResults: envPageSize * 2,
       })
     })
   })
@@ -711,7 +714,7 @@ describe('EstablishmentRollController', () => {
       )
       expect(res.render).toHaveBeenCalledWith('pages/inReception', {
         currentPage: 1,
-        pageSize: 25,
+        pageSize: config.envPageSize,
         prisoners: [],
         prison: 'Leeds',
         sort: 'prisonerName&direction=ascending',
@@ -745,7 +748,7 @@ describe('EstablishmentRollController', () => {
       )
       expect(res.render).toHaveBeenCalledWith('pages/inReception', {
         currentPage: 1,
-        pageSize: 25,
+        pageSize: config.envPageSize,
         prisoners: [],
         prison: 'Leeds',
         sort: 'timeArrived&direction=descending',
@@ -756,6 +759,95 @@ describe('EstablishmentRollController', () => {
   })
 
   describe('getOutToday', () => {
+    it('paginates after filtering while keeping counts for all departures', async () => {
+      const { envPageSize } = config
+      const transfers = Array.from({ length: envPageSize + 2 }, (_, index) => ({
+        prisonerNumber: `transfer-${index}`,
+        departureTypeCode: 'TRN',
+      }))
+      movementsService.getOutTodayPrisoners.mockResolvedValue([
+        { prisonerNumber: 'release', departureTypeCode: 'REL' },
+        ...transfers,
+      ])
+      const controller = new EstablishmentRollController(
+        establishmentRollService as unknown as EstablishmentRollService,
+        movementsService as unknown as MovementsService,
+        locationService as unknown as LocationService,
+      )
+      const req = {
+        ...mockReq(),
+        query: { departureType: 'transferredOut', page: '2', sort: 'lastName', direction: 'ascending' },
+      } as unknown as Request
+      const res = mockRes()
+
+      await controller.getOutToday()(req, res, mockNext())
+
+      expect(movementsService.getOutTodayPrisoners).toHaveBeenCalledWith('token', 'LEI', 'lastName&direction=ascending')
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/outToday',
+        expect.objectContaining({
+          prisoners: transfers.slice(envPageSize),
+          currentPage: 2,
+          pageSize: envPageSize,
+          totalPages: 2,
+          totalResults: envPageSize + 2,
+          establishmentRollCounts: {
+            todayStats: { temporaryAbsence: 0, atCourt: 0, released: 1, transferredOut: envPageSize + 2 },
+          },
+        }),
+      )
+    })
+
+    it.each([
+      ['invalid', 1],
+      ['0', 1],
+      ['999', 2],
+    ])('handles requested page %s as page %i', async (page, expectedPage) => {
+      const prisoners = Array.from({ length: config.envPageSize + 1 }, (_, index) => ({
+        prisonerNumber: `prisoner-${index}`,
+        departureTypeCode: 'TAP',
+      }))
+      movementsService.getOutTodayPrisoners.mockResolvedValue(prisoners)
+      const controller = new EstablishmentRollController(
+        establishmentRollService as unknown as EstablishmentRollService,
+        movementsService as unknown as MovementsService,
+        locationService as unknown as LocationService,
+      )
+      const req = { ...mockReq(), query: { page } } as unknown as Request
+      const res = mockRes()
+
+      await controller.getOutToday()(req, res, mockNext())
+
+      const start = (expectedPage - 1) * config.envPageSize
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/outToday',
+        expect.objectContaining({
+          currentPage: expectedPage,
+          totalPages: 2,
+          totalResults: prisoners.length,
+          prisoners: prisoners.slice(start, start + config.envPageSize),
+        }),
+      )
+    })
+
+    it('shows the first page when no departures match the filter', async () => {
+      movementsService.getOutTodayPrisoners.mockResolvedValue([{ prisonerNumber: 'release', departureTypeCode: 'REL' }])
+      const controller = new EstablishmentRollController(
+        establishmentRollService as unknown as EstablishmentRollService,
+        movementsService as unknown as MovementsService,
+        locationService as unknown as LocationService,
+      )
+      const req = { ...mockReq(), query: { departureType: 'atCourt', page: '2' } } as unknown as Request
+      const res = mockRes()
+
+      await controller.getOutToday()(req, res, mockNext())
+
+      expect(res.render).toHaveBeenCalledWith(
+        'pages/outToday',
+        expect.objectContaining({ prisoners: [], currentPage: 1, totalPages: 0, totalResults: 0 }),
+      )
+    })
+
     it('filters prisoners by selected departure types and builds applied filters', async () => {
       const outPrisoners = [
         { prisonerNumber: 'A1234BC', departureTypeCode: 'TAP' },
