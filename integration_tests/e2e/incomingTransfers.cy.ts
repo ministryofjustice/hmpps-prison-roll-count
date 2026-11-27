@@ -26,27 +26,27 @@ context('En Route Page', () => {
 
     page.incomingTransfersRows().first().find('td').eq(1).should('contain.text', 'Shannon, Eddie')
     page.incomingTransfersRows().first().find('td').eq(2).should('contain.text', 'A1234AB')
-    page.incomingTransfersRows().first().find('td').eq(3).should('contain.text', '01/01/1980')
-    page.incomingTransfersRows().first().find('td').eq(4).should('contain.text', '11:0025/12/2023')
-    page.incomingTransfersRows().first().find('td').eq(5).should('contain.text', 'Leeds')
-    page.incomingTransfersRows().first().find('td').eq(6).should('contain.text', 'Normal Transfer')
-    // Column index 7 checked in the CSRA level test
-    // Column index 8 checked in the alerts and category test
+    page.incomingTransfersRows().first().find('td').eq(3).should('contain.text', '11:00')
+    page.incomingTransfersRows().first().find('td').eq(3).should('contain.text', '25/12/2023')
+    page.incomingTransfersRows().first().find('td').eq(4).should('contain.text', 'Leeds')
+    page.incomingTransfersRows().first().find('td').eq(5).should('contain.text', 'Normal Transfer')
+    // Column index 6 checked in the CSRA level test
+    // Column index 7 checked in the alerts and category test
   })
 
   it('should display the CSRA level for each prisoner', () => {
     const page = Page.verifyOnPage(IncomingTransfersPage)
     page.incomingTransfersRows().should('have.length', 2)
 
-    page.incomingTransfersRows().first().find('td').eq(7).should('contain.text', 'None')
-    page.incomingTransfersRows().eq(1).find('td').eq(7).should('contain.text', 'High')
+    page.incomingTransfersRows().first().find('td').eq(6).should('contain.text', 'None')
+    page.incomingTransfersRows().eq(1).find('td').eq(6).should('contain.text', 'High')
   })
 
   it('should display alerts and category if cat A', () => {
     const page = Page.verifyOnPage(IncomingTransfersPage)
 
-    page.incomingTransfersRows().eq(1).find('td').eq(8).should('contain.text', 'Hidden disability')
-    page.incomingTransfersRows().eq(1).find('td').eq(8).should('contain.text', 'CAT A')
+    page.incomingTransfersRows().eq(1).find('td').eq(7).should('contain.text', 'Hidden disability')
+    page.incomingTransfersRows().eq(1).find('td').eq(7).should('contain.text', 'CAT A')
   })
 
   it('makes Name, Departed, "En route from" and CSRA sortable but not the other columns', () => {
@@ -54,15 +54,14 @@ context('En Route Page', () => {
 
     // Sortable columns expose aria-sort
     page.incomingTransfersHeaders().eq(1).should('have.attr', 'aria-sort') // Name
-    page.incomingTransfersHeaders().eq(4).should('have.attr', 'aria-sort') // Departed
-    page.incomingTransfersHeaders().eq(5).should('have.attr', 'aria-sort') // En route from
-    page.incomingTransfersHeaders().eq(7).should('have.attr', 'aria-sort') // CSRA
+    page.incomingTransfersHeaders().eq(3).should('have.attr', 'aria-sort') // Departed
+    page.incomingTransfersHeaders().eq(4).should('have.attr', 'aria-sort') // Coming from
+    page.incomingTransfersHeaders().eq(6).should('have.attr', 'aria-sort') // CSRA
 
     // Non-sortable columns do not
     page.incomingTransfersHeaders().eq(2).should('not.have.attr', 'aria-sort') // Prison number
-    page.incomingTransfersHeaders().eq(3).should('not.have.attr', 'aria-sort') // Date of birth
-    page.incomingTransfersHeaders().eq(6).should('not.have.attr', 'aria-sort') // Reason
-    page.incomingTransfersHeaders().eq(8).should('not.have.attr', 'aria-sort') // Alert flags
+    page.incomingTransfersHeaders().eq(5).should('not.have.attr', 'aria-sort') // Reason
+    page.incomingTransfersHeaders().eq(7).should('not.have.attr', 'aria-sort') // Alert flags
   })
 
   it('name link returns to the incoming-transfers page via the prisoner profile back link', () => {
@@ -89,7 +88,7 @@ context('En Route Page', () => {
       .incomingTransfersRows()
       .first()
       .find('td')
-      .eq(7)
+      .eq(6)
       .find('a')
       .should('have.attr', 'href')
       .and('contain', '/save-backlink')
